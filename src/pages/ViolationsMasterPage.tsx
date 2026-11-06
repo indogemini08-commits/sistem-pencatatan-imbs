@@ -303,71 +303,74 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
       </div>
 
       {/* Division Navigation Switcher */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-1.5 p-1.5 bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] rounded-2xl w-full sm:w-fit shadow-soft text-xs font-bold">
-        <button
-          onClick={() => setActiveDivisionFilter('all')}
-          className={`w-full min-h-[40px] justify-center px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeDivisionFilter === 'all'
-              ? 'bg-white dark:bg-[#1e2742] text-slate-900 dark:text-white shadow-soft ring-1 ring-slate-300 dark:ring-white/[0.1]'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
-          }`}
-        >
-          <span>🌐 Semua Master</span>
-          <span className="px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-[#111726] text-[10px] text-slate-700 dark:text-slate-300 font-extrabold border border-slate-200 dark:border-white/[0.1]">
-            {violations.length}
-          </span>
-        </button>
+      <div className="w-full overflow-x-auto no-scrollbar -mx-1 px-1">
+        <div className="flex items-center gap-1.5 p-1.5 bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] rounded-2xl w-max shadow-soft text-xs font-bold">
+          <button
+            onClick={() => setActiveDivisionFilter('all')}
+            className={`min-h-[40px] px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
+              activeDivisionFilter === 'all'
+                ? 'bg-white dark:bg-[#1e2742] text-slate-900 dark:text-white shadow-soft ring-1 ring-slate-300 dark:ring-white/[0.1]'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5" />
+            <span>Semua Master</span>
+            <span className="px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-[#111726] text-[10px] text-slate-700 dark:text-slate-300 font-extrabold border border-slate-200 dark:border-white/[0.1]">
+              {violations.length}
+            </span>
+          </button>
 
-        <button
-          onClick={() => setActiveDivisionFilter('tahfizh')}
-          className={`w-full min-h-[40px] justify-center px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeDivisionFilter === 'tahfizh'
-              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20'
-              : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
-          }`}
-        >
-          <BookOpen className="w-3.5 h-3.5" />
-          <span>🕌 Tahfizh</span>
-          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
-            activeDivisionFilter === 'tahfizh' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
-          }`}>
-            {tahfizhCount}
-          </span>
-        </button>
+          <button
+            onClick={() => setActiveDivisionFilter('tahfizh')}
+            className={`min-h-[40px] px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
+              activeDivisionFilter === 'tahfizh'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20'
+                : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Tahfizh</span>
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+              activeDivisionFilter === 'tahfizh' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
+            }`}>
+              {tahfizhCount}
+            </span>
+          </button>
 
-        <button
-          onClick={() => setActiveDivisionFilter('kesantrian')}
-          className={`w-full min-h-[40px] justify-center px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeDivisionFilter === 'kesantrian'
-              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20'
-              : 'text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
-          }`}
-        >
-          <Building2 className="w-3.5 h-3.5" />
-          <span>🏢 Kesantrian</span>
-          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
-            activeDivisionFilter === 'kesantrian' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
-          }`}>
-            {kesantrianCount}
-          </span>
-        </button>
+          <button
+            onClick={() => setActiveDivisionFilter('kesantrian')}
+            className={`min-h-[40px] px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
+              activeDivisionFilter === 'kesantrian'
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20'
+                : 'text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
+            }`}
+          >
+            <Building2 className="w-3.5 h-3.5" />
+            <span>Kesantrian</span>
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+              activeDivisionFilter === 'kesantrian' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
+            }`}>
+              {kesantrianCount}
+            </span>
+          </button>
 
-        <button
-          onClick={() => setActiveDivisionFilter('akademik')}
-          className={`w-full min-h-[40px] justify-center px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeDivisionFilter === 'akademik'
-              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20'
-              : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
-          }`}
-        >
-          <GraduationCap className="w-3.5 h-3.5" />
-          <span>📚 Akademik</span>
-          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
-            activeDivisionFilter === 'akademik' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
-          }`}>
-            {akademikCount}
-          </span>
-        </button>
+          <button
+            onClick={() => setActiveDivisionFilter('akademik')}
+            className={`min-h-[40px] px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shrink-0 ${
+              activeDivisionFilter === 'akademik'
+                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20'
+                : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
+            }`}
+          >
+            <GraduationCap className="w-3.5 h-3.5" />
+            <span>Akademik</span>
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+              activeDivisionFilter === 'akademik' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
+            }`}>
+              {akademikCount}
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Snapshot Safe Guarantee Notice */}

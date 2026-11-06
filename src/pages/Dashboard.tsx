@@ -29,6 +29,7 @@ import {
   Activity,
   ArrowRight,
   Target,
+  Globe,
 } from 'lucide-react';
 import { User, DashboardStats, Halaqah, Student } from '../types';
 import { api } from '../services/api';
@@ -555,60 +556,61 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </p>
 
             {/* Division Switcher Glass Tabs */}
-            <div className="pt-2">
-              <div className="inline-flex items-center p-1 bg-black/30 backdrop-blur-md border border-white/10 rounded-2xl gap-1">
+            <div className="pt-2 w-full overflow-x-auto no-scrollbar -mx-1 px-1">
+              <div className="inline-flex items-center p-1 bg-black/30 backdrop-blur-md border border-white/10 rounded-2xl gap-1 min-w-max">
                 <button
                   onClick={() => setDashboardDivision('all')}
-                  className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
                     dashboardDivision === 'all'
                       ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-indigo-600/30'
                       : 'text-slate-300 hover:text-white hover:bg-white/5'
                   }`}
                 >
-                  <span>🌐 Terpadu</span>
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>Terpadu</span>
                 </button>
                 <button
                   onClick={() => setDashboardDivision('tahfizh')}
-                  className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
                     dashboardDivision === 'tahfizh'
                       ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/30'
                       : 'text-slate-300 hover:text-emerald-300 hover:bg-white/5'
                   }`}
                 >
                   <BookOpen className="w-3.5 h-3.5" />
-                  <span>🕌 Tahfizh</span>
+                  <span>Tahfizh</span>
                 </button>
                 <button
                   onClick={() => setDashboardDivision('kesantrian')}
-                  className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
                     dashboardDivision === 'kesantrian'
                       ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/30'
                       : 'text-slate-300 hover:text-blue-300 hover:bg-white/5'
                   }`}
                 >
                   <Building2 className="w-3.5 h-3.5" />
-                  <span>🏢 Kesantrian</span>
+                  <span>Kesantrian</span>
                 </button>
                 <button
                   onClick={() => setDashboardDivision('akademik')}
-                  className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
                     dashboardDivision === 'akademik'
                       ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-600/30'
                       : 'text-slate-300 hover:text-purple-300 hover:bg-white/5'
                   }`}
                 >
                   <GraduationCap className="w-3.5 h-3.5" />
-                  <span>📚 Akademik</span>
+                  <span>Akademik</span>
                 </button>
               </div>
             </div>
           </div>
 
           {/* Quick Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 shrink-0 w-full sm:w-auto">
             <button
               onClick={onOpenQuickRecord}
-              className="px-5 py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 text-white text-xs sm:text-sm font-extrabold rounded-2xl shadow-xl shadow-indigo-600/30 border border-white/20 transition-all flex items-center justify-center gap-2 transform active:scale-95 cursor-pointer"
+              className="w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 text-white text-xs sm:text-sm font-extrabold rounded-2xl shadow-xl shadow-indigo-600/30 border border-white/20 transition-all flex items-center justify-center gap-2 transform active:scale-95 cursor-pointer"
             >
               <PlusCircle className="w-4 h-4 text-purple-200" />
               <span>+ Catat Pelanggaran</span>
@@ -617,7 +619,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             {onOpenQuickReward && (
               <button
                 onClick={onOpenQuickReward}
-                className="px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-extrabold rounded-2xl shadow-xl shadow-emerald-600/30 border border-emerald-400/20 transition-all flex items-center justify-center gap-2 transform active:scale-95 cursor-pointer"
+                className="w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-extrabold rounded-2xl shadow-xl shadow-emerald-600/30 border border-emerald-400/20 transition-all flex items-center justify-center gap-2 transform active:scale-95 cursor-pointer"
               >
                 <Award className="w-4 h-4 text-emerald-200" />
                 <span>★ Catat Kebaikan</span>
@@ -628,112 +630,112 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </div>
 
       {/* 2. Top Metric Cards (6 SaaS Cards matching Reference Image 2) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-4">
         {/* Total Santri */}
-        <div className="saas-card-glow p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
+        <div className="saas-card-glow p-3.5 sm:p-5">
+          <div className="flex items-center justify-between gap-1.5">
+            <span className="text-[10px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
               Total Santri
             </span>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-purple-100/90 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 flex items-center justify-center ring-1 ring-purple-400/40 shadow-xs shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-purple-100/90 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 flex items-center justify-center ring-1 ring-purple-400/40 shadow-xs shrink-0">
               <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+          <p className="mt-2 text-xl sm:text-3xl font-black text-slate-900 dark:text-white">
             {stats?.summary.totalStudents || 0}
           </p>
-          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-emerald-700 dark:text-emerald-400 font-extrabold">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_#10b981]" />
-            <span>Santri aktif pondok</span>
+          <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-emerald-700 dark:text-emerald-400 font-extrabold truncate">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_#10b981] shrink-0" />
+            <span className="truncate">Santri aktif pondok</span>
           </div>
         </div>
 
         {/* Poin Netto Terpadu */}
-        <div className="saas-card-glow p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
+        <div className="saas-card-glow p-3.5 sm:p-5">
+          <div className="flex items-center justify-between gap-1.5">
+            <span className="text-[10px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
               Poin Netto
             </span>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-rose-100/90 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 flex items-center justify-center ring-1 ring-rose-400/40 shadow-xs shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-rose-100/90 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 flex items-center justify-center ring-1 ring-rose-400/40 shadow-xs shrink-0">
               <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <p className="mt-2 text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400">
+          <p className="mt-2 text-xl sm:text-3xl font-black text-rose-600 dark:text-rose-400">
             {stats?.summary.netTotalPoints !== undefined ? stats.summary.netTotalPoints : (stats?.summary.totalPoints || 0)}
           </p>
-          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 font-bold truncate">
+          <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 font-bold truncate">
             <span>{stats?.summary.totalRecords || 0} kasus aktif</span>
           </div>
         </div>
 
         {/* Poin Dikurangi (Reward) */}
-        <div className="saas-card-glow p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
+        <div className="saas-card-glow p-3.5 sm:p-5">
+          <div className="flex items-center justify-between gap-1.5">
+            <span className="text-[10px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
               Poin Dikurangi
             </span>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-emerald-100/90 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center ring-1 ring-emerald-400/40 shadow-xs shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-emerald-100/90 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center ring-1 ring-emerald-400/40 shadow-xs shrink-0">
               <Award className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <p className="mt-2 text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">
+          <p className="mt-2 text-xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">
             -{stats?.summary.totalPointsDeducted || 0}
           </p>
-          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-emerald-700 dark:text-emerald-400 font-extrabold truncate">
+          <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-emerald-700 dark:text-emerald-400 font-extrabold truncate">
             <span>{stats?.summary.totalPositiveRecords || 0} kebaikan</span>
           </div>
         </div>
 
         {/* Divisi Tahfizh */}
-        <div className="saas-card-glow p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
-              Divisi Tahfizh
+        <div className="saas-card-glow p-3.5 sm:p-5">
+          <div className="flex items-center justify-between gap-1.5">
+            <span className="text-[10px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
+              Tahfizh
             </span>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-cyan-100/90 dark:bg-cyan-950/80 text-cyan-700 dark:text-cyan-300 flex items-center justify-center ring-1 ring-cyan-400/40 shadow-xs shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-cyan-100/90 dark:bg-cyan-950/80 text-cyan-700 dark:text-cyan-300 flex items-center justify-center ring-1 ring-cyan-400/40 shadow-xs shrink-0">
               <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+          <p className="mt-2 text-xl sm:text-3xl font-black text-slate-900 dark:text-white">
             {stats?.summary.tahfizhTotalPoints || 0}
           </p>
-          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 font-semibold truncate">
+          <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 font-semibold truncate">
             <span>Ded: -{stats?.summary.tahfizhDeductedPoints || 0} • {stats?.summary.tahfizhRecordsCount || 0} kjdn</span>
           </div>
         </div>
 
         {/* Divisi Kesantrian */}
-        <div className="saas-card-glow p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
-              Divisi Kesantrian
+        <div className="saas-card-glow p-3.5 sm:p-5">
+          <div className="flex items-center justify-between gap-1.5">
+            <span className="text-[10px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
+              Kesantrian
             </span>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-amber-100/90 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 flex items-center justify-center ring-1 ring-amber-400/40 shadow-xs shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-amber-100/90 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 flex items-center justify-center ring-1 ring-amber-400/40 shadow-xs shrink-0">
               <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+          <p className="mt-2 text-xl sm:text-3xl font-black text-slate-900 dark:text-white">
             {stats?.summary.kesantrianTotalPoints || 0}
           </p>
-          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 font-semibold truncate">
+          <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 font-semibold truncate">
             <span>Ded: -{stats?.summary.kesantrianDeductedPoints || 0} • {stats?.summary.kesantrianRecordsCount || 0} kjdn</span>
           </div>
         </div>
 
         {/* Divisi Akademik */}
-        <div className="saas-card-glow p-4 sm:p-5">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
-              Divisi Akademik
+        <div className="saas-card-glow p-3.5 sm:p-5">
+          <div className="flex items-center justify-between gap-1.5">
+            <span className="text-[10px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
+              Akademik
             </span>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-violet-100/90 dark:bg-violet-950/80 text-violet-700 dark:text-violet-300 flex items-center justify-center ring-1 ring-violet-400/40 shadow-xs shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl bg-violet-100/90 dark:bg-violet-950/80 text-violet-700 dark:text-violet-300 flex items-center justify-center ring-1 ring-violet-400/40 shadow-xs shrink-0">
               <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
-          <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+          <p className="mt-2 text-xl sm:text-3xl font-black text-slate-900 dark:text-white">
             {stats?.summary.akademikTotalPoints || 0}
           </p>
-          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 font-semibold truncate">
+          <div className="mt-1 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-slate-600 dark:text-slate-300 font-semibold truncate">
             <span>Ded: -{stats?.summary.akademikDeductedPoints || 0} • {stats?.summary.akademikRecordsCount || 0} kjdn</span>
           </div>
         </div>

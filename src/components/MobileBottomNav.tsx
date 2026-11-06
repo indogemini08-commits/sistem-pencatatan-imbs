@@ -13,7 +13,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   onOpenQuickRecord,
 }) => {
   return (
-    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-[#0d1222]/95 backdrop-blur-xl border-t border-slate-200/80 dark:border-white/[0.08] px-2 py-2 shadow-2xl transition-colors duration-300">
+    <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0d1222]/95 backdrop-blur-xl border-t border-slate-200/80 dark:border-white/[0.08] px-2 py-1.5 pb-2.5 sm:pb-2 shadow-2xl transition-colors duration-300">
       <div className="flex items-center justify-around relative max-w-md mx-auto">
         {/* Dashboard */}
         <button
@@ -28,7 +28,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             <span className="absolute -top-1 w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-sm shadow-indigo-500" />
           )}
           <LayoutDashboard className="w-5 h-5" />
-          <span className="text-[10px] mt-0.5 tracking-tight">Beranda</span>
+          <span className="text-[10px] mt-0.5 tracking-tight font-medium">Beranda</span>
         </button>
 
         {/* Riwayat */}
@@ -44,19 +44,19 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
             <span className="absolute -top-1 w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-sm shadow-indigo-500" />
           )}
           <History className="w-5 h-5" />
-          <span className="text-[10px] mt-0.5 tracking-tight">Riwayat</span>
+          <span className="text-[10px] mt-0.5 tracking-tight font-medium">Riwayat</span>
         </button>
 
         {/* Big Center Action Button: + CATAT */}
         <div className="relative -top-5 flex flex-col items-center group">
           <button
             onClick={onOpenQuickRecord}
-            className="w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-purple-600 via-indigo-600 to-indigo-700 text-white flex items-center justify-center shadow-lg shadow-indigo-500/40 ring-4 ring-white dark:ring-[#0d1222] transform active:scale-90 transition-transform duration-200"
+            className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-purple-600 via-indigo-600 to-indigo-700 text-white flex items-center justify-center shadow-lg shadow-indigo-500/40 ring-4 ring-white dark:ring-[#0d1222] transform active:scale-90 transition-transform duration-200"
             aria-label="Catat Pelanggaran"
           >
-            <Plus className="w-7 h-7 stroke-[2.5]" />
+            <Plus className="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.5]" />
           </button>
-          <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 mt-1 uppercase tracking-wider">
+          <span className="text-[9px] font-black text-indigo-600 dark:text-indigo-400 mt-0.5 uppercase tracking-wider">
             Catat
           </span>
         </div>

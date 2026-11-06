@@ -19,6 +19,7 @@ import {
   Building2,
   GraduationCap,
   UserCheck,
+  Globe,
 } from 'lucide-react';
 import { ViolationRecord, Halaqah, Teacher, SchoolSettings, User, ViolationDivision } from '../types';
 import { api } from '../services/api';
@@ -376,71 +377,74 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
       </div>
 
       {/* Division Tabs Switcher */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 p-1.5 rounded-2xl bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] text-xs font-bold w-full sm:w-fit gap-1.5 shadow-soft">
-        <button
-          onClick={() => setFilterDivision('all')}
-          className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
-            filterDivision === 'all'
-              ? 'bg-white dark:bg-[#1e2742] text-slate-900 dark:text-white shadow-md ring-1 ring-slate-300 dark:ring-white/[0.1]'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
-          }`}
-        >
-          <span>🌐 Rekap Terpadu (Semua)</span>
-          <span className="px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-[#111726] text-[10px] text-slate-700 dark:text-slate-300 font-extrabold border border-slate-200 dark:border-white/[0.1]">
-            {records.length}
-          </span>
-        </button>
+      <div className="w-full overflow-x-auto no-scrollbar -mx-1 px-1">
+        <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] text-xs font-bold w-max shadow-soft">
+          <button
+            onClick={() => setFilterDivision('all')}
+            className={`py-2 px-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 ${
+              filterDivision === 'all'
+                ? 'bg-white dark:bg-[#1e2742] text-slate-900 dark:text-white shadow-md ring-1 ring-slate-300 dark:ring-white/[0.1]'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
+            }`}
+          >
+            <Globe className="w-3.5 h-3.5" />
+            <span>Rekap Terpadu</span>
+            <span className="px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-[#111726] text-[10px] text-slate-700 dark:text-slate-300 font-extrabold border border-slate-200 dark:border-white/[0.1]">
+              {records.length}
+            </span>
+          </button>
 
-        <button
-          onClick={() => setFilterDivision('tahfizh')}
-          className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
-            filterDivision === 'tahfizh'
-              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20'
-              : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
-          }`}
-        >
-          <BookOpen className="w-3.5 h-3.5" />
-          <span>🕌 Tahfizh</span>
-          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
-            filterDivision === 'tahfizh' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
-          }`}>
-            {tahfizhRecords.length}
-          </span>
-        </button>
+          <button
+            onClick={() => setFilterDivision('tahfizh')}
+            className={`py-2 px-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 ${
+              filterDivision === 'tahfizh'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20'
+                : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
+            }`}
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Tahfizh</span>
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+              filterDivision === 'tahfizh' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
+            }`}>
+              {tahfizhRecords.length}
+            </span>
+          </button>
 
-        <button
-          onClick={() => setFilterDivision('kesantrian')}
-          className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
-            filterDivision === 'kesantrian'
-              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20'
-              : 'text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
-          }`}
-        >
-          <Building2 className="w-3.5 h-3.5" />
-          <span>🏢 Kesantrian</span>
-          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
-            filterDivision === 'kesantrian' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
-          }`}>
-            {kesantrianRecords.length}
-          </span>
-        </button>
+          <button
+            onClick={() => setFilterDivision('kesantrian')}
+            className={`py-2 px-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 ${
+              filterDivision === 'kesantrian'
+                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20'
+                : 'text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
+            }`}
+          >
+            <Building2 className="w-3.5 h-3.5" />
+            <span>Kesantrian</span>
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+              filterDivision === 'kesantrian' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
+            }`}>
+              {kesantrianRecords.length}
+            </span>
+          </button>
 
-        <button
-          onClick={() => setFilterDivision('akademik')}
-          className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
-            filterDivision === 'akademik'
-              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20'
-              : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
-          }`}
-        >
-          <GraduationCap className="w-3.5 h-3.5" />
-          <span>📚 Akademik</span>
-          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
-            filterDivision === 'akademik' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
-          }`}>
-            {akademikRecords.length}
-          </span>
-        </button>
+          <button
+            onClick={() => setFilterDivision('akademik')}
+            className={`py-2 px-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 ${
+              filterDivision === 'akademik'
+                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20'
+                : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
+            }`}
+          >
+            <GraduationCap className="w-3.5 h-3.5" />
+            <span>Akademik</span>
+            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+              filterDivision === 'akademik' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
+            }`}>
+              {akademikRecords.length}
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Filter and Date Range Card */}

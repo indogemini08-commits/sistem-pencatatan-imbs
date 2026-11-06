@@ -344,50 +344,52 @@ export const PositiveRecordsPage: React.FC<PositiveRecordsPageProps> = ({
       <div className="saas-card p-4 sm:p-5 space-y-4">
         {/* Division Selector & Reset Filter */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-100 dark:border-white/[0.06] pb-3">
-          <div className="grid grid-cols-2 sm:flex p-1 rounded-xl bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] text-xs font-bold w-full sm:w-auto gap-1">
-            <button
-              onClick={() => setFilterDivision('all')}
-              className={`py-2 px-3 sm:py-1.5 rounded-lg text-center transition-all ${
-                filterDivision === 'all'
-                  ? 'bg-white dark:bg-[#1e2742] text-slate-900 dark:text-white shadow-soft'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              Semua
-            </button>
-            <button
-              onClick={() => setFilterDivision('tahfizh')}
-              className={`py-2 px-3 sm:py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-center transition-all ${
-                filterDivision === 'tahfizh'
-                  ? 'bg-white dark:bg-[#1e2742] text-emerald-700 dark:text-emerald-400 shadow-soft'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <BookOpen className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-              <span>Tahfizh</span>
-            </button>
-            <button
-              onClick={() => setFilterDivision('kesantrian')}
-              className={`py-2 px-3 sm:py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-center transition-all ${
-                filterDivision === 'kesantrian'
-                  ? 'bg-white dark:bg-[#1e2742] text-indigo-700 dark:text-indigo-400 shadow-soft'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Building2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-              <span>Kesantrian</span>
-            </button>
-            <button
-              onClick={() => setFilterDivision('akademik')}
-              className={`py-2 px-3 sm:py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-center transition-all ${
-                filterDivision === 'akademik'
-                  ? 'bg-white dark:bg-[#1e2742] text-purple-700 dark:text-purple-400 shadow-soft'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <GraduationCap className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
-              <span>Akademik</span>
-            </button>
+          <div className="w-full sm:w-auto overflow-x-auto no-scrollbar -mx-1 px-1">
+            <div className="flex items-center p-1 rounded-xl bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] text-xs font-bold w-max gap-1">
+              <button
+                onClick={() => setFilterDivision('all')}
+                className={`py-1.5 px-3 rounded-lg text-center transition-all shrink-0 ${
+                  filterDivision === 'all'
+                    ? 'bg-white dark:bg-[#1e2742] text-slate-900 dark:text-white shadow-soft'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                Semua
+              </button>
+              <button
+                onClick={() => setFilterDivision('tahfizh')}
+                className={`py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 text-center transition-all shrink-0 ${
+                  filterDivision === 'tahfizh'
+                    ? 'bg-white dark:bg-[#1e2742] text-emerald-700 dark:text-emerald-400 shadow-soft'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <span>Tahfizh</span>
+              </button>
+              <button
+                onClick={() => setFilterDivision('kesantrian')}
+                className={`py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 text-center transition-all shrink-0 ${
+                  filterDivision === 'kesantrian'
+                    ? 'bg-white dark:bg-[#1e2742] text-indigo-700 dark:text-indigo-400 shadow-soft'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                <span>Kesantrian</span>
+              </button>
+              <button
+                onClick={() => setFilterDivision('akademik')}
+                className={`py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 text-center transition-all shrink-0 ${
+                  filterDivision === 'akademik'
+                    ? 'bg-white dark:bg-[#1e2742] text-purple-700 dark:text-purple-400 shadow-soft'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <GraduationCap className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
+                <span>Akademik</span>
+              </button>
+            </div>
           </div>
 
           {(search || filterStatus !== 'all' || startDate || endDate) && (

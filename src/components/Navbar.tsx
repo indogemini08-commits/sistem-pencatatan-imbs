@@ -133,13 +133,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-20 h-16 sm:h-18 bg-white/75 dark:bg-[#0b101d]/80 backdrop-blur-2xl border-b border-slate-200/90 dark:border-white/[0.1] px-4 sm:px-6 lg:px-8 flex items-center justify-between shadow-xs transition-colors duration-200">
+    <header className="sticky top-0 z-20 h-16 sm:h-18 bg-white/80 dark:bg-[#0b101d]/85 backdrop-blur-2xl border-b border-slate-200/90 dark:border-white/[0.1] px-3 sm:px-6 lg:px-8 flex items-center justify-between shadow-xs transition-colors duration-200">
       {/* Left: Mobile Toggle & Desktop Breadcrumb */}
-      <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex items-center gap-2 sm:gap-4 min-w-0">
         {/* Mobile Hamburger Menu */}
         <button
           onClick={onToggleSidebar}
-          className="lg:hidden p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.08] border border-slate-300/80 dark:border-white/[0.1] transition-colors"
+          className="lg:hidden p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.08] border border-slate-300/80 dark:border-white/[0.1] transition-colors shrink-0"
           aria-label="Buka Menu"
         >
           <Menu className="w-5 h-5" />
@@ -147,10 +147,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Mobile Logo & App Title */}
         <div
-          className="flex lg:hidden items-center gap-2 cursor-pointer"
+          className="flex lg:hidden items-center gap-2 cursor-pointer min-w-0"
           onClick={() => onSelectTab && onSelectTab('dashboard')}
         >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 p-0.5 flex items-center justify-center ring-1 ring-indigo-500/30">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 p-0.5 flex items-center justify-center ring-1 ring-indigo-500/30 shrink-0">
             <div className="w-full h-full rounded-lg bg-white dark:bg-slate-950 p-1 flex items-center justify-center">
               <img
                 src={settings?.logo_url || '/logo.svg'}
@@ -162,7 +162,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               />
             </div>
           </div>
-          <span className="text-sm font-black text-slate-900 dark:text-white truncate">
+          <span className="text-xs sm:text-sm font-black text-slate-900 dark:text-white truncate max-w-[105px] xs:max-w-[130px] sm:max-w-[200px]">
             {settings?.app_name || 'Sistem Poin IMBS'}
           </span>
         </div>
@@ -199,7 +199,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
 
       {/* Right: Academic Year Pill, Quick Action, Theme, Notifications & Profile */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
         {/* Academic Year Pill */}
         <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/85 dark:bg-white/[0.08] border border-slate-300 dark:border-white/[0.12] text-xs text-slate-800 dark:text-slate-200 font-bold shadow-xs">
           <Calendar className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
@@ -210,46 +210,49 @@ export const Navbar: React.FC<NavbarProps> = ({
         {onOpenQuickReward && (
           <button
             onClick={onOpenQuickReward}
-            className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 border border-white/10 transition-all transform active:scale-95"
+            className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 border border-white/10 transition-all transform active:scale-95 shrink-0"
             title="Catat Kegiatan Baik / Pengurangan Poin Santri"
+            aria-label="Catat Kebaikan"
           >
-            <Sparkles className="w-3.5 h-3.5 text-emerald-200" />
-            <span className="hidden md:inline">Catat Kebaikan</span>
-            <span className="md:hidden font-extrabold">★ Kebaikan</span>
+            <Sparkles className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-emerald-200" />
+            <span className="hidden sm:inline">Catat Kebaikan</span>
           </button>
         )}
 
         {/* Quick Violation Record Button */}
         <button
           onClick={onOpenQuickRecord}
-          className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 text-white text-xs sm:text-xs font-bold rounded-xl shadow-md shadow-indigo-600/25 border border-white/20 transition-all transform active:scale-95"
+          className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 text-white text-xs font-bold rounded-xl shadow-md shadow-indigo-600/25 border border-white/20 transition-all transform active:scale-95 shrink-0"
+          title="Catat Pelanggaran Santri"
+          aria-label="Catat Pelanggaran"
         >
-          <PlusCircle className="w-3.5 h-3.5 text-purple-200" />
+          <PlusCircle className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-purple-200" />
           <span className="hidden sm:inline">Catat Pelanggaran</span>
-          <span className="sm:hidden font-extrabold">+ Catat</span>
         </button>
 
         {/* Notification Bell */}
         <button
           type="button"
           title="Notifikasi Aktivitas"
-          className="relative p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] border border-slate-200/80 dark:border-white/[0.08] transition-colors"
+          className="relative p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] border border-slate-200/80 dark:border-white/[0.08] transition-colors shrink-0"
         >
           <Bell className="w-4 h-4" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-[#0b101d]" />
         </button>
 
         {/* Theme Toggle Switcher (Matahari - Bulan) */}
-        <ThemeToggle size="sm" />
+        <div className="shrink-0">
+          <ThemeToggle size="sm" />
+        </div>
 
         {/* User Profile Pill Card (Matching Reference Image) */}
-        <div className="flex items-center gap-2 sm:gap-2.5 pl-1.5 sm:pl-2">
-          <div className="flex items-center gap-2 px-2 py-1 rounded-2xl bg-slate-100/90 dark:bg-white/[0.06] border border-slate-200/90 dark:border-white/[0.08] shadow-xs">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs shadow-md shadow-indigo-500/25 ring-1 ring-white/20 shrink-0">
+        <div className="flex items-center shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-1.5 sm:px-2 py-1 rounded-2xl bg-slate-100/90 dark:bg-white/[0.06] border border-slate-200/90 dark:border-white/[0.08] shadow-xs">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs shadow-md shadow-indigo-500/25 ring-1 ring-white/20 shrink-0">
               {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : <User className="w-3.5 h-3.5" />}
             </div>
             <div className="text-left hidden sm:block pr-1">
-              <p className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[120px] leading-tight">
+              <p className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[110px] leading-tight">
                 {currentUser?.name || 'Pengguna'}
               </p>
               <div className="mt-0.5">{getRoleBadge(currentUser?.role)}</div>
@@ -257,7 +260,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={onLogout}
               title="Keluar / Logout"
-              className="p-1 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0 ml-1"
+              className="p-1 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0 ml-0.5"
               aria-label="Logout"
             >
               <LogOut className="w-3.5 h-3.5" />

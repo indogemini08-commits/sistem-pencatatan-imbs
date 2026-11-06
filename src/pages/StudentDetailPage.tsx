@@ -239,32 +239,32 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
         {/* Main Records Box */}
         <div className="lg:col-span-2 glass-panel overflow-hidden">
           {/* Sub Tab Switcher: Pelanggaran vs Kebaikan */}
-          <div className="px-5 pt-4 border-b border-slate-200/80 dark:border-white/[0.08] flex items-center gap-2 bg-slate-50/60 dark:bg-slate-900/40">
+          <div className="px-3 sm:px-5 pt-3 sm:pt-4 border-b border-slate-200/80 dark:border-white/[0.08] flex items-center gap-1.5 sm:gap-2 bg-slate-50/60 dark:bg-slate-900/40 overflow-x-auto no-scrollbar">
             <button
               onClick={() => setActiveHistoryTab('violations')}
-              className={`flex items-center gap-2 py-2.5 px-4 font-bold text-xs sm:text-sm border-b-2 transition-all cursor-pointer ${
+              className={`flex items-center gap-2 py-2.5 px-3.5 sm:px-4 font-bold text-xs sm:text-sm border-b-2 transition-all cursor-pointer shrink-0 ${
                 activeHistoryTab === 'violations'
                   ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-[#111726] rounded-t-xl'
                   : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              <History className="w-4 h-4 text-indigo-500" />
+              <History className="w-4 h-4 text-indigo-500 shrink-0" />
               <span>Riwayat Pelanggaran ({records.length})</span>
             </button>
             <button
               onClick={() => setActiveHistoryTab('rewards')}
-              className={`flex items-center gap-2 py-2.5 px-4 font-bold text-xs sm:text-sm border-b-2 transition-all cursor-pointer ${
+              className={`flex items-center gap-2 py-2.5 px-3.5 sm:px-4 font-bold text-xs sm:text-sm border-b-2 transition-all cursor-pointer shrink-0 ${
                 activeHistoryTab === 'rewards'
                   ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 bg-white dark:bg-[#111726] rounded-t-xl'
                   : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              <Award className="w-4 h-4 text-emerald-500" />
+              <Award className="w-4 h-4 text-emerald-500 shrink-0" />
               <span>Kebaikan & Pengurangan Poin ({positiveRecords.length})</span>
             </button>
           </div>
 
-          <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-4 sm:p-6 border-b border-slate-100 dark:border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                 {activeHistoryTab === 'violations'
@@ -279,50 +279,52 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
             </div>
 
             {/* Division Filter Pills */}
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900/70 p-1 rounded-xl text-xs font-bold border border-slate-200/50 dark:border-white/[0.06]">
-              <button
-                onClick={() => setRecordDivisionFilter('all')}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  recordDivisionFilter === 'all'
-                    ? 'bg-white dark:bg-[#161d31] text-slate-900 dark:text-white shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                Semua ({activeHistoryTab === 'violations' ? records.length : positiveRecords.length})
-              </button>
-              <button
-                onClick={() => setRecordDivisionFilter('tahfizh')}
-                className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
-                  recordDivisionFilter === 'tahfizh'
-                    ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400'
-                }`}
-              >
-                <BookOpen className="w-3 h-3" />
-                Tahfizh ({activeHistoryTab === 'violations' ? tahfizhRecordsCount : tahfizhPositiveCount})
-              </button>
-              <button
-                onClick={() => setRecordDivisionFilter('kesantrian')}
-                className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
-                  recordDivisionFilter === 'kesantrian'
-                    ? 'bg-indigo-600 text-white shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400'
-                }`}
-              >
-                <Building2 className="w-3 h-3" />
-                Kesantrian ({activeHistoryTab === 'violations' ? kesantrianRecordsCount : kesantrianPositiveCount})
-              </button>
-              <button
-                onClick={() => setRecordDivisionFilter('akademik')}
-                className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
-                  recordDivisionFilter === 'akademik'
-                    ? 'bg-purple-600 text-white shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400'
-                }`}
-              >
-                <GraduationCap className="w-3 h-3" />
-                Akademik ({activeHistoryTab === 'violations' ? akademikRecordsCount : akademikPositiveCount})
-              </button>
+            <div className="w-full sm:w-auto overflow-x-auto no-scrollbar -mx-1 px-1">
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900/70 p-1 rounded-xl text-xs font-bold border border-slate-200/50 dark:border-white/[0.06] w-max">
+                <button
+                  onClick={() => setRecordDivisionFilter('all')}
+                  className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer shrink-0 ${
+                    recordDivisionFilter === 'all'
+                      ? 'bg-white dark:bg-[#161d31] text-slate-900 dark:text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  Semua ({activeHistoryTab === 'violations' ? records.length : positiveRecords.length})
+                </button>
+                <button
+                  onClick={() => setRecordDivisionFilter('tahfizh')}
+                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
+                    recordDivisionFilter === 'tahfizh'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400'
+                  }`}
+                >
+                  <BookOpen className="w-3 h-3 shrink-0" />
+                  Tahfizh ({activeHistoryTab === 'violations' ? tahfizhRecordsCount : tahfizhPositiveCount})
+                </button>
+                <button
+                  onClick={() => setRecordDivisionFilter('kesantrian')}
+                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
+                    recordDivisionFilter === 'kesantrian'
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400'
+                  }`}
+                >
+                  <Building2 className="w-3 h-3 shrink-0" />
+                  Kesantrian ({activeHistoryTab === 'violations' ? kesantrianRecordsCount : kesantrianPositiveCount})
+                </button>
+                <button
+                  onClick={() => setRecordDivisionFilter('akademik')}
+                  className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer shrink-0 ${
+                    recordDivisionFilter === 'akademik'
+                      ? 'bg-purple-600 text-white shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400'
+                  }`}
+                >
+                  <GraduationCap className="w-3 h-3 shrink-0" />
+                  Akademik ({activeHistoryTab === 'violations' ? akademikRecordsCount : akademikPositiveCount})
+                </button>
+              </div>
             </div>
           </div>
 
