@@ -20,7 +20,7 @@ router.get('/', (req: Request, res: Response) => {
       params.push(division);
     }
 
-    sql += ` ORDER BY v.code ASC`;
+    sql += ` ORDER BY v.default_points DESC, v.code ASC`;
 
     const violations = query<any>(sql, params);
     return res.json(violations);

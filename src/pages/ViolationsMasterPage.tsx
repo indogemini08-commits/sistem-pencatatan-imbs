@@ -230,19 +230,21 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
     }
   };
 
-  const filteredViolations = violations.filter((v) => {
-    const matchSearch =
-      v.name.toLowerCase().includes(search.toLowerCase()) ||
-      v.code.toLowerCase().includes(search.toLowerCase()) ||
-      (v.description && v.description.toLowerCase().includes(search.toLowerCase()));
+  const filteredViolations = violations
+    .filter((v) => {
+      const matchSearch =
+        v.name.toLowerCase().includes(search.toLowerCase()) ||
+        v.code.toLowerCase().includes(search.toLowerCase()) ||
+        (v.description && v.description.toLowerCase().includes(search.toLowerCase()));
 
-    const matchDivision =
-      activeDivisionFilter === 'all' || (v.division || 'tahfizh') === activeDivisionFilter;
+      const matchDivision =
+        activeDivisionFilter === 'all' || (v.division || 'tahfizh') === activeDivisionFilter;
 
-    const matchCategory = selectedCategory === 'all' || v.category === selectedCategory;
+      const matchCategory = selectedCategory === 'all' || v.category === selectedCategory;
 
-    return matchSearch && matchDivision && matchCategory;
-  });
+      return matchSearch && matchDivision && matchCategory;
+    })
+    .sort((a, b) => (Number(b.default_points) || 0) - (Number(a.default_points) || 0));
 
   const categories = [
     'Tahfizh',

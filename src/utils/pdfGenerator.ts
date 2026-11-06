@@ -62,10 +62,16 @@ function drawOfficialHeader(doc: jsPDF, settings: SchoolSettings): number {
   return startY + 8;
 }
 
+export interface PDFGenerationResult {
+  doc: jsPDF;
+  fileName: string;
+  blobUrl: string;
+}
+
 /**
- * Cetak Laporan Riwayat Pelanggaran Lengkap (Filterable)
+ * Buat Dokumen jsPDF Laporan Riwayat Pelanggaran Lengkap (Filterable)
  */
-export function generateViolationReportPDF(
+export function buildViolationReportPDF(
   records: ViolationRecord[],
   settings: SchoolSettings,
   filterInfo?: {
@@ -75,7 +81,7 @@ export function generateViolationReportPDF(
     category?: string;
     printedBy?: string;
   }
-) {
+): PDFGenerationResult {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageWidth = doc.internal.pageSize.getWidth();
 
@@ -201,18 +207,43 @@ export function generateViolationReportPDF(
   doc.text('( ............................................ )', 25, sigY);
   doc.text(`( ${filterInfo?.muhafizh || '............................................'} )`, pageWidth - 65, sigY);
 
-  doc.save(`Laporan_Pelanggaran_Halaqah_${new Date().toISOString().split('T')[0]}.pdf`);
+  const fileName = `Laporan_Pelanggaran_${new Date().toISOString().split('T')[0]}.pdf`;
+  const blobUrl = doc.output('bloburl');
+
+  return {
+    doc,
+    fileName,
+    blobUrl: typeof blobUrl === 'string' ? blobUrl : URL.createObjectURL(doc.output('blob')),
+  };
 }
 
 /**
- * Cetak Surat Rekap Poin & Pelanggaran Individual Santri
- * (Untuk arsip wali santri & pembinaan)
+ * Cetak Laporan Langsung (Fallback jika tidak preview)
  */
-export function generateStudentDetailPDF(
+export function generateViolationReportPDF(
+  records: ViolationRecord[],
+  settings: SchoolSettings,
+  filterInfo?: {
+    period?: string;
+    halaqah?: string;
+    muhafizh?: string;
+    category?: string;
+    printedBy?: string;
+  }
+) {
+  const result = buildViolationReportPDF(records, settings, filterInfo);
+  result.doc.save(result.fileName);
+  return result;
+}
+
+/**
+ * Buat Dokumen jsPDF Surat Rekap Poin & Pelanggaran Individual Santri
+ */
+export function buildStudentDetailPDF(
   student: Student,
   records: ViolationRecord[],
   settings: SchoolSettings
-) {
+): PDFGenerationResult {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageWidth = doc.internal.pageSize.getWidth();
 
@@ -359,5 +390,26 @@ export function generateStudentDetailPDF(
   doc.text('( ............................................ )', 25, sigY);
   doc.text(`( ${student.teacher_name || '............................................'} )`, pageWidth - 70, sigY);
 
-  doc.save(`Rekap_Poin_${student.name.replace(/\s+/g, '_')}_${student.student_number}.pdf`);
+  const cleanName = student.name.replace(/\s+/g, '_');
+  const fileName = `Rekap_Poin_${cleanName}_${student.student_number}.pdf`;
+  const blobUrl = doc.output('bloburl');
+
+  return {
+    doc,
+    fileName,
+    blobUrl: typeof blobUrl === 'string' ? blobUrl : URL.createObjectURL(doc.output('blob')),
+  };
+}
+
+/**
+ * Cetak Surat Rekap Individual Santri Langsung (Fallback jika tidak preview)
+ */
+export function generateStudentDetailPDF(
+  student: Student,
+  records: ViolationRecord[],
+  settings: SchoolSettings
+) {
+  const result = buildStudentDetailPDF(student, records, settings);
+  result.doc.save(result.fileName);
+  return result;
 }

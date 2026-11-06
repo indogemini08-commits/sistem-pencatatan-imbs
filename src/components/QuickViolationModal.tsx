@@ -152,9 +152,11 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
     }
   };
 
-  // Filtered master violations according to currently active division
+  // Filtered master violations according to currently active division (Sorted highest points to lowest)
   const currentDivisionViolations = useMemo(() => {
-    return violations.filter((v) => (v.division || 'tahfizh') === division);
+    return violations
+      .filter((v) => (v.division || 'tahfizh') === division)
+      .sort((a, b) => (Number(b.default_points) || 0) - (Number(a.default_points) || 0));
   }, [violations, division]);
 
   // Filtered all-students for Kesantrian search

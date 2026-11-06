@@ -26,7 +26,8 @@ import {
 } from 'lucide-react';
 import { api } from '../services/api';
 import { SchoolSettings, Student, ViolationRecord, PositiveRecord, PointThreshold } from '../types';
-import { generateStudentDetailPDF } from '../utils/pdfGenerator';
+import { buildStudentDetailPDF } from '../utils/pdfGenerator';
+import { PDFPreviewModal } from '../components/PDFPreviewModal';
 
 interface ParentPortalPageProps {
   settings: SchoolSettings | null;
@@ -126,7 +127,13 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
     });
   }, [portalData, filterDivision]);
 
-  // Handle PDF Export
+  // PDF Preview Mode state
+  const [previewPdfOpen, setPreviewPdfOpen] = useState<boolean>(false);
+  const [previewPdfDoc, setPreviewPdfDoc] = useState<any>(null);
+  const [previewPdfBlobUrl, setPreviewPdfBlobUrl] = useState<string | null>(null);
+  const [previewPdfFileName, setPreviewPdfFileName] = useState<string>('');
+
+  // Handle PDF Export — Opens Preview First
   const handleExportPDF = () => {
     if (!portalData) return;
     const effectiveSettings: SchoolSettings = portalData.settings || settings || {
@@ -140,7 +147,11 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
       kop_surat_text: "DIVISI KESISWAAN & HALAQAH TAHFIZH AL-QUR'AN",
       current_academic_year: '2025/2026',
     };
-    generateStudentDetailPDF(portalData.student, portalData.records, effectiveSettings);
+    const result = buildStudentDetailPDF(portalData.student, portalData.records, effectiveSettings);
+    setPreviewPdfDoc(result.doc);
+    setPreviewPdfBlobUrl(result.blobUrl);
+    setPreviewPdfFileName(result.fileName);
+    setPreviewPdfOpen(true);
   };
 
   const school = portalData?.settings || settings;
@@ -843,6 +854,19 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
           Sistem Informasi Kedisiplinan Terpadu © {new Date().getFullYear()}
         </p>
       </footer>
+
+      {/* PDF Export Preview Modal */}
+      {portalData && (
+        <PDFPreviewModal
+          isOpen={previewPdfOpen}
+          onClose={() => setPreviewPdfOpen(false)}
+          title={`Pratinjau Lembar Rapor Kedisiplinan: ${portalData.student.name}`}
+          subtitle="Periksa rekapitulasi capaian, data kedisiplinan, dan kop surat resmi sebelum disimpan"
+          fileName={previewPdfFileName}
+          blobUrl={previewPdfBlobUrl}
+          doc={previewPdfDoc}
+        />
+      )}
     </div>
   );
 };

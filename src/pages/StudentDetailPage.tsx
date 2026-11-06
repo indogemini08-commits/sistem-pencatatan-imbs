@@ -20,7 +20,8 @@ import {
 import { Student, ViolationRecord, PositiveRecord, SchoolSettings } from '../types';
 import { api } from '../services/api';
 import { StatusBadge } from '../components/Badge';
-import { generateStudentDetailPDF } from '../utils/pdfGenerator';
+import { buildStudentDetailPDF } from '../utils/pdfGenerator';
+import { PDFPreviewModal } from '../components/PDFPreviewModal';
 
 interface StudentDetailPageProps {
   studentId: string;
@@ -38,6 +39,12 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
   const [positiveRecords, setPositiveRecords] = useState<PositiveRecord[]>([]);
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // PDF Preview Mode state
+  const [previewPdfOpen, setPreviewPdfOpen] = useState<boolean>(false);
+  const [previewPdfDoc, setPreviewPdfDoc] = useState<any>(null);
+  const [previewPdfBlobUrl, setPreviewPdfBlobUrl] = useState<string | null>(null);
+  const [previewPdfFileName, setPreviewPdfFileName] = useState<string>('');
   const [activeHistoryTab, setActiveHistoryTab] = useState<'violations' | 'rewards'>('violations');
   const [recordDivisionFilter, setRecordDivisionFilter] = useState<'all' | 'tahfizh' | 'kesantrian' | 'akademik'>('all');
 
@@ -62,8 +69,11 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
   };
 
   const filteredRecords = useMemo(() => {
-    if (recordDivisionFilter === 'all') return records;
-    return records.filter((r) => (r.division || 'tahfizh') === recordDivisionFilter);
+    const list =
+      recordDivisionFilter === 'all'
+        ? [...records]
+        : records.filter((r) => (r.division || 'tahfizh') === recordDivisionFilter);
+    return list.sort((a, b) => (Number(b.points_snapshot) || 0) - (Number(a.points_snapshot) || 0));
   }, [records, recordDivisionFilter]);
 
   const filteredPositiveRecords = useMemo(() => {
@@ -97,7 +107,11 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
 
   const handlePrintPDF = () => {
     if (!student || !settings) return;
-    generateStudentDetailPDF(student, records, settings);
+    const result = buildStudentDetailPDF(student, records, settings);
+    setPreviewPdfDoc(result.doc);
+    setPreviewPdfBlobUrl(result.blobUrl);
+    setPreviewPdfFileName(result.fileName);
+    setPreviewPdfOpen(true);
   };
 
   if (loading) {
@@ -573,6 +587,17 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
           </div>
         </div>
       </div>
+
+      {/* PDF Export Preview Modal */}
+      <PDFPreviewModal
+        isOpen={previewPdfOpen}
+        onClose={() => setPreviewPdfOpen(false)}
+        title={`Pratinjau Surat Rekap Poin Santri: ${student.name}`}
+        subtitle="Periksa rekapitulasi pelanggaran, identitas santri, dan format kop surat sebelum disimpan"
+        fileName={previewPdfFileName}
+        blobUrl={previewPdfBlobUrl}
+        doc={previewPdfDoc}
+      />
     </div>
   );
 };

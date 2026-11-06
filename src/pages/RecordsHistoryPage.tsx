@@ -25,8 +25,9 @@ import { ViolationRecord, Halaqah, Teacher, SchoolSettings, User, ViolationDivis
 import { api } from '../services/api';
 import { storageSync } from '../services/storageSync';
 import { exportToExcel } from '../utils/excelHelper';
-import { generateViolationReportPDF } from '../utils/pdfGenerator';
+import { buildViolationReportPDF } from '../utils/pdfGenerator';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { PDFPreviewModal } from '../components/PDFPreviewModal';
 
 interface RecordsHistoryPageProps {
   currentUser: User | null;
@@ -71,6 +72,15 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showBulkConfirm, setShowBulkConfirm] = useState<boolean>(false);
   const [isBulkDeleting, setIsBulkDeleting] = useState<boolean>(false);
+
+  // Sorting: Default by Points Descending (Terbesar ke Terkecil)
+  const [sortBy, setSortBy] = useState<'points_desc' | 'points_asc' | 'date_desc' | 'date_asc'>('points_desc');
+
+  // PDF Preview Mode before saving
+  const [previewPdfOpen, setPreviewPdfOpen] = useState<boolean>(false);
+  const [previewPdfDoc, setPreviewPdfDoc] = useState<any>(null);
+  const [previewPdfBlobUrl, setPreviewPdfBlobUrl] = useState<string | null>(null);
+  const [previewPdfFileName, setPreviewPdfFileName] = useState<string>('');
 
   const canDelete =
     currentUser?.role === 'admin' ||
@@ -202,9 +212,9 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
     });
   };
 
-  // Filtering Logic
+  // Filtering & Sorting Logic
   const filteredRecords = useMemo(() => {
-    return records.filter((r) => {
+    const list = records.filter((r) => {
       // 1. Division Filter
       if (filterDivision !== 'all') {
         const rDiv = r.division || 'tahfizh';
@@ -254,7 +264,25 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
       return true;
     });
-  }, [records, filterDivision, filterStatus, filterHalaqah, filterTeacher, filterCategory, startDate, endDate, search]);
+
+    // Default sorting: Points Descending (Terbesar hingga Terkecil)
+    return list.sort((a, b) => {
+      if (sortBy === 'points_desc') {
+        const diff = (Number(b.points_snapshot) || 0) - (Number(a.points_snapshot) || 0);
+        if (diff !== 0) return diff;
+        return (b.date || '').localeCompare(a.date || '');
+      }
+      if (sortBy === 'points_asc') {
+        const diff = (Number(a.points_snapshot) || 0) - (Number(b.points_snapshot) || 0);
+        if (diff !== 0) return diff;
+        return (b.date || '').localeCompare(a.date || '');
+      }
+      if (sortBy === 'date_asc') {
+        return (a.date || '').localeCompare(b.date || '');
+      }
+      return (b.date || '').localeCompare(a.date || '');
+    });
+  }, [records, filterDivision, filterStatus, filterHalaqah, filterTeacher, filterCategory, startDate, endDate, search, sortBy]);
 
   const totalPoints = useMemo(() => {
     return filteredRecords
@@ -297,22 +325,31 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
     exportToExcel(dataToExport, `Rekap_Pelanggaran_${prefix}_${new Date().toISOString().split('T')[0]}`);
   };
 
-  // Export to PDF with Kop Surat
+  // Export to PDF with Kop Surat — Opens Preview First
   const handleExportPDF = () => {
     if (!settings) {
       alert('Pengaturan sekolah belum dimuat.');
       return;
     }
 
-    generateViolationReportPDF(filteredRecords, settings, {
+    const divisionLabel =
+      filterDivision === 'akademik'
+        ? 'Bagian Akademik (Sekolah)'
+        : filterDivision === 'kesantrian'
+        ? 'Bagian Kesantrian (Asrama)'
+        : filterDivision === 'tahfizh'
+        ? 'Bagian Tahfizh (Halaqah)'
+        : 'Terpadu (Semua Divisi)';
+
+    const result = buildViolationReportPDF(filteredRecords, settings, {
       period: startDate && endDate ? `${startDate} s/d ${endDate}` : (startDate ? `Sejak ${startDate}` : undefined),
-      halaqah:
-        filterDivision === 'kesantrian'
-          ? 'Bagian Kesantrian (Asrama)'
-          : filterDivision === 'tahfizh'
-          ? 'Bagian Tahfizh (Halaqah)'
-          : 'Terpadu (Tahfizh & Kesantrian)',
+      halaqah: divisionLabel,
     });
+
+    setPreviewPdfDoc(result.doc);
+    setPreviewPdfBlobUrl(result.blobUrl);
+    setPreviewPdfFileName(result.fileName);
+    setPreviewPdfOpen(true);
   };
 
   // Title rendering
@@ -535,6 +572,21 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                 <option value="Kedisiplinan">Kedisiplinan</option>
                 <option value="Kehadiran">Kehadiran</option>
                 <option value="Adab & Akhlak">Adab & Akhlak</option>
+              </select>
+            </div>
+
+            {/* Urutan Poin / Tanggal (Default: Poin Terbesar ke Terkecil) */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Urutan:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="w-full sm:w-auto text-xs px-2.5 py-2 rounded-lg border border-indigo-300 dark:border-indigo-500/40 bg-indigo-50/60 dark:bg-white/[0.08] text-indigo-950 dark:text-indigo-200 font-bold min-h-[38px] outline-none cursor-pointer"
+              >
+                <option value="points_desc">🔥 Poin Terbesar ke Terkecil</option>
+                <option value="points_asc">Poin Terkecil ke Terbesar</option>
+                <option value="date_desc">Tanggal Terbaru</option>
+                <option value="date_asc">Tanggal Terlama</option>
               </select>
             </div>
           </div>
@@ -1001,6 +1053,17 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
         isLoading={isBulkDeleting}
         onConfirm={handleBulkDeleteRecords}
         onCancel={() => setShowBulkConfirm(false)}
+      />
+
+      {/* PDF Export Preview Modal */}
+      <PDFPreviewModal
+        isOpen={previewPdfOpen}
+        onClose={() => setPreviewPdfOpen(false)}
+        title="Pratinjau Laporan Riwayat Pelanggaran"
+        subtitle="Periksa rekapitulasi pelanggaran, kop surat, dan pembagian divisi sebelum disimpan"
+        fileName={previewPdfFileName}
+        blobUrl={previewPdfBlobUrl}
+        doc={previewPdfDoc}
       />
     </div>
   );

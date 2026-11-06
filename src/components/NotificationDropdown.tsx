@@ -293,7 +293,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
   return (
     <div
       ref={dropdownRef}
-      className="fixed inset-x-3 top-16 sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 w-auto sm:w-[420px] max-w-[calc(100vw-1.5rem)] rounded-3xl bg-white/95 dark:bg-[#111726]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-white/[0.12] shadow-2xl z-50 overflow-hidden animate-scale-in"
+      className="fixed inset-x-3 top-16 sm:inset-x-auto sm:absolute sm:right-0 sm:top-full sm:mt-2.5 w-auto sm:w-[460px] max-w-[calc(100vw-1.5rem)] rounded-3xl bg-white/95 dark:bg-[#111726]/95 backdrop-blur-2xl border border-slate-200/90 dark:border-white/[0.12] shadow-2xl z-50 overflow-hidden animate-scale-in"
     >
       {/* Header */}
       <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-white/[0.08] flex items-center justify-between gap-3 bg-slate-50/70 dark:bg-slate-900/40">
@@ -341,55 +341,67 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
         </div>
       </div>
 
-      {/* Category Filter Pills */}
-      <div className="px-4 py-2.5 border-b border-slate-100 dark:border-white/[0.06] bg-slate-50/30 dark:bg-transparent overflow-x-auto no-scrollbar">
-        <div className="flex items-center gap-1.5 min-w-max">
+      {/* Category Segmented Tabs (Anti-Crop Full Width Grid) */}
+      <div className="p-2 sm:px-4 sm:py-2.5 border-b border-slate-100 dark:border-white/[0.06] bg-slate-50/50 dark:bg-white/[0.02]">
+        <div className="grid grid-cols-4 gap-1 p-1 rounded-2xl bg-slate-100/90 dark:bg-white/[0.06] text-xs">
           <button
             type="button"
             onClick={() => setActiveTab('all')}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            className={`py-1.5 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center truncate flex items-center justify-center gap-1 cursor-pointer ${
               activeTab === 'all'
                 ? 'bg-indigo-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06]'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
-            Semua ({notifications.length})
+            <span>Semua</span>
+            <span
+              className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
+                activeTab === 'all'
+                  ? 'bg-white/25 text-white'
+                  : 'bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-slate-300'
+              }`}
+            >
+              {notifications.length}
+            </span>
           </button>
+
           <button
             type="button"
             onClick={() => setActiveTab('attention')}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
+            className={`py-1.5 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center truncate flex items-center justify-center gap-1 cursor-pointer ${
               activeTab === 'attention'
                 ? 'bg-amber-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-white/[0.06]'
+                : 'text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400'
             }`}
           >
-            <AlertTriangle className="w-3 h-3" />
-            <span>Atensi SP</span>
+            <AlertTriangle className="w-3 h-3 shrink-0" />
+            <span className="truncate">Atensi SP</span>
           </button>
+
           <button
             type="button"
             onClick={() => setActiveTab('violation')}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
+            className={`py-1.5 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center truncate flex items-center justify-center gap-1 cursor-pointer ${
               activeTab === 'violation'
                 ? 'bg-rose-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-white/[0.06]'
+                : 'text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400'
             }`}
           >
-            <ShieldAlert className="w-3 h-3" />
-            <span>Pelanggaran</span>
+            <ShieldAlert className="w-3 h-3 shrink-0" />
+            <span className="truncate">Pelanggaran</span>
           </button>
+
           <button
             type="button"
             onClick={() => setActiveTab('reward')}
-            className={`px-3 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1 shrink-0 cursor-pointer ${
+            className={`py-1.5 px-1 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center truncate flex items-center justify-center gap-1 cursor-pointer ${
               activeTab === 'reward'
                 ? 'bg-emerald-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-white/[0.06]'
+                : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400'
             }`}
           >
-            <Sparkles className="w-3 h-3" />
-            <span>Kebaikan</span>
+            <Sparkles className="w-3 h-3 shrink-0" />
+            <span className="truncate">Kebaikan</span>
           </button>
         </div>
       </div>
@@ -524,3 +536,4 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
     </div>
   );
 };
+

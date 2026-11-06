@@ -2105,7 +2105,7 @@ router6.get("/", (req, res) => {
       sql += ` AND v.division = ?`;
       params.push(division);
     }
-    sql += ` ORDER BY v.code ASC`;
+    sql += ` ORDER BY v.default_points DESC, v.code ASC`;
     const violations = query(sql, params);
     return res.json(violations);
   } catch (err) {
