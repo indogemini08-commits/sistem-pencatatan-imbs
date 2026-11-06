@@ -208,6 +208,7 @@ export function App() {
             setCurrentTab(tab);
             setSelectedStudentId(null);
           }}
+          onSelectStudent={handleSelectStudent}
           onSettingsUpdated={loadSettings}
         />
 
