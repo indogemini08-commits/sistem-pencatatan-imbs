@@ -62,3 +62,5 @@ coverage/
 *.tsbuildinfo
 vite.config.ts.timestamp*
 
+
+.vercel
