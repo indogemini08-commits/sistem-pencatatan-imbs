@@ -351,26 +351,26 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
           {selectedIds.size > 0 && (
             <button
               onClick={() => setShowBulkConfirm(true)}
-              className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-rose-500/20 transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto"
+              className="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-rose-500/20 transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto whitespace-nowrap shrink-0"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4 shrink-0" />
               <span>Hapus {selectedIds.size} Catatan</span>
             </button>
           )}
 
           <button
             onClick={handleExportPDF}
-            className="px-4 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto"
+            className="px-5 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto whitespace-nowrap shrink-0"
           >
-            <FileText className="w-4 h-4" />
+            <FileText className="w-4 h-4 shrink-0" />
             <span>Export PDF (Kop Surat)</span>
           </button>
 
           <button
             onClick={handleExportExcel}
-            className="px-3.5 py-2.5 bg-white dark:bg-[#161d31] hover:bg-slate-50 dark:hover:bg-[#1e2742] text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-white/[0.1] shadow-soft transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto"
+            className="px-5 py-2.5 bg-white dark:bg-[#161d31] hover:bg-slate-50 dark:hover:bg-[#1e2742] text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-white/[0.1] shadow-soft transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto whitespace-nowrap shrink-0"
           >
-            <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span>Export Excel</span>
           </button>
         </div>

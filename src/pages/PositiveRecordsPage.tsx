@@ -279,26 +279,26 @@ export const PositiveRecordsPage: React.FC<PositiveRecordsPageProps> = ({
           {selectedIds.size > 0 && (
             <button
               onClick={() => setShowBulkConfirm(true)}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-rose-500/20 transition-all w-full sm:w-auto min-h-[44px] sm:min-h-0"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-rose-500/20 transition-all w-full sm:w-auto min-h-[44px] sm:min-h-0 whitespace-nowrap shrink-0"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-4 h-4 shrink-0" />
               <span>Hapus {selectedIds.size} Catatan</span>
             </button>
           )}
           {onOpenQuickReward && (
             <button
               onClick={onOpenQuickReward}
-              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-500/25 transition-all active:scale-95 w-full sm:w-auto min-h-[44px] sm:min-h-0"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-500/25 transition-all active:scale-95 w-full sm:w-auto min-h-[44px] sm:min-h-0 whitespace-nowrap shrink-0"
             >
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4 h-4 shrink-0" />
               <span>+ Catat Kebaikan</span>
             </button>
           )}
           <button
             onClick={handleExportExcel}
-            className="flex items-center justify-center gap-2 px-3.5 py-2.5 bg-white dark:bg-[#161d31] border border-slate-200 dark:border-white/[0.1] hover:bg-slate-50 dark:hover:bg-[#1e2742] text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl shadow-soft transition-colors w-full sm:w-auto min-h-[44px] sm:min-h-0"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 bg-white dark:bg-[#161d31] border border-slate-200 dark:border-white/[0.1] hover:bg-slate-50 dark:hover:bg-[#1e2742] text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl shadow-soft transition-colors w-full sm:w-auto min-h-[44px] sm:min-h-0 whitespace-nowrap shrink-0"
           >
-            <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span>Ekspor Data Excel</span>
           </button>
         </div>

@@ -293,55 +293,57 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
       </div>
 
       {/* Tabs Switcher */}
-      <div className="flex items-center gap-1.5 p-1.5 bg-slate-200/70 dark:bg-[#111726] rounded-2xl max-w-xl border border-slate-300/60 dark:border-white/[0.08] shadow-soft">
-        <button
-          onClick={() => {
-            setActiveSubTab('school');
-            setSuccessMsg('');
-            setErrorMsg('');
-          }}
-          className={`flex-1 py-2.5 px-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all ${
-            activeSubTab === 'school'
-              ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/25'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/[0.04]'
-          }`}
-        >
-          <Building className="w-4 h-4" />
-          <span>Identitas & Logo</span>
-        </button>
+      <div className="w-full overflow-x-auto no-scrollbar -mx-1 px-1">
+        <div className="flex items-center gap-1.5 p-1.5 bg-slate-200/70 dark:bg-[#111726] rounded-2xl w-max sm:w-auto max-w-xl border border-slate-300/60 dark:border-white/[0.08] shadow-soft">
+          <button
+            onClick={() => {
+              setActiveSubTab('school');
+              setSuccessMsg('');
+              setErrorMsg('');
+            }}
+            className={`py-2.5 px-3.5 sm:px-4 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all whitespace-nowrap shrink-0 ${
+              activeSubTab === 'school'
+                ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/25'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/[0.04]'
+            }`}
+          >
+            <Building className="w-4 h-4 shrink-0" />
+            <span>Identitas & Logo</span>
+          </button>
 
-        <button
-          onClick={() => {
-            setActiveSubTab('thresholds');
-            setSuccessMsg('');
-            setErrorMsg('');
-          }}
-          className={`flex-1 py-2.5 px-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all ${
-            activeSubTab === 'thresholds'
-              ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/25'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/[0.04]'
-          }`}
-        >
-          <Sliders className="w-4 h-4" />
-          <span>Batas Poin (Status)</span>
-        </button>
+          <button
+            onClick={() => {
+              setActiveSubTab('thresholds');
+              setSuccessMsg('');
+              setErrorMsg('');
+            }}
+            className={`py-2.5 px-3.5 sm:px-4 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all whitespace-nowrap shrink-0 ${
+              activeSubTab === 'thresholds'
+                ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/25'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/[0.04]'
+            }`}
+          >
+            <Sliders className="w-4 h-4 shrink-0" />
+            <span>Batas Poin (Status)</span>
+          </button>
 
-        <button
-          onClick={() => {
-            setActiveSubTab('sync');
-            setSuccessMsg('');
-            setErrorMsg('');
-            loadCloudInfo();
-          }}
-          className={`flex-1 py-2.5 px-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all ${
-            activeSubTab === 'sync'
-              ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/25'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/[0.04]'
-          }`}
-        >
-          <Cloud className="w-4 h-4" />
-          <span>Sinkronisasi Cloud</span>
-        </button>
+          <button
+            onClick={() => {
+              setActiveSubTab('sync');
+              setSuccessMsg('');
+              setErrorMsg('');
+              loadCloudInfo();
+            }}
+            className={`py-2.5 px-3.5 sm:px-4 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all whitespace-nowrap shrink-0 ${
+              activeSubTab === 'sync'
+                ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/25'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/[0.04]'
+            }`}
+          >
+            <Cloud className="w-4 h-4 shrink-0" />
+            <span>Sinkronisasi Cloud</span>
+          </button>
+        </div>
       </div>
 
       {/* Feedback Alerts */}
@@ -630,9 +632,9 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
               <button
                 type="submit"
                 disabled={saving}
-                className="px-7 py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/25 transition-all flex items-center gap-2 transform active:scale-98 disabled:opacity-50"
+                className="w-full sm:w-auto justify-center px-7 py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/25 transition-all flex items-center gap-2 transform active:scale-98 disabled:opacity-50 whitespace-nowrap shrink-0 cursor-pointer"
               >
-                <Save className="w-4 h-4" />
+                <Save className="w-4 h-4 shrink-0" />
                 <span>{saving ? 'Menyimpan...' : 'Simpan Pengaturan Lembaga'}</span>
               </button>
             </div>
@@ -737,9 +739,9 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             <button
               type="submit"
               disabled={saving}
-              className="px-7 py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/25 transition-all flex items-center gap-2 transform active:scale-98 disabled:opacity-50"
+              className="w-full sm:w-auto justify-center px-7 py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/25 transition-all flex items-center gap-2 transform active:scale-98 disabled:opacity-50 whitespace-nowrap shrink-0 cursor-pointer"
             >
-              <Save className="w-4 h-4" />
+              <Save className="w-4 h-4 shrink-0" />
               <span>{saving ? 'Menyimpan...' : 'Simpan Perubahan Batas Poin'}</span>
             </button>
           </div>

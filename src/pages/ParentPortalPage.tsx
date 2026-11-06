@@ -278,21 +278,21 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
                 <span>Menampilkan Data Santri: <strong className="text-white font-black">{portalData.student.name}</strong> (NIS: {portalData.student.student_number})</span>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                 <button
                   type="button"
                   onClick={handleExportPDF}
-                  className="px-3.5 py-2 text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl transition-all flex items-center gap-1.5 shadow-md shadow-indigo-600/25 cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl transition-all flex items-center gap-1.5 shadow-md shadow-indigo-600/25 cursor-pointer whitespace-nowrap shrink-0"
                 >
-                  <Download className="w-3.5 h-3.5" />
+                  <Download className="w-3.5 h-3.5 shrink-0" />
                   <span>Cetak Lembar PDF</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleResetSearch}
-                  className="px-3.5 py-2 text-xs font-bold text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 border border-white/15 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 border border-white/15 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
                 >
-                  <RotateCcw className="w-3.5 h-3.5" />
+                  <RotateCcw className="w-3.5 h-3.5 shrink-0" />
                   <span>Cari Santri Lain</span>
                 </button>
               </div>

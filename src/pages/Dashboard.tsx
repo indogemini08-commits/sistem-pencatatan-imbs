@@ -610,18 +610,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 shrink-0 w-full sm:w-auto">
             <button
               onClick={onOpenQuickRecord}
-              className="w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 text-white text-xs sm:text-sm font-extrabold rounded-2xl shadow-xl shadow-indigo-600/30 border border-white/20 transition-all flex items-center justify-center gap-2 transform active:scale-95 cursor-pointer"
+              className="w-full sm:w-auto px-5 py-2.5 sm:py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 text-white text-xs sm:text-sm font-extrabold rounded-2xl shadow-xl shadow-indigo-600/30 border border-white/20 transition-all flex items-center justify-center gap-2 transform active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
             >
-              <PlusCircle className="w-4 h-4 text-purple-200" />
+              <PlusCircle className="w-4 h-4 text-purple-200 shrink-0" />
               <span>+ Catat Pelanggaran</span>
             </button>
 
             {onOpenQuickReward && (
               <button
                 onClick={onOpenQuickReward}
-                className="w-full sm:w-auto px-4 sm:px-5 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-extrabold rounded-2xl shadow-xl shadow-emerald-600/30 border border-emerald-400/20 transition-all flex items-center justify-center gap-2 transform active:scale-95 cursor-pointer"
+                className="w-full sm:w-auto px-5 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-extrabold rounded-2xl shadow-xl shadow-emerald-600/30 border border-emerald-400/20 transition-all flex items-center justify-center gap-2 transform active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
               >
-                <Award className="w-4 h-4 text-emerald-200" />
+                <Award className="w-4 h-4 text-emerald-200 shrink-0" />
                 <span>★ Catat Kebaikan</span>
               </button>
             )}

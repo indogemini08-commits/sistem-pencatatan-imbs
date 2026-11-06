@@ -210,11 +210,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         {onOpenQuickReward && (
           <button
             onClick={onOpenQuickReward}
-            className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 border border-white/10 transition-all transform active:scale-95 shrink-0"
+            className="flex items-center gap-1.5 p-2 sm:px-3.5 sm:py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 border border-white/10 transition-all transform active:scale-95 shrink-0 whitespace-nowrap"
             title="Catat Kegiatan Baik / Pengurangan Poin Santri"
             aria-label="Catat Kebaikan"
           >
-            <Sparkles className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-emerald-200" />
+            <Sparkles className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-emerald-200 shrink-0" />
             <span className="hidden sm:inline">Catat Kebaikan</span>
           </button>
         )}
@@ -222,11 +222,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Quick Violation Record Button */}
         <button
           onClick={onOpenQuickRecord}
-          className="flex items-center gap-1.5 p-2 sm:px-3 sm:py-1.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 text-white text-xs font-bold rounded-xl shadow-md shadow-indigo-600/25 border border-white/20 transition-all transform active:scale-95 shrink-0"
+          className="flex items-center gap-1.5 p-2 sm:px-3.5 sm:py-2 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 text-white text-xs font-bold rounded-xl shadow-md shadow-indigo-600/25 border border-white/20 transition-all transform active:scale-95 shrink-0 whitespace-nowrap"
           title="Catat Pelanggaran Santri"
           aria-label="Catat Pelanggaran"
         >
-          <PlusCircle className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-purple-200" />
+          <PlusCircle className="w-4 h-4 sm:w-3.5 sm:h-3.5 text-purple-200 shrink-0" />
           <span className="hidden sm:inline">Catat Pelanggaran</span>
         </button>
 
