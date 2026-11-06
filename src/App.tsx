@@ -251,7 +251,8 @@ export function App() {
 
           {(currentTab === 'violations_master' ||
             currentTab === 'violations_tahfizh' ||
-            currentTab === 'violations_kesantrian') && (
+            currentTab === 'violations_kesantrian' ||
+            currentTab === 'violations_akademik') && (
             <ViolationsMasterPage
               currentUser={currentUser}
               initialDivision={
@@ -259,6 +260,8 @@ export function App() {
                   ? 'tahfizh'
                   : currentTab === 'violations_kesantrian'
                   ? 'kesantrian'
+                  : currentTab === 'violations_akademik'
+                  ? 'akademik'
                   : 'all'
               }
             />
@@ -266,7 +269,8 @@ export function App() {
 
           {(currentTab === 'records' ||
             currentTab === 'records_tahfizh' ||
-            currentTab === 'records_kesantrian') && (
+            currentTab === 'records_kesantrian' ||
+            currentTab === 'records_akademik') && (
             <RecordsHistoryPage
               currentUser={currentUser}
               settings={settings}
@@ -276,6 +280,8 @@ export function App() {
                   ? 'tahfizh'
                   : currentTab === 'records_kesantrian'
                   ? 'kesantrian'
+                  : currentTab === 'records_akademik'
+                  ? 'akademik'
                   : 'all'
               }
             />
@@ -283,7 +289,8 @@ export function App() {
 
           {(currentTab === 'rewards' ||
             currentTab === 'rewards_tahfizh' ||
-            currentTab === 'rewards_kesantrian') && (
+            currentTab === 'rewards_kesantrian' ||
+            currentTab === 'rewards_akademik') && (
             <PositiveRecordsPage
               currentUser={currentUser}
               settings={settings}
@@ -293,6 +300,8 @@ export function App() {
                   ? 'tahfizh'
                   : currentTab === 'rewards_kesantrian'
                   ? 'kesantrian'
+                  : currentTab === 'rewards_akademik'
+                  ? 'akademik'
                   : 'all'
               }
             />

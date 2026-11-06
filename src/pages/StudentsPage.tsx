@@ -609,13 +609,16 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                   )}
                 </div>
 
-                {(s.tahfizh_points !== undefined || s.kesantrian_points !== undefined) && (
+                {(s.tahfizh_points !== undefined || s.kesantrian_points !== undefined || s.akademik_points !== undefined) && (
                   <div className="flex items-center gap-1 text-[10px] font-bold text-slate-600 dark:text-slate-400">
                     <span className="text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40">
                       T: {s.tahfizh_points || 0}
                     </span>
                     <span className="text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900/40">
                       K: {s.kesantrian_points || 0}
+                    </span>
+                    <span className="text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 px-1.5 py-0.5 rounded border border-purple-200 dark:border-purple-900/40">
+                      A: {s.akademik_points || 0}
                     </span>
                   </div>
                 )}
@@ -734,7 +737,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                         </span>
                       )}
                     </div>
-                    {(s.tahfizh_points !== undefined || s.kesantrian_points !== undefined) && (
+                    {(s.tahfizh_points !== undefined || s.kesantrian_points !== undefined || s.akademik_points !== undefined) && (
                       <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1">
                         <span
                           className="text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40"
@@ -747,6 +750,12 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                           title={`Poin Bersih Kesantrian: ${s.kesantrian_points || 0}`}
                         >
                           K: {s.kesantrian_points || 0}
+                        </span>
+                        <span
+                          className="text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 px-1.5 py-0.5 rounded border border-purple-200 dark:border-purple-900/40"
+                          title={`Poin Bersih Akademik: ${s.akademik_points || 0}`}
+                        >
+                          A: {s.akademik_points || 0}
                         </span>
                       </div>
                     )}

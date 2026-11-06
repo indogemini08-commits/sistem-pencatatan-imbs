@@ -17,6 +17,7 @@ import {
   RotateCcw,
   BookOpen,
   Building2,
+  GraduationCap,
   UserCheck,
 } from 'lucide-react';
 import { ViolationRecord, Halaqah, Teacher, SchoolSettings, User, ViolationDivision } from '../types';
@@ -30,7 +31,7 @@ interface RecordsHistoryPageProps {
   currentUser: User | null;
   settings: SchoolSettings | null;
   onSelectStudent?: (studentId: string) => void;
-  initialDivision?: 'tahfizh' | 'kesantrian' | 'all';
+  initialDivision?: 'tahfizh' | 'kesantrian' | 'akademik' | 'all';
 }
 
 export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
@@ -45,7 +46,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
 
   // Filters
-  const [filterDivision, setFilterDivision] = useState<'tahfizh' | 'kesantrian' | 'all'>(initialDivision);
+  const [filterDivision, setFilterDivision] = useState<'tahfizh' | 'kesantrian' | 'akademik' | 'all'>(initialDivision);
   const [search, setSearch] = useState<string>('');
   const [filterHalaqah, setFilterHalaqah] = useState<string>('all');
   const [filterTeacher, setFilterTeacher] = useState<string>('all');
@@ -268,13 +269,17 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
     return records.filter((r) => r.division === 'kesantrian');
   }, [records]);
 
+  const akademikRecords = useMemo(() => {
+    return records.filter((r) => r.division === 'akademik');
+  }, [records]);
+
   // Export to Excel
   const handleExportExcel = () => {
     const dataToExport = filteredRecords.map((r, idx) => ({
       No: idx + 1,
       Tanggal: r.date,
       Waktu: r.time,
-      Divisi: r.division === 'kesantrian' ? 'Kesantrian' : 'Tahfizh',
+      Divisi: r.division === 'akademik' ? 'Akademik' : r.division === 'kesantrian' ? 'Kesantrian' : 'Tahfizh',
       NIS: r.student_nis || '-',
       'Nama Santri': r.student_name || '-',
       Kelas: r.student_class_snapshot || '-',
@@ -287,7 +292,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
       'Pencatat Data': r.created_by || '-',
     }));
 
-    const prefix = filterDivision === 'kesantrian' ? 'Kesantrian' : filterDivision === 'tahfizh' ? 'Tahfizh' : 'Semua';
+    const prefix = filterDivision === 'akademik' ? 'Akademik' : filterDivision === 'kesantrian' ? 'Kesantrian' : filterDivision === 'tahfizh' ? 'Tahfizh' : 'Semua';
     exportToExcel(dataToExport, `Rekap_Pelanggaran_${prefix}_${new Date().toISOString().split('T')[0]}`);
   };
 
@@ -371,7 +376,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
       </div>
 
       {/* Division Tabs Switcher */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 p-1.5 rounded-2xl bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] text-xs font-bold w-full sm:w-fit gap-1.5 shadow-soft">
+      <div className="grid grid-cols-1 sm:grid-cols-4 p-1.5 rounded-2xl bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] text-xs font-bold w-full sm:w-fit gap-1.5 shadow-soft">
         <button
           onClick={() => setFilterDivision('all')}
           className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
@@ -395,7 +400,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
-          <span>🕌 Pelanggaran Tahfizh</span>
+          <span>🕌 Tahfizh</span>
           <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
             filterDivision === 'tahfizh' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
           }`}>
@@ -412,11 +417,28 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
           }`}
         >
           <Building2 className="w-3.5 h-3.5" />
-          <span>🏢 Pelanggaran Kesantrian</span>
+          <span>🏢 Kesantrian</span>
           <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
             filterDivision === 'kesantrian' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
           }`}>
             {kesantrianRecords.length}
+          </span>
+        </button>
+
+        <button
+          onClick={() => setFilterDivision('akademik')}
+          className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
+            filterDivision === 'akademik'
+              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20'
+              : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
+          }`}
+        >
+          <GraduationCap className="w-3.5 h-3.5" />
+          <span>📚 Akademik</span>
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+            filterDivision === 'akademik' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
+          }`}>
+            {akademikRecords.length}
           </span>
         </button>
       </div>
@@ -559,6 +581,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
             <div className="block md:hidden divide-y divide-slate-100 dark:divide-white/[0.06]">
               {filteredRecords.map((r) => {
                 const isCancelled = r.status === 'cancelled';
+                const isAkademik = r.division === 'akademik';
                 const isKesantrian = r.division === 'kesantrian';
 
                 return (
@@ -597,12 +620,14 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                       <div className="flex items-center gap-1.5 shrink-0">
                         <span
                           className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-0.5 rounded-lg border ${
-                            isKesantrian
+                            isAkademik
+                              ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-500/20'
+                              : isKesantrian
                               ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
                               : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20'
                           }`}
                         >
-                          {isKesantrian ? 'Kesantrian' : 'Tahfizh'}
+                          {isAkademik ? 'Akademik' : isKesantrian ? 'Kesantrian' : 'Tahfizh'}
                         </span>
                         {isCancelled ? (
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/[0.1]">
@@ -716,6 +741,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                 <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
                   {filteredRecords.map((r, index) => {
                     const isCancelled = r.status === 'cancelled';
+                    const isAkademik = r.division === 'akademik';
                     const isKesantrian = r.division === 'kesantrian';
 
                     return (
@@ -749,12 +775,19 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                         <td className="px-4 py-3.5 whitespace-nowrap">
                           <span
                             className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-lg border ${
-                              isKesantrian
+                              isAkademik
+                                ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-500/20'
+                                : isKesantrian
                                 ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
                                 : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20'
                             }`}
                           >
-                            {isKesantrian ? (
+                            {isAkademik ? (
+                              <>
+                                <GraduationCap className="w-3 h-3" />
+                                Akademik
+                              </>
+                            ) : isKesantrian ? (
                               <>
                                 <Building2 className="w-3 h-3" />
                                 Kesantrian

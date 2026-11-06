@@ -10,7 +10,7 @@ router.get('/', (req: Request, res: Response) => {
     let sql = 'SELECT * FROM positive_actions WHERE 1=1';
     const params: any[] = [];
 
-    if (division && (division === 'tahfizh' || division === 'kesantrian')) {
+    if (division && division !== 'all') {
       sql += ' AND division = ?';
       params.push(division);
     }

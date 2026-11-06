@@ -42,7 +42,7 @@ export interface Halaqah {
   created_at?: string;
 }
 
-export type ViolationDivision = 'tahfizh' | 'kesantrian';
+export type ViolationDivision = 'tahfizh' | 'kesantrian' | 'akademik';
 
 export interface StudentThresholdStatus {
   statusName: string;
@@ -65,16 +65,20 @@ export interface Student {
   total_points: number;
   tahfizh_points?: number;
   kesantrian_points?: number;
+  akademik_points?: number;
   gross_total_points?: number;
   gross_tahfizh_points?: number;
   gross_kesantrian_points?: number;
+  gross_akademik_points?: number;
   tahfizh_deductions?: number;
   kesantrian_deductions?: number;
+  akademik_deductions?: number;
   total_deductions?: number;
   positive_count?: number;
   violation_count?: number;
   tahfizh_violation_count?: number;
   kesantrian_violation_count?: number;
+  akademik_violation_count?: number;
   status_info?: StudentThresholdStatus;
   created_at?: string;
 }
@@ -226,10 +230,13 @@ export interface DashboardStats {
     tahfizhTotalPoints?: number;
     kesantrianRecordsCount?: number;
     kesantrianTotalPoints?: number;
+    akademikRecordsCount?: number;
+    akademikTotalPoints?: number;
     totalPositiveRecords?: number;
     totalPointsDeducted?: number;
     tahfizhDeductedPoints?: number;
     kesantrianDeductedPoints?: number;
+    akademikDeductedPoints?: number;
     netTotalPoints?: number;
   };
   topStudents: Array<{
@@ -241,6 +248,7 @@ export interface DashboardStats {
     total_points: number;
     tahfizh_points?: number;
     kesantrian_points?: number;
+    akademik_points?: number;
     violation_count: number;
   }>;
   byCategory: Array<{
@@ -268,6 +276,7 @@ export interface DashboardStats {
     total_points: number;
     tahfizh_points?: number;
     kesantrian_points?: number;
+    akademik_points?: number;
   }>;
 }
 

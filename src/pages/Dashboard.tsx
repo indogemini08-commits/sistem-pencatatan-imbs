@@ -53,7 +53,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const isMuhafizh = currentUser?.role === 'teacher';
   const isGuru = currentUser?.role === 'guru';
 
-  const [dashboardDivision, setDashboardDivision] = useState<'all' | 'tahfizh' | 'kesantrian'>('all');
+  const [dashboardDivision, setDashboardDivision] = useState<'all' | 'tahfizh' | 'kesantrian' | 'akademik'>('all');
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [teacherHalaqahs, setTeacherHalaqahs] = useState<Halaqah[]>([]);
   const [teacherStudents, setTeacherStudents] = useState<Student[]>([]);
@@ -589,6 +589,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   <Building2 className="w-3.5 h-3.5" />
                   <span>🏢 Kesantrian</span>
                 </button>
+                <button
+                  onClick={() => setDashboardDivision('akademik')}
+                  className={`px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                    dashboardDivision === 'akademik'
+                      ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-600/30'
+                      : 'text-slate-300 hover:text-purple-300 hover:bg-white/5'
+                  }`}
+                >
+                  <GraduationCap className="w-3.5 h-3.5" />
+                  <span>📚 Akademik</span>
+                </button>
               </div>
             </div>
           </div>
@@ -616,8 +627,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      {/* 2. Top Metric Cards (5 SaaS Cards matching Reference Image 2) */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+      {/* 2. Top Metric Cards (6 SaaS Cards matching Reference Image 2) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {/* Total Santri */}
         <div className="saas-card-glow p-4 sm:p-5">
           <div className="flex items-center justify-between gap-2">
@@ -669,7 +680,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             -{stats?.summary.totalPointsDeducted || 0}
           </p>
           <div className="mt-1 flex items-center gap-1.5 text-[11px] text-emerald-700 dark:text-emerald-400 font-extrabold truncate">
-            <span>{stats?.summary.totalPositiveRecords || 0} kebaikan tercatat</span>
+            <span>{stats?.summary.totalPositiveRecords || 0} kebaikan</span>
           </div>
         </div>
 
@@ -692,7 +703,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         {/* Divisi Kesantrian */}
-        <div className="saas-card-glow p-4 sm:p-5 col-span-2 sm:col-span-1">
+        <div className="saas-card-glow p-4 sm:p-5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
               Divisi Kesantrian
@@ -706,6 +717,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </p>
           <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 font-semibold truncate">
             <span>Ded: -{stats?.summary.kesantrianDeductedPoints || 0} • {stats?.summary.kesantrianRecordsCount || 0} kjdn</span>
+          </div>
+        </div>
+
+        {/* Divisi Akademik */}
+        <div className="saas-card-glow p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
+              Divisi Akademik
+            </span>
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-violet-100/90 dark:bg-violet-950/80 text-violet-700 dark:text-violet-300 flex items-center justify-center ring-1 ring-violet-400/40 shadow-xs shrink-0">
+              <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5" />
+            </div>
+          </div>
+          <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+            {stats?.summary.akademikTotalPoints || 0}
+          </p>
+          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 font-semibold truncate">
+            <span>Ded: -{stats?.summary.akademikDeductedPoints || 0} • {stats?.summary.akademikRecordsCount || 0} kjdn</span>
           </div>
         </div>
       </div>
@@ -983,7 +1012,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     10 Santri Poin Tertinggi
                   </h2>
                   <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
-                    Akumulasi terpadu Divisi Tahfizh & Divisi Kesantrian
+                    Akumulasi terpadu Divisi Tahfizh, Kesantrian & Akademik
                   </p>
                 </div>
               </div>
@@ -1027,6 +1056,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       </span>
                       <span className="px-1.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 font-bold">
                         K: {s.kesantrian_points || 0}
+                      </span>
+                      <span className="px-1.5 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 font-bold">
+                        A: {s.akademik_points || 0}
                       </span>
                     </div>
                   </div>
@@ -1084,6 +1116,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           </span>
                           <span className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/60 font-bold">
                             K: {s.kesantrian_points || 0}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-md bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 font-bold">
+                            A: {s.akademik_points || 0}
                           </span>
                         </div>
                       </td>
@@ -1247,6 +1282,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 const maxCount = Math.max(...((stats?.byCategory || []).map((x) => x.count) || [1]), 1);
                 const percentage = Math.round((c.count / maxCount) * 100);
                 const isKesantrian = c.division === 'kesantrian';
+                const isAkademik = c.division === 'akademik';
 
                 return (
                   <div key={c.category + (c.division || '')} className="space-y-1">
@@ -1255,12 +1291,14 @@ export const Dashboard: React.FC<DashboardProps> = ({
                         <span className="truncate max-w-[140px]">{c.category}</span>
                         <span
                           className={`text-[9px] px-1.5 py-0.2 rounded font-semibold ${
-                            isKesantrian
+                            isAkademik
+                              ? 'bg-purple-100 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300'
+                              : isKesantrian
                               ? 'bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300'
                               : 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300'
                           }`}
                         >
-                          {isKesantrian ? 'Kesantrian' : 'Tahfizh'}
+                          {isAkademik ? 'Akademik' : isKesantrian ? 'Kesantrian' : 'Tahfizh'}
                         </span>
                       </span>
                       <span className="text-slate-500 dark:text-slate-400 font-medium text-[11px]">
@@ -1270,9 +1308,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
                     <div className="h-2 bg-slate-100 dark:bg-white/[0.06] rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-500 ${
-                          isKesantrian
+                          isAkademik
+                            ? 'bg-gradient-to-r from-purple-600 to-indigo-500'
+                            : isKesantrian
                             ? 'bg-gradient-to-r from-blue-600 to-indigo-500'
-                            : 'bg-gradient-to-r from-purple-600 to-emerald-400'
+                            : 'bg-gradient-to-r from-teal-600 to-emerald-400'
                         }`}
                         style={{ width: `${percentage}%` }}
                       />

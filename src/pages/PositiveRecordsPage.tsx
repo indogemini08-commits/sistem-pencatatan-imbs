@@ -14,6 +14,7 @@ import {
   RotateCcw,
   BookOpen,
   Building2,
+  GraduationCap,
   Sparkles,
   MinusCircle,
   User,
@@ -29,7 +30,7 @@ interface PositiveRecordsPageProps {
   currentUser: UserType | null;
   settings: SchoolSettings | null;
   onSelectStudent?: (studentId: string) => void;
-  initialDivision?: 'tahfizh' | 'kesantrian' | 'all';
+  initialDivision?: 'tahfizh' | 'kesantrian' | 'akademik' | 'all';
   onOpenQuickReward?: () => void;
 }
 
@@ -44,7 +45,7 @@ export const PositiveRecordsPage: React.FC<PositiveRecordsPageProps> = ({
   const [loading, setLoading] = useState<boolean>(true);
 
   // Filters
-  const [filterDivision, setFilterDivision] = useState<'tahfizh' | 'kesantrian' | 'all'>(initialDivision);
+  const [filterDivision, setFilterDivision] = useState<'tahfizh' | 'kesantrian' | 'akademik' | 'all'>(initialDivision);
   const [search, setSearch] = useState<string>('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [startDate, setStartDate] = useState<string>('');
@@ -343,7 +344,7 @@ export const PositiveRecordsPage: React.FC<PositiveRecordsPageProps> = ({
       <div className="saas-card p-4 sm:p-5 space-y-4">
         {/* Division Selector & Reset Filter */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-slate-100 dark:border-white/[0.06] pb-3">
-          <div className="grid grid-cols-3 sm:flex p-1 rounded-xl bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] text-xs font-bold w-full sm:w-auto gap-1">
+          <div className="grid grid-cols-2 sm:flex p-1 rounded-xl bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] text-xs font-bold w-full sm:w-auto gap-1">
             <button
               onClick={() => setFilterDivision('all')}
               className={`py-2 px-3 sm:py-1.5 rounded-lg text-center transition-all ${
@@ -375,6 +376,17 @@ export const PositiveRecordsPage: React.FC<PositiveRecordsPageProps> = ({
             >
               <Building2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
               <span>Kesantrian</span>
+            </button>
+            <button
+              onClick={() => setFilterDivision('akademik')}
+              className={`py-2 px-3 sm:py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-center transition-all ${
+                filterDivision === 'akademik'
+                  ? 'bg-white dark:bg-[#1e2742] text-purple-700 dark:text-purple-400 shadow-soft'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <GraduationCap className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400 shrink-0" />
+              <span>Akademik</span>
             </button>
           </div>
 
@@ -494,12 +506,14 @@ export const PositiveRecordsPage: React.FC<PositiveRecordsPageProps> = ({
                       <div className="flex items-center gap-1.5 shrink-0">
                         <span
                           className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-0.5 rounded-lg border ${
-                            r.division === 'tahfizh'
-                              ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
-                              : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/20'
+                            r.division === 'akademik'
+                              ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-500/20'
+                              : r.division === 'kesantrian'
+                              ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/20'
+                              : 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
                           }`}
                         >
-                          {r.division === 'tahfizh' ? 'Tahfizh' : 'Kesantrian'}
+                          {r.division === 'akademik' ? 'Akademik' : r.division === 'kesantrian' ? 'Kesantrian' : 'Tahfizh'}
                         </span>
                         {isCancelled ? (
                           <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/[0.1]">
@@ -641,20 +655,27 @@ export const PositiveRecordsPage: React.FC<PositiveRecordsPageProps> = ({
                         <td className="px-4 py-3.5 whitespace-nowrap">
                           <span
                             className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-lg border ${
-                              r.division === 'tahfizh'
-                                ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
-                                : 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/20'
+                              r.division === 'akademik'
+                                ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-500/20'
+                                : r.division === 'kesantrian'
+                                ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/20'
+                                : 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
                             }`}
                           >
-                            {r.division === 'tahfizh' ? (
+                            {r.division === 'akademik' ? (
                               <>
-                                <BookOpen className="w-3 h-3" />
-                                <span>Tahfizh</span>
+                                <GraduationCap className="w-3 h-3" />
+                                <span>Akademik</span>
                               </>
-                            ) : (
+                            ) : r.division === 'kesantrian' ? (
                               <>
                                 <Building2 className="w-3 h-3" />
                                 <span>Kesantrian</span>
+                              </>
+                            ) : (
+                              <>
+                                <BookOpen className="w-3 h-3" />
+                                <span>Tahfizh</span>
                               </>
                             )}
                           </span>

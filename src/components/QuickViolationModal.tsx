@@ -14,6 +14,7 @@ import {
   Eye,
   FileText,
   Building2,
+  GraduationCap,
   Search,
   MapPin,
 } from 'lucide-react';
@@ -75,6 +76,7 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
     newTotalPoints: number;
     tahfizhPoints?: number;
     kesantrianPoints?: number;
+    akademikPoints?: number;
   } | null>(null);
 
   // Initialize date & time and fetch options
@@ -279,7 +281,7 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
 
           {/* Division Switcher Tabs */}
           {!successData && (
-            <div className="flex bg-black/40 p-1.5 rounded-2xl border border-white/10 mt-3 sm:mt-4 gap-1.5 shadow-inner">
+            <div className="grid grid-cols-3 bg-black/40 p-1.5 rounded-2xl border border-white/10 mt-3 sm:mt-4 gap-1.5 shadow-inner">
               <button
                 type="button"
                 onClick={() => {
@@ -287,14 +289,14 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                   setSelectedViolationId('');
                   setErrorMsg('');
                 }}
-                className={`flex-1 min-h-[42px] py-2 px-2.5 sm:px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
+                className={`min-h-[42px] py-2 px-1.5 sm:px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
                   division === 'tahfizh'
                     ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-500/30 ring-1 ring-emerald-400/40'
                     : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <BookOpen className="w-4 h-4 text-emerald-300 shrink-0" />
-                <span>🕌 Divisi Tahfizh</span>
+                <BookOpen className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
+                <span className="truncate">Tahfizh</span>
               </button>
               <button
                 type="button"
@@ -303,14 +305,33 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                   setSelectedViolationId('');
                   setErrorMsg('');
                 }}
-                className={`flex-1 min-h-[42px] py-2 px-2.5 sm:px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
+                className={`min-h-[42px] py-2 px-1.5 sm:px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
                   division === 'kesantrian'
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-indigo-500/30 ring-1 ring-indigo-400/40'
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30 ring-1 ring-blue-400/40'
                     : 'text-slate-300 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Building2 className="w-4 h-4 text-indigo-300 shrink-0" />
-                <span>🏢 Divisi Kesantrian</span>
+                <Building2 className="w-3.5 h-3.5 text-blue-300 shrink-0" />
+                <span className="truncate">Kesantrian</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setDivision('akademik');
+                  setSelectedViolationId('');
+                  setErrorMsg('');
+                  if (!locationName || locationName === 'Asrama Putra') {
+                    setLocationName('Ruang Kelas / KBM');
+                  }
+                }}
+                className={`min-h-[42px] py-2 px-1.5 sm:px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
+                  division === 'akademik'
+                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-500/30 ring-1 ring-purple-400/40'
+                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <GraduationCap className="w-3.5 h-3.5 text-purple-300 shrink-0" />
+                <span className="truncate">Akademik</span>
               </button>
             </div>
           )}
@@ -337,9 +358,11 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                   <span className={`font-bold px-2.5 py-0.5 rounded-lg text-xs flex items-center gap-1 ${
                     successData.division === 'kesantrian'
                       ? 'bg-blue-100 dark:bg-blue-950/50 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-900/40'
+                      : successData.division === 'akademik'
+                      ? 'bg-purple-100 dark:bg-purple-950/50 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-900/40'
                       : 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900/40'
                   }`}>
-                    {successData.division === 'kesantrian' ? '🏢 Bagian Kesantrian' : '🕌 Bagian Tahfizh'}
+                    {successData.division === 'kesantrian' ? '🏢 Bagian Kesantrian' : successData.division === 'akademik' ? '📚 Bagian Akademik' : '🕌 Bagian Tahfizh'}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
@@ -362,13 +385,16 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                       {successData.newTotalPoints} Poin
                     </span>
                   </div>
-                  {(successData.tahfizhPoints !== undefined || successData.kesantrianPoints !== undefined) && (
-                    <div className="flex items-center justify-end gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium pt-1">
+                  {(successData.tahfizhPoints !== undefined || successData.kesantrianPoints !== undefined || successData.akademikPoints !== undefined) && (
+                    <div className="flex items-center justify-end gap-1.5 flex-wrap text-xs text-slate-500 dark:text-slate-400 font-medium pt-1">
                       <span className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40">
-                        📗 Tahfizh: {successData.tahfizhPoints || 0} Poin
+                        📗 T: {successData.tahfizhPoints || 0}
                       </span>
                       <span className="bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded border border-blue-200 dark:border-blue-900/40">
-                        🏢 Kesantrian: {successData.kesantrianPoints || 0} Poin
+                        🏢 K: {successData.kesantrianPoints || 0}
+                      </span>
+                      <span className="bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded border border-purple-200 dark:border-purple-900/40">
+                        📚 A: {successData.akademikPoints || 0}
                       </span>
                     </div>
                   )}
@@ -512,22 +538,22 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
               )}
 
               {/* ========================================================= */}
-              {/* DIVISI 2: KESANTRIAN (ASRAMA) MODE */}
+              {/* DIVISI 2 & 3: KESANTRIAN & AKADEMIK MODE */}
               {/* ========================================================= */}
-              {division === 'kesantrian' && (
+              {(division === 'kesantrian' || division === 'akademik') && (
                 <>
-                  {/* Petugas / Wali Asrama */}
+                  {/* Petugas / Guru / Pembina */}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
                         <UserCheck className="w-3.5 h-3.5 text-indigo-500" />
-                        Pembina / Petugas
+                        {division === 'akademik' ? 'Guru Pengajar / Pelapor' : 'Pembina / Petugas'}
                       </label>
                       <input
                         type="text"
                         value={supervisorName}
                         onChange={(e) => setSupervisorName(e.target.value)}
-                        placeholder="Wali Asrama / Bagian Kesantrian"
+                        placeholder={division === 'akademik' ? 'Guru Mata Pelajaran / Wali Kelas' : 'Wali Asrama / Bagian Kesantrian'}
                         className="w-full text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
                         required
                       />
@@ -541,7 +567,7 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                         type="text"
                         value={locationName}
                         onChange={(e) => setLocationName(e.target.value)}
-                        placeholder="Misal: Kamar 02, Masjid, Kantin"
+                        placeholder={division === 'akademik' ? 'Misal: Ruang Kelas 8A, Lab' : 'Misal: Kamar 02, Masjid, Kantin'}
                         className="w-full text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
                         required
                       />
@@ -553,7 +579,7 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                     <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
                       <span className="flex items-center gap-1.5">
                         <Award className="w-3.5 h-3.5 text-indigo-500" />
-                        Pilih Santri (Semua Kelas / Asrama)
+                        Pilih Santri ({division === 'akademik' ? 'Semua Kelas / Siswa' : 'Semua Kelas / Asrama'})
                       </span>
                       <span className="text-[11px] text-slate-400 font-normal">
                         {allStudents.length} santri aktif
@@ -596,7 +622,7 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                 <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
-                    Jenis Pelanggaran ({division === 'kesantrian' ? 'Aturan Kesantrian' : 'Aturan Halaqah'})
+                    Jenis Pelanggaran ({division === 'kesantrian' ? 'Aturan Kesantrian' : division === 'akademik' ? 'Aturan Akademik' : 'Aturan Halaqah'})
                   </span>
                   <span className="text-[11px] text-slate-400 font-normal">
                     {currentDivisionViolations.length} aturan tersedia

@@ -39,7 +39,7 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [activeHistoryTab, setActiveHistoryTab] = useState<'violations' | 'rewards'>('violations');
-  const [recordDivisionFilter, setRecordDivisionFilter] = useState<'all' | 'tahfizh' | 'kesantrian'>('all');
+  const [recordDivisionFilter, setRecordDivisionFilter] = useState<'all' | 'tahfizh' | 'kesantrian' | 'akademik'>('all');
 
   useEffect(() => {
     loadStudentDetails();
@@ -79,12 +79,20 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
     return records.filter((r) => r.division === 'kesantrian').length;
   }, [records]);
 
+  const akademikRecordsCount = useMemo(() => {
+    return records.filter((r) => r.division === 'akademik').length;
+  }, [records]);
+
   const tahfizhPositiveCount = useMemo(() => {
     return positiveRecords.filter((r) => r.division === 'tahfizh').length;
   }, [positiveRecords]);
 
   const kesantrianPositiveCount = useMemo(() => {
     return positiveRecords.filter((r) => r.division === 'kesantrian').length;
+  }, [positiveRecords]);
+
+  const akademikPositiveCount = useMemo(() => {
+    return positiveRecords.filter((r) => r.division === 'akademik').length;
   }, [positiveRecords]);
 
   const handlePrintPDF = () => {
@@ -205,6 +213,10 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                   <Building2 className="w-3 h-3" />
                   Kesantrian: {student.kesantrian_points || 0} pts
                 </span>
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-purple-100/70 dark:bg-purple-950/60 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800 flex items-center gap-1">
+                  <GraduationCap className="w-3 h-3" />
+                  Akademik: {student.akademik_points || 0} pts
+                </span>
               </div>
             </div>
 
@@ -300,6 +312,17 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                 <Building2 className="w-3 h-3" />
                 Kesantrian ({activeHistoryTab === 'violations' ? kesantrianRecordsCount : kesantrianPositiveCount})
               </button>
+              <button
+                onClick={() => setRecordDivisionFilter('akademik')}
+                className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
+                  recordDivisionFilter === 'akademik'
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400'
+                }`}
+              >
+                <GraduationCap className="w-3 h-3" />
+                Akademik ({activeHistoryTab === 'violations' ? akademikRecordsCount : akademikPositiveCount})
+              </button>
             </div>
           </div>
 
@@ -319,6 +342,7 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
                   {filteredRecords.map((r) => {
+                    const isAkademik = r.division === 'akademik';
                     const isKesantrian = r.division === 'kesantrian';
                     const isCancelled = r.status === 'cancelled';
 
@@ -332,12 +356,19 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                         <td className="px-4 py-3 whitespace-nowrap">
                           <span
                             className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md border ${
-                              isKesantrian
+                              isAkademik
+                                ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-900/40'
+                                : isKesantrian
                                 ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-900/40'
                                 : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/40'
                             }`}
                           >
-                            {isKesantrian ? (
+                            {isAkademik ? (
+                              <>
+                                <GraduationCap className="w-3 h-3" />
+                                Akademik
+                              </>
+                            ) : isKesantrian ? (
                               <>
                                 <Building2 className="w-3 h-3" />
                                 Kesantrian
@@ -414,6 +445,7 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
                   {filteredPositiveRecords.map((r) => {
+                    const isAkademik = r.division === 'akademik';
                     const isKesantrian = r.division === 'kesantrian';
                     const isCancelled = r.status === 'cancelled';
 
@@ -427,12 +459,19 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                         <td className="px-4 py-3 whitespace-nowrap">
                           <span
                             className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md border ${
-                              isKesantrian
+                              isAkademik
+                                ? 'bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-900/40'
+                                : isKesantrian
                                 ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-900/40'
                                 : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/40'
                             }`}
                           >
-                            {isKesantrian ? (
+                            {isAkademik ? (
+                              <>
+                                <GraduationCap className="w-3 h-3" />
+                                Akademik
+                              </>
+                            ) : isKesantrian ? (
                               <>
                                 <Building2 className="w-3 h-3" />
                                 Kesantrian

@@ -65,16 +65,22 @@ export const Navbar: React.FC<NavbarProps> = ({
         return { label: 'Master Aturan Tahfizh', icon: ShieldAlert };
       case 'violations_kesantrian':
         return { label: 'Master Aturan Kesantrian', icon: ShieldCheck };
+      case 'violations_akademik':
+        return { label: 'Master Aturan Akademik', icon: ShieldCheck };
       case 'records':
         return { label: 'Riwayat Pelanggaran Terpadu', icon: History };
       case 'records_tahfizh':
         return { label: 'Pelanggaran Divisi Tahfizh', icon: BookOpen };
       case 'records_kesantrian':
         return { label: 'Pelanggaran Divisi Kesantrian', icon: Building2 };
+      case 'records_akademik':
+        return { label: 'Pelanggaran Divisi Akademik', icon: BookOpen };
       case 'rewards_tahfizh':
         return { label: 'Kebaikan & Prestasi Tahfizh', icon: Award };
       case 'rewards_kesantrian':
         return { label: 'Kebaikan & Prestasi Kesantrian', icon: Award };
+      case 'rewards_akademik':
+        return { label: 'Kebaikan & Prestasi Akademik', icon: Award };
       case 'users':
         return { label: 'Manajemen Akun Pengguna', icon: UserCog };
       case 'settings':

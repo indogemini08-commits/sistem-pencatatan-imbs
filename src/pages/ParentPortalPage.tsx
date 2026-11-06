@@ -56,7 +56,7 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
 
   // Tabs & Filters
   const [activeTab, setActiveTab] = useState<'pelanggaran' | 'kebaikan' | 'panduan'>('pelanggaran');
-  const [filterDivision, setFilterDivision] = useState<'all' | 'tahfizh' | 'kesantrian'>('all');
+  const [filterDivision, setFilterDivision] = useState<'all' | 'tahfizh' | 'kesantrian' | 'akademik'>('all');
 
   // Auto-load if initialNis provided or from URL search params
   useEffect(() => {
@@ -400,8 +400,8 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
               )}
             </div>
 
-            {/* Metrics 4-Grid Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            {/* Metrics 5-Grid Cards */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
               {/* Total Poin Netto */}
               {(() => {
                 const netPts = Number(portalData.student.total_points || 0);
@@ -471,6 +471,20 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                 </p>
                 <span className="text-[11px] text-slate-400 mt-1 block">
                   Kedisiplinan asrama & ibadah
+                </span>
+              </div>
+
+              {/* Pelanggaran Akademik */}
+              <div className="bg-[#111726] p-4 sm:p-5 rounded-2xl border border-white/[0.08] shadow-soft">
+                <div className="flex items-center gap-1.5 text-slate-400 text-xs font-bold uppercase mb-1">
+                  <GraduationCap className="w-4 h-4 text-purple-400" />
+                  <span>Divisi Akademik</span>
+                </div>
+                <p className="text-2xl sm:text-3xl font-black text-purple-400 font-mono">
+                  {portalData.student.akademik_points || 0}
+                </p>
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  Kedisiplinan KBM & sekolah
                 </span>
               </div>
 
@@ -569,6 +583,15 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                     >
                       Kesantrian (Asrama)
                     </button>
+                    <button
+                      type="button"
+                      onClick={() => setFilterDivision('akademik')}
+                      className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                        filterDivision === 'akademik' ? 'bg-purple-600 text-white shadow-soft' : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      Akademik (Sekolah)
+                    </button>
                   </div>
 
                   <span className="text-xs text-slate-400">
@@ -592,6 +615,7 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                   <div className="grid grid-cols-1 gap-3">
                     {filteredViolations.map((r, idx) => {
                       const isCancelled = r.status === 'cancelled';
+                      const isAkademik = r.division === 'akademik';
                       const isKesantrian = r.division === 'kesantrian';
 
                       return (
@@ -607,12 +631,14 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                             <div className="flex items-center gap-2 flex-wrap">
                               <span
                                 className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold border ${
-                                  isKesantrian
+                                  isAkademik
+                                    ? 'bg-purple-500/20 text-purple-300 border-purple-400/30'
+                                    : isKesantrian
                                     ? 'bg-blue-500/20 text-blue-300 border-blue-400/30'
                                     : 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
                                 }`}
                               >
-                                {isKesantrian ? '🏢 Divisi Kesantrian' : '🕌 Divisi Tahfizh'}
+                                {isAkademik ? '📚 Divisi Akademik' : isKesantrian ? '🏢 Divisi Kesantrian' : '🕌 Divisi Tahfizh'}
                               </span>
 
                               <span className="text-xs text-slate-400 flex items-center gap-1">
@@ -688,8 +714,14 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-white/[0.06]">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
-                              {p.division === 'kesantrian' ? '🏢 Kesantrian' : '🕌 Tahfizh'}
+                            <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold border ${
+                              p.division === 'akademik'
+                                ? 'bg-purple-500/20 text-purple-300 border-purple-400/30'
+                                : p.division === 'kesantrian'
+                                ? 'bg-blue-500/20 text-blue-300 border-blue-400/30'
+                                : 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
+                            }`}>
+                              {p.division === 'akademik' ? '📚 Akademik' : p.division === 'kesantrian' ? '🏢 Kesantrian' : '🕌 Tahfizh'}
                             </span>
                             <span className="text-xs text-slate-400">
                               {p.date} {p.time ? `• ${p.time} WIB` : ''}

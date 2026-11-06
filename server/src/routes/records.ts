@@ -186,7 +186,7 @@ router.post('/', async (req: Request, res: Response) => {
     }
 
     // Determine division
-    const finalDivision = division === 'kesantrian' ? 'kesantrian' : (violation.division === 'kesantrian' ? 'kesantrian' : 'tahfizh');
+    const finalDivision = division === 'kesantrian' ? 'kesantrian' : division === 'akademik' ? 'akademik' : (violation.division || 'tahfizh');
 
     // 3. Halaqah & Teacher resolution
     const actualHalaqahId = halaqahId || student.halaqah_id;
@@ -209,7 +209,7 @@ router.post('/', async (req: Request, res: Response) => {
       }
     }
 
-    // If Kesantrian division, allow location and supervisor overrides
+    // If Kesantrian or Akademik division, allow location and supervisor overrides
     if (finalDivision === 'kesantrian') {
       if (locationName && locationName.trim()) {
         halaqahName = locationName.trim();
@@ -221,6 +221,18 @@ router.post('/', async (req: Request, res: Response) => {
         teacherName = supervisorName.trim();
       } else {
         teacherName = createdBy || 'Bagian Kesantrian';
+      }
+    } else if (finalDivision === 'akademik') {
+      if (locationName && locationName.trim()) {
+        halaqahName = locationName.trim();
+      } else {
+        halaqahName = 'Ruang Kelas / KBM';
+      }
+
+      if (supervisorName && supervisorName.trim()) {
+        teacherName = supervisorName.trim();
+      } else {
+        teacherName = createdBy || 'Guru Mata Pelajaran';
       }
     }
 
@@ -243,8 +255,8 @@ router.post('/', async (req: Request, res: Response) => {
         recordId,
         student.id,
         finalDivision,
-        finalDivision === 'kesantrian' ? null : (actualHalaqahId || null),
-        finalDivision === 'kesantrian' ? null : (teacherId || null),
+        finalDivision === 'tahfizh' ? (actualHalaqahId || null) : null,
+        finalDivision === 'tahfizh' ? (teacherId || null) : null,
         violation.id,
         violation.name,           // Snapshot name
         violation.default_points, // Snapshot points (Read-only from master)
@@ -264,7 +276,8 @@ router.post('/', async (req: Request, res: Response) => {
     const totalPointsRow = get<any>(`
       SELECT COALESCE(SUM(points_snapshot), 0) as total,
              COALESCE(SUM(CASE WHEN division = 'tahfizh' THEN points_snapshot ELSE 0 END), 0) as tahfizh_points,
-             COALESCE(SUM(CASE WHEN division = 'kesantrian' THEN points_snapshot ELSE 0 END), 0) as kesantrian_points
+             COALESCE(SUM(CASE WHEN division = 'kesantrian' THEN points_snapshot ELSE 0 END), 0) as kesantrian_points,
+             COALESCE(SUM(CASE WHEN division = 'akademik' THEN points_snapshot ELSE 0 END), 0) as akademik_points
       FROM violation_records
       WHERE student_id = ? AND status = 'active'
     `, [student.id]);
@@ -272,6 +285,7 @@ router.post('/', async (req: Request, res: Response) => {
     const newTotalPoints = Number(totalPointsRow?.total || 0);
     const tahfizhPoints = Number(totalPointsRow?.tahfizh_points || 0);
     const kesantrianPoints = Number(totalPointsRow?.kesantrian_points || 0);
+    const akademikPoints = Number(totalPointsRow?.akademik_points || 0);
 
     logAudit({
       userName: createdBy,
@@ -286,6 +300,7 @@ router.post('/', async (req: Request, res: Response) => {
         newTotalPoints,
         tahfizhPoints,
         kesantrianPoints,
+        akademikPoints,
       },
     });
 
@@ -301,6 +316,7 @@ router.post('/', async (req: Request, res: Response) => {
       newTotalPoints,
       tahfizhPoints,
       kesantrianPoints,
+      akademikPoints,
     });
   } catch (err: any) {
     console.error('Record violation error:', err);
@@ -437,6 +453,9 @@ router.get('/stats', (req: Request, res: Response) => {
     const kesantrianRecordsCount = get<any>('SELECT COUNT(*) as count FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.status = "active" AND vr.division = "kesantrian"')?.count || 0;
     const kesantrianTotalPoints = get<any>('SELECT COALESCE(SUM(vr.points_snapshot), 0) as total FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.status = "active" AND vr.division = "kesantrian"')?.total || 0;
 
+    const akademikRecordsCount = get<any>('SELECT COUNT(*) as count FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.status = "active" AND vr.division = "akademik"')?.count || 0;
+    const akademikTotalPoints = get<any>('SELECT COALESCE(SUM(vr.points_snapshot), 0) as total FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.status = "active" AND vr.division = "akademik"')?.total || 0;
+
     const todayCount = get<any>(`SELECT COUNT(*) as count FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.date = ? AND vr.status = "active" ${divisionFilterSql}`, [today])?.count || 0;
     const monthCount = get<any>(`SELECT COUNT(*) as count FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.date LIKE ? AND vr.status = "active" ${divisionFilterSql}`, [`${currentMonth}%`])?.count || 0;
 
@@ -445,6 +464,7 @@ router.get('/stats', (req: Request, res: Response) => {
 
     const tahfizhDeductedPoints = get<any>('SELECT COALESCE(SUM(pr.points_deducted), 0) as total FROM positive_records pr JOIN students s ON s.id = pr.student_id AND s.status = "active" WHERE pr.status = "active" AND pr.division = "tahfizh"')?.total || 0;
     const kesantrianDeductedPoints = get<any>('SELECT COALESCE(SUM(pr.points_deducted), 0) as total FROM positive_records pr JOIN students s ON s.id = pr.student_id AND s.status = "active" WHERE pr.status = "active" AND pr.division = "kesantrian"')?.total || 0;
+    const akademikDeductedPoints = get<any>('SELECT COALESCE(SUM(pr.points_deducted), 0) as total FROM positive_records pr JOIN students s ON s.id = pr.student_id AND s.status = "active" WHERE pr.status = "active" AND pr.division = "akademik"')?.total || 0;
 
     // Thresholds
     const thresholds = query<any>('SELECT * FROM point_thresholds ORDER BY sort_order ASC');
@@ -454,7 +474,8 @@ router.get('/stats', (req: Request, res: Response) => {
       SELECT student_id,
              COALESCE(SUM(points_deducted), 0) as total_deducted,
              COALESCE(SUM(CASE WHEN division = 'tahfizh' THEN points_deducted ELSE 0 END), 0) as tahfizh_deducted,
-             COALESCE(SUM(CASE WHEN division = 'kesantrian' THEN points_deducted ELSE 0 END), 0) as kesantrian_deducted
+             COALESCE(SUM(CASE WHEN division = 'kesantrian' THEN points_deducted ELSE 0 END), 0) as kesantrian_deducted,
+             COALESCE(SUM(CASE WHEN division = 'akademik' THEN points_deducted ELSE 0 END), 0) as akademik_deducted
       FROM positive_records
       WHERE status = 'active'
       GROUP BY student_id
@@ -471,6 +492,7 @@ router.get('/stats', (req: Request, res: Response) => {
              COALESCE(SUM(vr.points_snapshot), 0) as gross_total_points,
              COALESCE(SUM(CASE WHEN vr.division = 'tahfizh' THEN vr.points_snapshot ELSE 0 END), 0) as gross_tahfizh_points,
              COALESCE(SUM(CASE WHEN vr.division = 'kesantrian' THEN vr.points_snapshot ELSE 0 END), 0) as gross_kesantrian_points,
+             COALESCE(SUM(CASE WHEN vr.division = 'akademik' THEN vr.points_snapshot ELSE 0 END), 0) as gross_akademik_points,
              COUNT(vr.id) as violation_count
       FROM students s
       LEFT JOIN halaqah h ON h.id = s.halaqah_id
@@ -484,14 +506,17 @@ router.get('/stats', (req: Request, res: Response) => {
       const d = deductionsMap.get(s.id) || {};
       const deductedTahfizh = Number(d.tahfizh_deducted || 0);
       const deductedKesantrian = Number(d.kesantrian_deducted || 0);
+      const deductedAkademik = Number(d.akademik_deducted || 0);
       const grossTahfizh = Number(s.gross_tahfizh_points || 0);
       const grossKesantrian = Number(s.gross_kesantrian_points || 0);
+      const grossAkademik = Number(s.gross_akademik_points || 0);
 
       const netTahfizh = Math.max(0, grossTahfizh - deductedTahfizh);
       const netKesantrian = Math.max(0, grossKesantrian - deductedKesantrian);
+      const netAkademik = Math.max(0, grossAkademik - deductedAkademik);
       const netTotal = hasDivisionFilter
-        ? (division === 'tahfizh' ? netTahfizh : netKesantrian)
-        : (netTahfizh + netKesantrian);
+        ? (division === 'tahfizh' ? netTahfizh : division === 'kesantrian' ? netKesantrian : netAkademik)
+        : (netTahfizh + netKesantrian + netAkademik);
 
       return {
         id: s.id,
@@ -503,9 +528,11 @@ router.get('/stats', (req: Request, res: Response) => {
         gross_points: Number(s.gross_total_points || 0),
         tahfizh_points: netTahfizh,
         kesantrian_points: netKesantrian,
+        akademik_points: netAkademik,
         tahfizh_deductions: deductedTahfizh,
         kesantrian_deductions: deductedKesantrian,
-        total_deductions: deductedTahfizh + deductedKesantrian,
+        akademik_deductions: deductedAkademik,
+        total_deductions: deductedTahfizh + deductedKesantrian + deductedAkademik,
         violation_count: s.violation_count,
       };
     });
@@ -573,10 +600,13 @@ router.get('/stats', (req: Request, res: Response) => {
         tahfizhTotalPoints,
         kesantrianRecordsCount,
         kesantrianTotalPoints,
+        akademikRecordsCount,
+        akademikTotalPoints,
         totalPositiveRecords,
         totalPointsDeducted,
         tahfizhDeductedPoints,
         kesantrianDeductedPoints,
+        akademikDeductedPoints,
         netTotalPoints: Math.max(0, totalPoints - totalPointsDeducted),
       },
       topStudents,

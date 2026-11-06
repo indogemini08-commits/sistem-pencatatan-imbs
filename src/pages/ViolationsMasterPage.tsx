@@ -19,6 +19,7 @@ import {
   Activity,
   BookOpen,
   Building2,
+  GraduationCap,
   ShieldCheck,
 } from 'lucide-react';
 import type { MasterViolation, User, ViolationDivision } from '../types';
@@ -28,7 +29,7 @@ import { ConfirmDialog } from '../components/ConfirmDialog';
 
 interface ViolationsMasterPageProps {
   currentUser: User | null;
-  initialDivision?: 'tahfizh' | 'kesantrian' | 'all';
+  initialDivision?: 'tahfizh' | 'kesantrian' | 'akademik' | 'all';
 }
 
 export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
@@ -38,7 +39,7 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
   const [violations, setViolations] = useState<MasterViolation[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [search, setSearch] = useState<string>('');
-  const [activeDivisionFilter, setActiveDivisionFilter] = useState<'tahfizh' | 'kesantrian' | 'all'>(initialDivision);
+  const [activeDivisionFilter, setActiveDivisionFilter] = useState<'tahfizh' | 'kesantrian' | 'akademik' | 'all'>(initialDivision);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // Modals
@@ -97,12 +98,12 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
   };
 
   const handleOpenAdd = () => {
-    const defaultDiv = activeDivisionFilter === 'kesantrian' ? 'kesantrian' : 'tahfizh';
+    const defaultDiv = activeDivisionFilter === 'kesantrian' ? 'kesantrian' : activeDivisionFilter === 'akademik' ? 'akademik' : 'tahfizh';
     setFormDivision(defaultDiv);
     setFormCode('');
     setFormName('');
-    setFormCategory(defaultDiv === 'kesantrian' ? 'Ibadah & Shalat' : 'Tahfizh');
-    setFormPoints(defaultDiv === 'kesantrian' ? 5 : 4);
+    setFormCategory(defaultDiv === 'kesantrian' ? 'Ibadah & Shalat' : defaultDiv === 'akademik' ? 'Akademik' : 'Tahfizh');
+    setFormPoints(defaultDiv === 'kesantrian' ? 5 : defaultDiv === 'akademik' ? 5 : 4);
     setFormDesc('');
     setFormStatus('active');
     setFormError('');
@@ -250,11 +251,17 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
     'Kedisiplinan',
     'Kehadiran',
     'Adab & Akhlak',
+    'Akademik',
+    'Tugas & PR',
+    'Ketertiban Kelas',
+    'Ujian & Evaluasi',
+    'Kehadiran KBM',
     'Lainnya',
   ];
 
   const tahfizhCount = violations.filter((v) => (v.division || 'tahfizh') === 'tahfizh').length;
   const kesantrianCount = violations.filter((v) => v.division === 'kesantrian').length;
+  const akademikCount = violations.filter((v) => v.division === 'akademik').length;
 
   return (
     <div className="space-y-5 sm:space-y-6 animate-scale-in">
@@ -269,7 +276,7 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
               Master Pelanggaran & Poin
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-              Atur aturan dan bobot sanksi terpadu untuk Divisi Tahfizh dan Divisi Kesantrian.
+              Atur aturan dan bobot sanksi terpadu untuk Divisi Tahfizh, Kesantrian, dan Akademik.
             </p>
           </div>
         </div>
@@ -296,7 +303,7 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
       </div>
 
       {/* Division Navigation Switcher */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 p-1.5 bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] rounded-2xl w-full sm:w-fit shadow-soft text-xs font-bold">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-1.5 p-1.5 bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] rounded-2xl w-full sm:w-fit shadow-soft text-xs font-bold">
         <button
           onClick={() => setActiveDivisionFilter('all')}
           className={`w-full min-h-[40px] justify-center px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
@@ -320,7 +327,7 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
-          <span>🕌 Divisi Tahfizh</span>
+          <span>🕌 Tahfizh</span>
           <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
             activeDivisionFilter === 'tahfizh' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
           }`}>
@@ -337,11 +344,28 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
           }`}
         >
           <Building2 className="w-3.5 h-3.5" />
-          <span>🏢 Divisi Kesantrian</span>
+          <span>🏢 Kesantrian</span>
           <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
             activeDivisionFilter === 'kesantrian' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
           }`}>
             {kesantrianCount}
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveDivisionFilter('akademik')}
+          className={`w-full min-h-[40px] justify-center px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            activeDivisionFilter === 'akademik'
+              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20'
+              : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
+          }`}
+        >
+          <GraduationCap className="w-3.5 h-3.5" />
+          <span>📚 Akademik</span>
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+            activeDivisionFilter === 'akademik' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
+          }`}>
+            {akademikCount}
           </span>
         </button>
       </div>
@@ -400,6 +424,7 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
           </div>
         ) : (
           filteredViolations.map((v) => {
+            const isAkademik = v.division === 'akademik';
             const isKesantrian = v.division === 'kesantrian';
             return (
               <div
@@ -422,12 +447,19 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
                     </span>
                     <span
                       className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-lg border ${
-                        isKesantrian
+                        isAkademik
+                          ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-500/20'
+                          : isKesantrian
                           ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
                           : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20'
                       }`}
                     >
-                      {isKesantrian ? (
+                      {isAkademik ? (
+                        <>
+                          <GraduationCap className="w-3 h-3" />
+                          Akademik
+                        </>
+                      ) : isKesantrian ? (
                         <>
                           <Building2 className="w-3 h-3" />
                           Kesantrian
@@ -551,6 +583,7 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
                 </tr>
               ) : (
                 filteredViolations.map((v) => {
+                  const isAkademik = v.division === 'akademik';
                   const isKesantrian = v.division === 'kesantrian';
 
                   return (
@@ -570,12 +603,19 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
                       <td className="py-3.5 px-4">
                         <span
                           className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-lg border ${
-                            isKesantrian
+                            isAkademik
+                              ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-500/20'
+                              : isKesantrian
                               ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
                               : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20'
                           }`}
                         >
-                          {isKesantrian ? (
+                          {isAkademik ? (
+                            <>
+                              <GraduationCap className="w-3 h-3" />
+                              Akademik
+                            </>
+                          ) : isKesantrian ? (
                             <>
                               <Building2 className="w-3 h-3" />
                               Kesantrian
@@ -685,21 +725,21 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                     Divisi Pelanggaran
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => {
                         setFormDivision('tahfizh');
                         setFormCategory('Tahfizh');
                       }}
-                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+                      className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
                         formDivision === 'tahfizh'
                           ? 'bg-emerald-50 dark:bg-emerald-500/15 border-emerald-500 text-emerald-800 dark:text-emerald-300 shadow-soft ring-1 ring-emerald-500/30'
                           : 'bg-white dark:bg-[#161d31] border-slate-200 dark:border-white/[0.1] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.04]'
                       }`}
                     >
-                      <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                      <span>🕌 Divisi Tahfizh</span>
+                      <BookOpen className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <span>🕌 Tahfizh</span>
                     </button>
                     <button
                       type="button"
@@ -707,14 +747,29 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
                         setFormDivision('kesantrian');
                         setFormCategory('Ibadah & Shalat');
                       }}
-                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+                      className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
                         formDivision === 'kesantrian'
                           ? 'bg-blue-50 dark:bg-blue-500/15 border-blue-500 text-blue-800 dark:text-blue-300 shadow-soft ring-1 ring-blue-500/30'
                           : 'bg-white dark:bg-[#161d31] border-slate-200 dark:border-white/[0.1] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.04]'
                       }`}
                     >
-                      <Building2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                      <span>🏢 Divisi Kesantrian</span>
+                      <Building2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                      <span>🏢 Kesantrian</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormDivision('akademik');
+                        setFormCategory('Akademik');
+                      }}
+                      className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                        formDivision === 'akademik'
+                          ? 'bg-purple-50 dark:bg-purple-500/15 border-purple-500 text-purple-800 dark:text-purple-300 shadow-soft ring-1 ring-purple-500/30'
+                          : 'bg-white dark:bg-[#161d31] border-slate-200 dark:border-white/[0.1] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.04]'
+                      }`}
+                    >
+                      <GraduationCap className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                      <span>📚 Akademik</span>
                     </button>
                   </div>
                 </div>
@@ -728,7 +783,7 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
                       type="text"
                       value={formCode}
                       onChange={(e) => setFormCode(e.target.value.toUpperCase())}
-                      placeholder={formDivision === 'kesantrian' ? 'KS001' : 'P001'}
+                      placeholder={formDivision === 'kesantrian' ? 'KS001' : formDivision === 'akademik' ? 'AK001' : 'P001'}
                       className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 outline-none"
                     />
                   </div>
@@ -850,30 +905,42 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
                   <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                     Divisi Pelanggaran
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-2">
                     <button
                       type="button"
                       onClick={() => setFormDivision('tahfizh')}
-                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+                      className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
                         formDivision === 'tahfizh'
                           ? 'bg-emerald-50 dark:bg-emerald-500/15 border-emerald-500 text-emerald-800 dark:text-emerald-300 shadow-soft ring-1 ring-emerald-500/30'
                           : 'bg-white dark:bg-[#161d31] border-slate-200 dark:border-white/[0.1] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.04]'
                       }`}
                     >
-                      <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                      <span>🕌 Divisi Tahfizh</span>
+                      <BookOpen className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <span>🕌 Tahfizh</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setFormDivision('kesantrian')}
-                      className={`p-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all ${
+                      className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
                         formDivision === 'kesantrian'
                           ? 'bg-blue-50 dark:bg-blue-500/15 border-blue-500 text-blue-800 dark:text-blue-300 shadow-soft ring-1 ring-blue-500/30'
                           : 'bg-white dark:bg-[#161d31] border-slate-200 dark:border-white/[0.1] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.04]'
                       }`}
                     >
-                      <Building2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                      <span>🏢 Divisi Kesantrian</span>
+                      <Building2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                      <span>🏢 Kesantrian</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormDivision('akademik')}
+                      className={`p-2.5 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                        formDivision === 'akademik'
+                          ? 'bg-purple-50 dark:bg-purple-500/15 border-purple-500 text-purple-800 dark:text-purple-300 shadow-soft ring-1 ring-purple-500/30'
+                          : 'bg-white dark:bg-[#161d31] border-slate-200 dark:border-white/[0.1] text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/[0.04]'
+                      }`}
+                    >
+                      <GraduationCap className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                      <span>📚 Akademik</span>
                     </button>
                   </div>
                 </div>

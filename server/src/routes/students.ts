@@ -39,9 +39,11 @@ router.get('/', (req: Request, res: Response) => {
              COALESCE(SUM(CASE WHEN vr.status = 'active' THEN vr.points_snapshot ELSE 0 END), 0) as gross_total_points,
              COALESCE(SUM(CASE WHEN vr.status = 'active' AND vr.division = 'tahfizh' THEN vr.points_snapshot ELSE 0 END), 0) as gross_tahfizh_points,
              COALESCE(SUM(CASE WHEN vr.status = 'active' AND vr.division = 'kesantrian' THEN vr.points_snapshot ELSE 0 END), 0) as gross_kesantrian_points,
+             COALESCE(SUM(CASE WHEN vr.status = 'active' AND vr.division = 'akademik' THEN vr.points_snapshot ELSE 0 END), 0) as gross_akademik_points,
              COUNT(CASE WHEN vr.status = 'active' THEN 1 ELSE NULL END) as violation_count,
              COUNT(CASE WHEN vr.status = 'active' AND vr.division = 'tahfizh' THEN 1 ELSE NULL END) as tahfizh_violation_count,
-             COUNT(CASE WHEN vr.status = 'active' AND vr.division = 'kesantrian' THEN 1 ELSE NULL END) as kesantrian_violation_count
+             COUNT(CASE WHEN vr.status = 'active' AND vr.division = 'kesantrian' THEN 1 ELSE NULL END) as kesantrian_violation_count,
+             COUNT(CASE WHEN vr.status = 'active' AND vr.division = 'akademik' THEN 1 ELSE NULL END) as akademik_violation_count
       FROM students s
       LEFT JOIN halaqah h ON h.id = s.halaqah_id
       LEFT JOIN teachers t ON t.id = h.teacher_id
@@ -56,6 +58,7 @@ router.get('/', (req: Request, res: Response) => {
              COALESCE(SUM(points_deducted), 0) as total_deducted,
              COALESCE(SUM(CASE WHEN division = 'tahfizh' THEN points_deducted ELSE 0 END), 0) as tahfizh_deducted,
              COALESCE(SUM(CASE WHEN division = 'kesantrian' THEN points_deducted ELSE 0 END), 0) as kesantrian_deducted,
+             COALESCE(SUM(CASE WHEN division = 'akademik' THEN points_deducted ELSE 0 END), 0) as akademik_deducted,
              COUNT(*) as positive_count
       FROM positive_records
       WHERE status = 'active'
@@ -70,16 +73,19 @@ router.get('/', (req: Request, res: Response) => {
     const enriched = students.map(s => {
       const grossTahfizh = Number(s.gross_tahfizh_points || 0);
       const grossKesantrian = Number(s.gross_kesantrian_points || 0);
+      const grossAkademik = Number(s.gross_akademik_points || 0);
 
       const dInfo = deductionsMap.get(s.id) || {};
       const deductedTahfizh = Number(dInfo.tahfizh_deducted || 0);
       const deductedKesantrian = Number(dInfo.kesantrian_deducted || 0);
+      const deductedAkademik = Number(dInfo.akademik_deducted || 0);
       const totalDeductions = Number(dInfo.total_deducted || 0);
       const positiveCount = Number(dInfo.positive_count || 0);
 
       const netTahfizh = Math.max(0, grossTahfizh - deductedTahfizh);
       const netKesantrian = Math.max(0, grossKesantrian - deductedKesantrian);
-      const totalNetPts = netTahfizh + netKesantrian;
+      const netAkademik = Math.max(0, grossAkademik - deductedAkademik);
+      const totalNetPts = netTahfizh + netKesantrian + netAkademik;
 
       const st = getStatusForPoints(totalNetPts, thresholds);
       return {
@@ -87,11 +93,14 @@ router.get('/', (req: Request, res: Response) => {
         total_points: totalNetPts,
         tahfizh_points: netTahfizh,
         kesantrian_points: netKesantrian,
-        gross_total_points: grossTahfizh + grossKesantrian,
+        akademik_points: netAkademik,
+        gross_total_points: grossTahfizh + grossKesantrian + grossAkademik,
         gross_tahfizh_points: grossTahfizh,
         gross_kesantrian_points: grossKesantrian,
+        gross_akademik_points: grossAkademik,
         tahfizh_deductions: deductedTahfizh,
         kesantrian_deductions: deductedKesantrian,
+        akademik_deductions: deductedAkademik,
         total_deductions: totalDeductions,
         positive_count: positiveCount,
         status_info: st,
@@ -152,16 +161,19 @@ router.get('/portal/:nis', (req: Request, res: Response) => {
     const activeRecords = records.filter((r: any) => r.status === 'active');
     const grossTahfizh = activeRecords.filter((r: any) => r.division === 'tahfizh').reduce((sum: number, r: any) => sum + Number(r.points_snapshot || 0), 0);
     const grossKesantrian = activeRecords.filter((r: any) => r.division === 'kesantrian').reduce((sum: number, r: any) => sum + Number(r.points_snapshot || 0), 0);
+    const grossAkademik = activeRecords.filter((r: any) => r.division === 'akademik').reduce((sum: number, r: any) => sum + Number(r.points_snapshot || 0), 0);
 
     // Calculate active positive deductions
     const activePosRecords = positiveRecords.filter((r: any) => r.status === 'active');
     const deductedTahfizh = activePosRecords.filter((r: any) => r.division === 'tahfizh').reduce((sum: number, r: any) => sum + Number(r.points_deducted || 0), 0);
     const deductedKesantrian = activePosRecords.filter((r: any) => r.division === 'kesantrian').reduce((sum: number, r: any) => sum + Number(r.points_deducted || 0), 0);
+    const deductedAkademik = activePosRecords.filter((r: any) => r.division === 'akademik').reduce((sum: number, r: any) => sum + Number(r.points_deducted || 0), 0);
 
     // Net points
     const netTahfizh = Math.max(0, grossTahfizh - deductedTahfizh);
     const netKesantrian = Math.max(0, grossKesantrian - deductedKesantrian);
-    const totalNetPoints = netTahfizh + netKesantrian;
+    const netAkademik = Math.max(0, grossAkademik - deductedAkademik);
+    const totalNetPoints = netTahfizh + netKesantrian + netAkademik;
 
     const statusInfo = getStatusForPoints(totalNetPoints, thresholds);
 
@@ -174,12 +186,15 @@ router.get('/portal/:nis', (req: Request, res: Response) => {
         total_points: totalNetPoints,
         tahfizh_points: netTahfizh,
         kesantrian_points: netKesantrian,
-        gross_total_points: grossTahfizh + grossKesantrian,
+        akademik_points: netAkademik,
+        gross_total_points: grossTahfizh + grossKesantrian + grossAkademik,
         gross_tahfizh_points: grossTahfizh,
         gross_kesantrian_points: grossKesantrian,
+        gross_akademik_points: grossAkademik,
         tahfizh_deductions: deductedTahfizh,
         kesantrian_deductions: deductedKesantrian,
-        total_deductions: deductedTahfizh + deductedKesantrian,
+        akademik_deductions: deductedAkademik,
+        total_deductions: deductedTahfizh + deductedKesantrian + deductedAkademik,
         status_info: statusInfo,
       },
       records,
@@ -232,16 +247,19 @@ router.get('/:id', (req: Request, res: Response) => {
     const activeRecords = records.filter((r: any) => r.status === 'active');
     const grossTahfizh = activeRecords.filter((r: any) => r.division === 'tahfizh').reduce((sum: number, r: any) => sum + Number(r.points_snapshot || 0), 0);
     const grossKesantrian = activeRecords.filter((r: any) => r.division === 'kesantrian').reduce((sum: number, r: any) => sum + Number(r.points_snapshot || 0), 0);
+    const grossAkademik = activeRecords.filter((r: any) => r.division === 'akademik').reduce((sum: number, r: any) => sum + Number(r.points_snapshot || 0), 0);
 
     // Calculate active positive deductions
     const activePosRecords = positiveRecords.filter((r: any) => r.status === 'active');
     const deductedTahfizh = activePosRecords.filter((r: any) => r.division === 'tahfizh').reduce((sum: number, r: any) => sum + Number(r.points_deducted || 0), 0);
     const deductedKesantrian = activePosRecords.filter((r: any) => r.division === 'kesantrian').reduce((sum: number, r: any) => sum + Number(r.points_deducted || 0), 0);
+    const deductedAkademik = activePosRecords.filter((r: any) => r.division === 'akademik').reduce((sum: number, r: any) => sum + Number(r.points_deducted || 0), 0);
 
     // Net points
     const netTahfizh = Math.max(0, grossTahfizh - deductedTahfizh);
     const netKesantrian = Math.max(0, grossKesantrian - deductedKesantrian);
-    const totalNetPoints = netTahfizh + netKesantrian;
+    const netAkademik = Math.max(0, grossAkademik - deductedAkademik);
+    const totalNetPoints = netTahfizh + netKesantrian + netAkademik;
 
     const statusInfo = getStatusForPoints(totalNetPoints, thresholds);
 
@@ -261,12 +279,15 @@ router.get('/:id', (req: Request, res: Response) => {
         total_points: totalNetPoints,
         tahfizh_points: netTahfizh,
         kesantrian_points: netKesantrian,
-        gross_total_points: grossTahfizh + grossKesantrian,
+        akademik_points: netAkademik,
+        gross_total_points: grossTahfizh + grossKesantrian + grossAkademik,
         gross_tahfizh_points: grossTahfizh,
         gross_kesantrian_points: grossKesantrian,
+        gross_akademik_points: grossAkademik,
         tahfizh_deductions: deductedTahfizh,
         kesantrian_deductions: deductedKesantrian,
-        total_deductions: deductedTahfizh + deductedKesantrian,
+        akademik_deductions: deductedAkademik,
+        total_deductions: deductedTahfizh + deductedKesantrian + deductedAkademik,
         status_info: statusInfo,
       },
       records,

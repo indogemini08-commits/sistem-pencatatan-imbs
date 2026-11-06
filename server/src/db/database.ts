@@ -104,6 +104,8 @@ function runMigrations(database: Database) {
     // Role 'guru' (Guru Pengajar) does not hold or supervise halaqahs
     database.run("UPDATE halaqah SET teacher_id = NULL WHERE teacher_id IN (SELECT t.id FROM teachers t JOIN users u ON u.id = t.user_id WHERE u.role = 'guru');");
     database.run("DELETE FROM teachers WHERE user_id IN (SELECT id FROM users WHERE role = 'guru');");
+    // Clean up temporary test/dummy teacher entries
+    database.run("DELETE FROM teachers WHERE name LIKE 'Ustadz Test%' OR name LIKE 'Test Guru%' OR name LIKE 'Ustadz Uji%';");
   } catch (e) {
     // ignore
   }
@@ -114,8 +116,8 @@ function runMigrations(database: Database) {
         id TEXT PRIMARY KEY,
         code TEXT UNIQUE NOT NULL,
         name TEXT NOT NULL,
-        division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian')),
-        category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Ibadah & Shalat', 'Khidmat & Sosial', 'Prestasi', 'Lainnya')),
+        division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+        category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Ibadah & Shalat', 'Khidmat & Sosial', 'Prestasi', 'Akademik', 'Lainnya')),
         description TEXT,
         default_points_deduction INTEGER NOT NULL CHECK(default_points_deduction > 0),
         status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
@@ -126,7 +128,7 @@ function runMigrations(database: Database) {
       CREATE TABLE IF NOT EXISTS positive_records (
         id TEXT PRIMARY KEY,
         student_id TEXT NOT NULL,
-        division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian')),
+        division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
         action_id TEXT,
         action_name_snapshot TEXT NOT NULL,
         points_deducted INTEGER NOT NULL CHECK(points_deducted > 0),
@@ -151,6 +153,138 @@ function runMigrations(database: Database) {
         FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE SET NULL
       );
     `);
+
+    // Helper to check existing table SQL definition
+    const checkTable = (tableName: string) => {
+      const res = database.exec(`SELECT sql FROM sqlite_master WHERE type='table' AND name='${tableName}'`)[0]?.values[0][0] as string || '';
+      return res;
+    };
+
+    const vSql = checkTable('violations');
+    if (vSql && !vSql.includes('akademik')) {
+      database.run("PRAGMA foreign_keys=OFF;");
+      database.run(`
+        CREATE TABLE violations_new (
+          id TEXT PRIMARY KEY,
+          code TEXT UNIQUE NOT NULL,
+          name TEXT NOT NULL,
+          division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+          category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Kehadiran', 'Adab & Akhlak', 'Ketertiban Asrama', 'Ibadah & Shalat', 'Akademik', 'Tugas & PR', 'Ketertiban Kelas', 'Ujian & Evaluasi', 'Kehadiran KBM', 'Lainnya')),
+          description TEXT,
+          default_points INTEGER NOT NULL CHECK(default_points > 0),
+          status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      database.run("INSERT INTO violations_new (id, code, name, division, category, description, default_points, status, created_at) SELECT id, code, name, division, category, description, default_points, status, created_at FROM violations;");
+      database.run("DROP TABLE violations;");
+      database.run("ALTER TABLE violations_new RENAME TO violations;");
+      database.run("PRAGMA foreign_keys=ON;");
+      console.log('Migrasi skema tabel violations selesai (akademik diaktifkan).');
+    }
+
+    const vrSql = checkTable('violation_records');
+    if (vrSql && !vrSql.includes('akademik')) {
+      database.run("PRAGMA foreign_keys=OFF;");
+      database.run(`
+        CREATE TABLE violation_records_new (
+          id TEXT PRIMARY KEY,
+          student_id TEXT NOT NULL,
+          division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+          halaqah_id TEXT,
+          teacher_id TEXT,
+          violation_id TEXT,
+          violation_name_snapshot TEXT NOT NULL,
+          points_snapshot INTEGER NOT NULL CHECK(points_snapshot > 0),
+          halaqah_name_snapshot TEXT NOT NULL,
+          teacher_name_snapshot TEXT NOT NULL,
+          student_class_snapshot TEXT NOT NULL,
+          academic_year_snapshot TEXT NOT NULL,
+          date TEXT NOT NULL,
+          time TEXT NOT NULL,
+          notes TEXT,
+          evidence_url TEXT,
+          status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'cancelled')),
+          created_by TEXT NOT NULL,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          cancelled_at TEXT,
+          cancelled_by TEXT,
+          cancellation_reason TEXT,
+          FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+          FOREIGN KEY (halaqah_id) REFERENCES halaqah(id) ON DELETE SET NULL,
+          FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE SET NULL,
+          FOREIGN KEY (violation_id) REFERENCES violations(id) ON DELETE SET NULL
+        );
+      `);
+      database.run("INSERT INTO violation_records_new SELECT * FROM violation_records;");
+      database.run("DROP TABLE violation_records;");
+      database.run("ALTER TABLE violation_records_new RENAME TO violation_records;");
+      database.run("PRAGMA foreign_keys=ON;");
+      console.log('Migrasi skema tabel violation_records selesai (akademik diaktifkan).');
+    }
+
+    const paSql = checkTable('positive_actions');
+    if (paSql && !paSql.includes('akademik')) {
+      database.run("PRAGMA foreign_keys=OFF;");
+      database.run(`
+        CREATE TABLE positive_actions_new (
+          id TEXT PRIMARY KEY,
+          code TEXT UNIQUE NOT NULL,
+          name TEXT NOT NULL,
+          division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+          category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Ibadah & Shalat', 'Khidmat & Sosial', 'Prestasi', 'Akademik', 'Lainnya')),
+          description TEXT,
+          default_points_deduction INTEGER NOT NULL CHECK(default_points_deduction > 0),
+          status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      database.run("INSERT INTO positive_actions_new (id, code, name, division, category, description, default_points_deduction, status, created_at) SELECT id, code, name, division, category, description, default_points_deduction, status, created_at FROM positive_actions;");
+      database.run("DROP TABLE positive_actions;");
+      database.run("ALTER TABLE positive_actions_new RENAME TO positive_actions;");
+      database.run("PRAGMA foreign_keys=ON;");
+      console.log('Migrasi skema tabel positive_actions selesai (akademik diaktifkan).');
+    }
+
+    const prSql = checkTable('positive_records');
+    if (prSql && !prSql.includes('akademik')) {
+      database.run("PRAGMA foreign_keys=OFF;");
+      database.run(`
+        CREATE TABLE positive_records_new (
+          id TEXT PRIMARY KEY,
+          student_id TEXT NOT NULL,
+          division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+          action_id TEXT,
+          action_name_snapshot TEXT NOT NULL,
+          points_deducted INTEGER NOT NULL CHECK(points_deducted > 0),
+          halaqah_id TEXT,
+          halaqah_name_snapshot TEXT,
+          teacher_id TEXT,
+          teacher_name_snapshot TEXT NOT NULL,
+          student_class_snapshot TEXT NOT NULL,
+          academic_year_snapshot TEXT NOT NULL,
+          date TEXT NOT NULL,
+          time TEXT NOT NULL,
+          notes TEXT,
+          status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'cancelled')),
+          created_by TEXT NOT NULL,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          cancelled_at TEXT,
+          cancelled_by TEXT,
+          cancellation_reason TEXT,
+          FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+          FOREIGN KEY (action_id) REFERENCES positive_actions(id) ON DELETE SET NULL,
+          FOREIGN KEY (halaqah_id) REFERENCES halaqah(id) ON DELETE SET NULL,
+          FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE SET NULL
+        );
+      `);
+      database.run("INSERT INTO positive_records_new SELECT * FROM positive_records;");
+      database.run("DROP TABLE positive_records;");
+      database.run("ALTER TABLE positive_records_new RENAME TO positive_records;");
+      database.run("PRAGMA foreign_keys=ON;");
+      console.log('Migrasi skema tabel positive_records selesai (akademik diaktifkan).');
+    }
+
     // Automatic cleanup of orphaned records to ensure foreign key integrity and prevent dashboard desync
     database.run("DELETE FROM violation_records WHERE student_id NOT IN (SELECT id FROM students);");
     database.run("DELETE FROM positive_records WHERE student_id NOT IN (SELECT id FROM students);");
@@ -165,7 +299,7 @@ function runMigrations(database: Database) {
       );
     `);
   } catch (e: any) {
-    console.error('Peringatan pembuatan tabel positive_actions/positive_records:', e?.message || e);
+    console.error('Peringatan pembuatan/migrasi tabel positive & violations:', e?.message || e);
   }
 }
 

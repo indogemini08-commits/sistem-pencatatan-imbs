@@ -27,7 +27,7 @@ router.get('/', (req: Request, res: Response) => {
       sql += ' AND pr.student_id = ?';
       params.push(student_id);
     }
-    if (division && (division === 'tahfizh' || division === 'kesantrian')) {
+    if (division && division !== 'all') {
       sql += ' AND pr.division = ?';
       params.push(division);
     }
@@ -131,6 +131,8 @@ router.post('/', async (req: Request, res: Response) => {
 
     const halaqahName = division === 'kesantrian'
       ? (locationName || 'Asrama & Kesantrian')
+      : division === 'akademik'
+      ? (locationName || 'Ruang Kelas / KBM')
       : (student.halaqah_name || 'Halaqah Mandiri');
 
     const teacherName = supervisorName || student.teacher_name || actorName || 'Pembimbing';

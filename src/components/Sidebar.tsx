@@ -185,6 +185,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ],
     },
     {
+      title: 'DIVISI AKADEMIK (SEKOLAH / KBM)',
+      items: [
+        {
+          id: 'records_akademik',
+          label: 'Pelanggaran Akademik',
+          icon: BookOpen,
+          roles: ['admin', 'coordinator', 'kepala_kesantrian', 'teacher', 'guru'],
+        },
+        {
+          id: 'rewards_akademik',
+          label: 'Kebaikan & Prestasi',
+          icon: Award,
+          roles: ['admin', 'coordinator', 'kepala_kesantrian', 'teacher', 'guru'],
+        },
+        {
+          id: 'violations_akademik',
+          label: 'Master Aturan Akademik',
+          icon: Shield,
+          roles: ['admin', 'coordinator', 'kepala_kesantrian'],
+        },
+      ],
+    },
+    {
       title: 'DATA SANTRI & PUSAT',
       items: [
         {

@@ -37,12 +37,12 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Nama, kategori, dan poin (>0) wajib diisi' });
     }
 
-    const cleanDivision = division === 'kesantrian' ? 'kesantrian' : 'tahfizh';
+    const cleanDivision = division === 'kesantrian' ? 'kesantrian' : division === 'akademik' ? 'akademik' : 'tahfizh';
 
     // Auto-generate code if empty
     let cleanCode = code ? code.trim().toUpperCase() : '';
     if (!cleanCode) {
-      const prefix = cleanDivision === 'kesantrian' ? 'KS' : 'P';
+      const prefix = cleanDivision === 'kesantrian' ? 'KS' : cleanDivision === 'akademik' ? 'AK' : 'P';
       const last = get<any>(`SELECT code FROM violations WHERE code LIKE "${prefix}%" ORDER BY code DESC LIMIT 1`);
       if (last && last.code.startsWith(prefix)) {
         const numPart = parseInt(last.code.replace(prefix, ''), 10);

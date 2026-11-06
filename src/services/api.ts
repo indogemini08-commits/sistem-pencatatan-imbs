@@ -12,6 +12,7 @@ import {
   StudentThresholdStatus,
   DashboardStats,
   AuditLog,
+  ViolationDivision,
 } from '../types';
 import { storageSync } from './storageSync';
 
@@ -416,7 +417,7 @@ export const api = {
       violationId: string;
       violationName?: string;
       points?: number;
-      division?: 'tahfizh' | 'kesantrian';
+      division?: ViolationDivision;
       supervisorName?: string;
       locationName?: string;
       date?: string;
@@ -430,11 +431,12 @@ export const api = {
         recordId: string;
         studentName: string;
         violationName: string;
-        division: 'tahfizh' | 'kesantrian';
+        division: ViolationDivision;
         points: number;
         newTotalPoints: number;
         tahfizhPoints?: number;
         kesantrianPoints?: number;
+        akademikPoints?: number;
       }>(`${API_BASE}/records`, {
         method: 'POST',
         body: JSON.stringify(data),
@@ -498,8 +500,10 @@ export const api = {
 
         const tahfizhRecords = activeRecords.filter((r) => r.division === 'tahfizh');
         const kesantrianRecords = activeRecords.filter((r) => r.division === 'kesantrian');
+        const akademikRecords = activeRecords.filter((r) => r.division === 'akademik');
         const tahfizhPos = activePosRecords.filter((pr) => pr.division === 'tahfizh');
         const kesantrianPos = activePosRecords.filter((pr) => pr.division === 'kesantrian');
+        const akademikPos = activePosRecords.filter((pr) => pr.division === 'akademik');
 
         const today = new Date().toISOString().split('T')[0];
         const currentMonth = today.substring(0, 7);
@@ -517,10 +521,13 @@ export const api = {
             tahfizhTotalPoints: tahfizhRecords.reduce((sum, r) => sum + Number(r.points_snapshot || 0), 0),
             kesantrianRecordsCount: kesantrianRecords.length,
             kesantrianTotalPoints: kesantrianRecords.reduce((sum, r) => sum + Number(r.points_snapshot || 0), 0),
+            akademikRecordsCount: akademikRecords.length,
+            akademikTotalPoints: akademikRecords.reduce((sum, r) => sum + Number(r.points_snapshot || 0), 0),
             totalPositiveRecords,
             totalPointsDeducted,
             tahfizhDeductedPoints: tahfizhPos.reduce((sum, pr) => sum + Number(pr.points_deducted || 0), 0),
             kesantrianDeductedPoints: kesantrianPos.reduce((sum, pr) => sum + Number(pr.points_deducted || 0), 0),
+            akademikDeductedPoints: akademikPos.reduce((sum, pr) => sum + Number(pr.points_deducted || 0), 0),
             netTotalPoints: Math.max(0, totalPoints - totalPointsDeducted),
           },
           topStudents: [],
@@ -577,7 +584,7 @@ export const api = {
       studentName?: string;
       studentNis?: string;
       studentClass?: string;
-      division: 'tahfizh' | 'kesantrian';
+      division: ViolationDivision;
       actionId?: string;
       customActionName?: string;
       customPoints?: number;

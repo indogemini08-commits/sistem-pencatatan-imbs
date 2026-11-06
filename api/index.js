@@ -72,8 +72,8 @@ CREATE TABLE IF NOT EXISTS violations (
   id TEXT PRIMARY KEY,
   code TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
-  division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian')),
-  category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Kehadiran', 'Adab & Akhlak', 'Ketertiban Asrama', 'Ibadah & Shalat', 'Lainnya')),
+  division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+  category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Kehadiran', 'Adab & Akhlak', 'Ketertiban Asrama', 'Ibadah & Shalat', 'Akademik', 'Tugas & PR', 'Ketertiban Kelas', 'Ujian & Evaluasi', 'Kehadiran KBM', 'Lainnya')),
   description TEXT,
   default_points INTEGER NOT NULL CHECK(default_points > 0),
   status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS violations (
 CREATE TABLE IF NOT EXISTS violation_records (
   id TEXT PRIMARY KEY,
   student_id TEXT NOT NULL,
-  division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian')),
+  division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
   halaqah_id TEXT,
   teacher_id TEXT,
   violation_id TEXT,
@@ -147,8 +147,8 @@ CREATE TABLE IF NOT EXISTS positive_actions (
   id TEXT PRIMARY KEY,
   code TEXT UNIQUE NOT NULL,
   name TEXT NOT NULL,
-  division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian')),
-  category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Ibadah & Shalat', 'Khidmat & Sosial', 'Prestasi', 'Lainnya')),
+  division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+  category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Ibadah & Shalat', 'Khidmat & Sosial', 'Prestasi', 'Akademik', 'Lainnya')),
   description TEXT,
   default_points_deduction INTEGER NOT NULL CHECK(default_points_deduction > 0),
   status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
@@ -158,7 +158,7 @@ CREATE TABLE IF NOT EXISTS positive_actions (
 CREATE TABLE IF NOT EXISTS positive_records (
   id TEXT PRIMARY KEY,
   student_id TEXT NOT NULL,
-  division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian')),
+  division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
   action_id TEXT,
   action_name_snapshot TEXT NOT NULL,
   points_deducted INTEGER NOT NULL CHECK(points_deducted > 0),
@@ -468,6 +468,7 @@ function runMigrations(database) {
   try {
     database.run("UPDATE halaqah SET teacher_id = NULL WHERE teacher_id IN (SELECT t.id FROM teachers t JOIN users u ON u.id = t.user_id WHERE u.role = 'guru');");
     database.run("DELETE FROM teachers WHERE user_id IN (SELECT id FROM users WHERE role = 'guru');");
+    database.run("DELETE FROM teachers WHERE name LIKE 'Ustadz Test%' OR name LIKE 'Test Guru%' OR name LIKE 'Ustadz Uji%';");
   } catch (e) {
   }
   try {
@@ -476,8 +477,8 @@ function runMigrations(database) {
         id TEXT PRIMARY KEY,
         code TEXT UNIQUE NOT NULL,
         name TEXT NOT NULL,
-        division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian')),
-        category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Ibadah & Shalat', 'Khidmat & Sosial', 'Prestasi', 'Lainnya')),
+        division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+        category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Ibadah & Shalat', 'Khidmat & Sosial', 'Prestasi', 'Akademik', 'Lainnya')),
         description TEXT,
         default_points_deduction INTEGER NOT NULL CHECK(default_points_deduction > 0),
         status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
@@ -488,7 +489,7 @@ function runMigrations(database) {
       CREATE TABLE IF NOT EXISTS positive_records (
         id TEXT PRIMARY KEY,
         student_id TEXT NOT NULL,
-        division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian')),
+        division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
         action_id TEXT,
         action_name_snapshot TEXT NOT NULL,
         points_deducted INTEGER NOT NULL CHECK(points_deducted > 0),
@@ -513,6 +514,131 @@ function runMigrations(database) {
         FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE SET NULL
       );
     `);
+    const checkTable = (tableName) => {
+      const res = database.exec(`SELECT sql FROM sqlite_master WHERE type='table' AND name='${tableName}'`)[0]?.values[0][0] || "";
+      return res;
+    };
+    const vSql = checkTable("violations");
+    if (vSql && !vSql.includes("akademik")) {
+      database.run("PRAGMA foreign_keys=OFF;");
+      database.run(`
+        CREATE TABLE violations_new (
+          id TEXT PRIMARY KEY,
+          code TEXT UNIQUE NOT NULL,
+          name TEXT NOT NULL,
+          division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+          category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Kehadiran', 'Adab & Akhlak', 'Ketertiban Asrama', 'Ibadah & Shalat', 'Akademik', 'Tugas & PR', 'Ketertiban Kelas', 'Ujian & Evaluasi', 'Kehadiran KBM', 'Lainnya')),
+          description TEXT,
+          default_points INTEGER NOT NULL CHECK(default_points > 0),
+          status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      database.run("INSERT INTO violations_new (id, code, name, division, category, description, default_points, status, created_at) SELECT id, code, name, division, category, description, default_points, status, created_at FROM violations;");
+      database.run("DROP TABLE violations;");
+      database.run("ALTER TABLE violations_new RENAME TO violations;");
+      database.run("PRAGMA foreign_keys=ON;");
+      console.log("Migrasi skema tabel violations selesai (akademik diaktifkan).");
+    }
+    const vrSql = checkTable("violation_records");
+    if (vrSql && !vrSql.includes("akademik")) {
+      database.run("PRAGMA foreign_keys=OFF;");
+      database.run(`
+        CREATE TABLE violation_records_new (
+          id TEXT PRIMARY KEY,
+          student_id TEXT NOT NULL,
+          division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+          halaqah_id TEXT,
+          teacher_id TEXT,
+          violation_id TEXT,
+          violation_name_snapshot TEXT NOT NULL,
+          points_snapshot INTEGER NOT NULL CHECK(points_snapshot > 0),
+          halaqah_name_snapshot TEXT NOT NULL,
+          teacher_name_snapshot TEXT NOT NULL,
+          student_class_snapshot TEXT NOT NULL,
+          academic_year_snapshot TEXT NOT NULL,
+          date TEXT NOT NULL,
+          time TEXT NOT NULL,
+          notes TEXT,
+          evidence_url TEXT,
+          status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'cancelled')),
+          created_by TEXT NOT NULL,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          cancelled_at TEXT,
+          cancelled_by TEXT,
+          cancellation_reason TEXT,
+          FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+          FOREIGN KEY (halaqah_id) REFERENCES halaqah(id) ON DELETE SET NULL,
+          FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE SET NULL,
+          FOREIGN KEY (violation_id) REFERENCES violations(id) ON DELETE SET NULL
+        );
+      `);
+      database.run("INSERT INTO violation_records_new SELECT * FROM violation_records;");
+      database.run("DROP TABLE violation_records;");
+      database.run("ALTER TABLE violation_records_new RENAME TO violation_records;");
+      database.run("PRAGMA foreign_keys=ON;");
+      console.log("Migrasi skema tabel violation_records selesai (akademik diaktifkan).");
+    }
+    const paSql = checkTable("positive_actions");
+    if (paSql && !paSql.includes("akademik")) {
+      database.run("PRAGMA foreign_keys=OFF;");
+      database.run(`
+        CREATE TABLE positive_actions_new (
+          id TEXT PRIMARY KEY,
+          code TEXT UNIQUE NOT NULL,
+          name TEXT NOT NULL,
+          division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+          category TEXT NOT NULL CHECK(category IN ('Tahfizh', 'Kedisiplinan', 'Ibadah & Shalat', 'Khidmat & Sosial', 'Prestasi', 'Akademik', 'Lainnya')),
+          description TEXT,
+          default_points_deduction INTEGER NOT NULL CHECK(default_points_deduction > 0),
+          status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+      database.run("INSERT INTO positive_actions_new (id, code, name, division, category, description, default_points_deduction, status, created_at) SELECT id, code, name, division, category, description, default_points_deduction, status, created_at FROM positive_actions;");
+      database.run("DROP TABLE positive_actions;");
+      database.run("ALTER TABLE positive_actions_new RENAME TO positive_actions;");
+      database.run("PRAGMA foreign_keys=ON;");
+      console.log("Migrasi skema tabel positive_actions selesai (akademik diaktifkan).");
+    }
+    const prSql = checkTable("positive_records");
+    if (prSql && !prSql.includes("akademik")) {
+      database.run("PRAGMA foreign_keys=OFF;");
+      database.run(`
+        CREATE TABLE positive_records_new (
+          id TEXT PRIMARY KEY,
+          student_id TEXT NOT NULL,
+          division TEXT NOT NULL DEFAULT 'tahfizh' CHECK(division IN ('tahfizh', 'kesantrian', 'akademik')),
+          action_id TEXT,
+          action_name_snapshot TEXT NOT NULL,
+          points_deducted INTEGER NOT NULL CHECK(points_deducted > 0),
+          halaqah_id TEXT,
+          halaqah_name_snapshot TEXT,
+          teacher_id TEXT,
+          teacher_name_snapshot TEXT NOT NULL,
+          student_class_snapshot TEXT NOT NULL,
+          academic_year_snapshot TEXT NOT NULL,
+          date TEXT NOT NULL,
+          time TEXT NOT NULL,
+          notes TEXT,
+          status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'cancelled')),
+          created_by TEXT NOT NULL,
+          created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          cancelled_at TEXT,
+          cancelled_by TEXT,
+          cancellation_reason TEXT,
+          FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+          FOREIGN KEY (action_id) REFERENCES positive_actions(id) ON DELETE SET NULL,
+          FOREIGN KEY (halaqah_id) REFERENCES halaqah(id) ON DELETE SET NULL,
+          FOREIGN KEY (teacher_id) REFERENCES teachers(id) ON DELETE SET NULL
+        );
+      `);
+      database.run("INSERT INTO positive_records_new SELECT * FROM positive_records;");
+      database.run("DROP TABLE positive_records;");
+      database.run("ALTER TABLE positive_records_new RENAME TO positive_records;");
+      database.run("PRAGMA foreign_keys=ON;");
+      console.log("Migrasi skema tabel positive_records selesai (akademik diaktifkan).");
+    }
     database.run("DELETE FROM violation_records WHERE student_id NOT IN (SELECT id FROM students);");
     database.run("DELETE FROM positive_records WHERE student_id NOT IN (SELECT id FROM students);");
     database.run("DELETE FROM student_halaqah_history WHERE student_id NOT IN (SELECT id FROM students);");
@@ -524,7 +650,7 @@ function runMigrations(database) {
       );
     `);
   } catch (e) {
-    console.error("Peringatan pembuatan tabel positive_actions/positive_records:", e?.message || e);
+    console.error("Peringatan pembuatan/migrasi tabel positive & violations:", e?.message || e);
   }
 }
 function addTombstone(id, entityType) {
@@ -698,43 +824,6 @@ function logAudit(options) {
 }
 
 // server/src/db/seed.ts
-function seedStudentsIfEmpty() {
-  const userCount = query("SELECT COUNT(*) as count FROM users")[0]?.count || 0;
-  if (userCount > 0) {
-    return;
-  }
-  const studentCount = query("SELECT COUNT(*) as count FROM students")[0]?.count || 0;
-  if (studentCount > 0) return;
-  const tombstones = getTombstones();
-  console.log("Tabel santri kosong, menginisialisasi 10 santri awal...");
-  const halaqahs = query("SELECT id, teacher_id FROM halaqah");
-  const students = [
-    { id: "std_001", nis: "2025001", name: "Muhammad Abdullah", class: "8A", gender: "L", halaqahId: "hlq_doha" },
-    { id: "std_002", nis: "2025002", name: "Ahmad Farhan Kamil", class: "8A", gender: "L", halaqahId: "hlq_doha" },
-    { id: "std_003", nis: "2025003", name: "Ibrahim Malik Ar-Rasyid", class: "7B", gender: "L", halaqahId: "hlq_doha" },
-    { id: "std_004", nis: "2025004", name: "Zaid bin Tsabit Robbani", class: "9B", gender: "L", halaqahId: "hlq_doha" },
-    { id: "std_005", nis: "2025005", name: "Hasan Al-Banna Pratama", class: "8B", gender: "L", halaqahId: "hlq_makkah" },
-    { id: "std_006", nis: "2025006", name: "Umar Dani Ramadhan", class: "7A", gender: "L", halaqahId: "hlq_makkah" },
-    { id: "std_007", nis: "2025007", name: "Salman Al-Farisi Munir", class: "7C", gender: "L", halaqahId: "hlq_makkah" },
-    { id: "std_008", nis: "2025008", name: "Ali Zainal Abidin", class: "9A", gender: "L", halaqahId: "hlq_madinah" },
-    { id: "std_009", nis: "2025009", name: "Bilal Habasyi Asy-Syahid", class: "8C", gender: "L", halaqahId: "hlq_madinah" },
-    { id: "std_010", nis: "2025010", name: "Usamah bin Zaid Akbar", class: "8A", gender: "L", halaqahId: "hlq_madinah" }
-  ];
-  for (const s of students) {
-    if (tombstones.has(s.id)) continue;
-    run(
-      `INSERT INTO students (id, student_number, name, class, gender, halaqah_id, academic_year, status)
-       VALUES (?, ?, ?, ?, ?, ?, '2025/2026', 'active')`,
-      [s.id, s.nis, s.name, s.class, s.gender, s.halaqahId]
-    );
-    const hInfo = halaqahs.find((h) => h.id === s.halaqahId);
-    run(
-      `INSERT INTO student_halaqah_history (id, student_id, halaqah_id, teacher_id, academic_year, class, start_date)
-       VALUES (?, ?, ?, ?, '2025/2026', ?, '2025-07-15')`,
-      ["hist_" + s.id, s.id, s.halaqahId, hInfo?.teacher_id || null, s.class]
-    );
-  }
-}
 var DEFAULT_KESANTRIAN_VIOLATIONS = [
   { id: "v_ks_001", code: "KS001", name: "Terlambat / Masbuq Shalat Berjamaah", cat: "Kedisiplinan", points: 5, desc: "Masbuq shalat fardhu berjamaah di masjid pesantren tanpa udzur syar'i" },
   { id: "v_ks_002", code: "KS002", name: "Masbuq Shalat Subuh / Kesiangan", cat: "Kedisiplinan", points: 8, desc: "Bangun terlambat sehingga masbuq pada shalat Subuh berjamaah" },
@@ -762,78 +851,33 @@ function seedKesantrianViolationsIfEmpty() {
       [v.id, v.code, v.name, v.cat, v.desc, v.points]
     );
   }
-  const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
-  const sampleKsRecords = [
-    {
-      id: "rec_ks_001",
-      studentId: "std_002",
-      // Ahmad Farhan Kamil
-      studentName: "Ahmad Farhan Kamil",
-      studentClass: "8A",
-      violationId: "v_ks_001",
-      violationName: "Terlambat / Masbuq Shalat Berjamaah",
-      points: 5,
-      date: today,
-      time: "04:50",
-      notes: "Masbuq 1 rakaat shalat Subuh di Masjid Utama",
-      supervisor: "Ustadz Ridwan (Wali Asrama)"
-    },
-    {
-      id: "rec_ks_002",
-      studentId: "std_001",
-      // Muhammad Abdullah
-      studentName: "Muhammad Abdullah",
-      studentClass: "8A",
-      violationId: "v_ks_004",
-      violationName: "Kamar / Lemari Asrama Berantakan & Jorok",
-      points: 3,
-      date: today,
-      time: "07:15",
-      notes: "Pakaian kotor berserakan di atas kasur Kamar Abu Bakar 02",
-      supervisor: "Bagian Kesantrian"
-    },
-    {
-      id: "rec_ks_003",
-      studentId: "std_005",
-      // Hasan Al-Banna Pratama
-      studentName: "Hasan Al-Banna Pratama",
-      studentClass: "8B",
-      violationId: "v_ks_006",
-      violationName: "Melewati Jam Malam Asrama (>22:30)",
-      points: 5,
-      date: today,
-      time: "23:05",
-      notes: "Masih berada di lorong asrama lantai 2 setelah jam malam",
-      supervisor: "Ustadz Pengawas Malam"
-    }
-  ];
-  for (const r of sampleKsRecords) {
-    if (tombstones.has(r.id) || tombstones.has(r.studentId)) continue;
-    const stdExists = query("SELECT id FROM students WHERE id = ?", [r.studentId]);
-    if (stdExists.length === 0) continue;
-    const exists = query("SELECT id FROM violation_records WHERE id = ?", [r.id]);
-    if (exists.length === 0) {
-      run(
-        `INSERT INTO violation_records (
-          id, student_id, division, halaqah_id, teacher_id, violation_id,
-          violation_name_snapshot, points_snapshot, halaqah_name_snapshot,
-          teacher_name_snapshot, student_class_snapshot, academic_year_snapshot,
-          date, time, notes, status, created_by
-        ) VALUES (?, ?, 'kesantrian', NULL, NULL, ?, ?, ?, 'Asrama & Kesantrian', ?, ?, '2025/2026', ?, ?, ?, 'active', 'Bagian Kesantrian')`,
-        [
-          r.id,
-          r.studentId,
-          r.violationId,
-          r.violationName,
-          r.points,
-          r.supervisor,
-          r.studentClass,
-          r.date,
-          r.time,
-          r.notes
-        ]
-      );
-    }
+}
+var DEFAULT_AKADEMIK_VIOLATIONS = [
+  { id: "v_ak_001", code: "AK001", name: "Terlambat Masuk Kelas / KBM (>10 menit)", cat: "Kedisiplinan", points: 3, desc: "Datang terlambat ke ruang kelas saat KBM berlangsung tanpa surat izin" },
+  { id: "v_ak_002", code: "AK002", name: "Tidak Mengerjakan Tugas / PR Sekolah", cat: "Tugas & PR", points: 5, desc: "Tidak menyelesaikan atau mengumpulkan tugas/PR yang diberikan guru" },
+  { id: "v_ak_003", code: "AK003", name: "Tidur / Mengantuk Saat KBM Berlangsung", cat: "Ketertiban Kelas", points: 4, desc: "Tidur atau tidak memperhatikan materi saat guru sedang menerangkan di kelas" },
+  { id: "v_ak_004", code: "AK004", name: "Tidak Membawa Buku Pelajaran / Modul", cat: "Kedisiplinan", points: 3, desc: "Tidak membawa buku paket, catatan, atau peralatan belajar saat pelajaran dimulai" },
+  { id: "v_ak_005", code: "AK005", name: "Alpa / Tidak Hadir KBM Tanpa Surat Izin", cat: "Kehadiran KBM", points: 10, desc: "Tidak hadir di kelas sekolah tanpa surat izin resmi dari bagian piket/sekolah" },
+  { id: "v_ak_006", code: "AK006", name: "Membuat Keributan / Gaduh di Kelas", cat: "Ketertiban Kelas", points: 5, desc: "Berbicara tidak pantas atau bercanda berlebihan sehingga mengganggu KBM" },
+  { id: "v_ak_007", code: "AK007", name: "Keluar Kelas Tanpa Izin Guru Pengajar", cat: "Ketertiban Kelas", points: 6, desc: "Meninggalkan ruang kelas saat jam KBM tanpa membawa kartu/izin guru" },
+  { id: "v_ak_008", code: "AK008", name: "Mencontek / Kerjasama Ilegal Saat Ujian", cat: "Ujian & Evaluasi", points: 25, desc: "Melakukan kecurangan, membawa contekan, atau bertukar jawaban saat asesmen/ujian" },
+  { id: "v_ak_009", code: "AK009", name: "Membawa Barang Non-Edukasi Terlarang ke Kelas", cat: "Kedisiplinan", points: 15, desc: "Membawa gawai, komik, atau mainan ke dalam ruang belajar tanpa izin" },
+  { id: "v_ak_010", code: "AK010", name: "Mencoret / Merusak Meja & Fasilitas Kelas", cat: "Kedisiplinan", points: 10, desc: "Merusak fasilitas sekolah, mencoret meja, papan tulis, atau dinding ruang kelas" },
+  { id: "v_ak_011", code: "AK011", name: "Memalsukan Tanda Tangan Guru / Wali Kelas", cat: "Adab & Akhlak", points: 30, desc: "Memalsukan tanda tangan guru pada lembar izin, buku tugas, atau buku raport" },
+  { id: "v_ak_012", code: "AK012", name: "Membolos Sekolah / Meninggalkan Area KBM", cat: "Kehadiran KBM", points: 15, desc: "Meninggalkan area sekolah saat jam belajar masih berlangsung" }
+];
+function seedAkademikViolationsIfEmpty() {
+  const akCount = query("SELECT COUNT(*) as count FROM violations WHERE division = 'akademik'")[0]?.count || 0;
+  if (akCount > 0) return;
+  const tombstones = getTombstones();
+  console.log("Menginisialisasi master pelanggaran divisi akademik (KBM/sekolah)...");
+  for (const v of DEFAULT_AKADEMIK_VIOLATIONS) {
+    if (tombstones.has(v.id)) continue;
+    run(
+      `INSERT INTO violations (id, code, name, division, category, description, default_points, status)
+       VALUES (?, ?, ?, 'akademik', ?, ?, ?, 'active')`,
+      [v.id, v.code, v.name, v.cat, v.desc, v.points]
+    );
   }
 }
 function seedNewRolesIfEmpty() {
@@ -867,39 +911,26 @@ var DEFAULT_POSITIVE_ACTIONS = [
   { id: "act_k_003", code: "KB-K03", name: "Khidmat Sosial Dapur / Membantu Operasional Pesantren", division: "kesantrian", cat: "Khidmat & Sosial", points: 10, desc: "Secara sukarela membantu penyiapan makan, kebersihan lingkungan, atau acara pesantren" },
   { id: "act_k_004", code: "KB-K04", name: "Amanah: Menemukan & Mengembalikan Barang Teman", division: "kesantrian", cat: "Khidmat & Sosial", points: 5, desc: "Menemukan barang berharga atau uang tercecer dan menyerahkannya ke bagian kesantrian" },
   { id: "act_k_005", code: "KB-K05", name: "Keteladanan Bangun Subuh Tanpa Dibangunkan (1 Pekan)", division: "kesantrian", cat: "Kedisiplinan", points: 5, desc: "Bangun mandiri dan membangunkan teman kamar shalat Subuh berjamaah selama 1 pekan" },
-  { id: "act_k_006", code: "KB-K06", name: "Prestasi Lomba Akademik / Bahasa / Olahraga", division: "kesantrian", cat: "Prestasi", points: 10, desc: "Membawa nama baik pesantren dalam kompetisi akademik, bahasa Arab/Inggris, atau olahraga" }
+  { id: "act_k_006", code: "KB-K06", name: "Prestasi Lomba Akademik / Bahasa / Olahraga", division: "kesantrian", cat: "Prestasi", points: 10, desc: "Membawa nama baik pesantren dalam kompetisi akademik, bahasa Arab/Inggris, atau olahraga" },
+  // Divisi Akademik (KBM / Sekolah)
+  { id: "act_a_001", code: "KB-A01", name: "Juara Olimpiade / Lomba Sains & Akademik", division: "akademik", cat: "Prestasi", points: 15, desc: "Meraih juara 1, 2, atau 3 pada kompetisi sains, matematika, atau akademik resmi" },
+  { id: "act_a_002", code: "KB-A02", name: "Nilai Ujian / Asesmen Sempurna (100)", division: "akademik", cat: "Prestasi", points: 10, desc: "Meraih nilai sempurna pada ujian semester, asesmen harian, atau kuis mata pelajaran" },
+  { id: "act_a_003", code: "KB-A03", name: "Santri Terdisiplin KBM Kelas (1 Bulan Penuh)", division: "akademik", cat: "Kedisiplinan", points: 5, desc: "Hadir 100% tepat waktu, tugas selalu tuntas, dan aktif dalam pembelajaran kelas" },
+  { id: "act_a_004", code: "KB-A04", name: "Tutor / Membimbing Teman Sekelas yang Tertinggal", division: "akademik", cat: "Khidmat & Sosial", points: 5, desc: "Membantu menjelaskan materi pelajaran kepada teman sekelas yang mengalami kesulitan" },
+  { id: "act_a_005", code: "KB-A05", name: "Presentasi Karya Ilmiah / Proyek KBM Terbaik", division: "akademik", cat: "Prestasi", points: 5, desc: "Menghasilkan proyek atau presentasi materi pelajaran dengan mutu terbaik di kelas" }
 ];
 function seedPositiveActionsIfEmpty() {
-  const count = query("SELECT COUNT(*) as count FROM positive_actions")[0]?.count || 0;
   const tombstones = getTombstones();
-  if (count === 0) {
-    console.log("Menginisialisasi master kegiatan baik (kebaikan & prestasi)...");
-    for (const a of DEFAULT_POSITIVE_ACTIONS) {
-      if (tombstones.has(a.id)) continue;
+  for (const a of DEFAULT_POSITIVE_ACTIONS) {
+    if (tombstones.has(a.id)) continue;
+    const exists = query("SELECT id FROM positive_actions WHERE id = ? OR code = ?", [a.id, a.code]);
+    if (exists.length === 0) {
       run(
         `INSERT INTO positive_actions (id, code, name, division, category, description, default_points_deduction, status)
          VALUES (?, ?, ?, ?, ?, ?, ?, 'active')`,
         [a.id, a.code, a.name, a.division, a.cat, a.desc, a.points]
       );
     }
-  }
-  const posCount = query("SELECT COUNT(*) as count FROM positive_records")[0]?.count || 0;
-  const std002Exists = query("SELECT id FROM students WHERE id = 'std_002'")[0];
-  if (posCount === 0 && std002Exists && !tombstones.has("pos_rec_001") && !tombstones.has("std_002")) {
-    const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
-    run(
-      `INSERT INTO positive_records (
-        id, student_id, division, action_id, action_name_snapshot, points_deducted,
-        halaqah_id, halaqah_name_snapshot, teacher_id, teacher_name_snapshot,
-        student_class_snapshot, academic_year_snapshot, date, time, notes, status, created_by
-      ) VALUES (
-        'pos_rec_001', 'std_002', 'kesantrian', 'act_k_002', 'Piket Kamar / Kebersihan Asrama Teladan', 5,
-        NULL, 'Asrama & Kesantrian', NULL, 'Ustadz Ridwan (Wali Asrama)',
-        '8A', '2025/2026', ?, '08:30', 'Kamar terbersih dan paling rapi pada inspeksi asrama pekan ini', 'active', 'Bagian Kesantrian'
-      )`,
-      [today]
-    );
-    console.log("Seeded sample positive record: -5 poin kesantrian for std_002");
   }
 }
 function seedDefaultAdminIfEmpty() {
@@ -921,6 +952,7 @@ function seedDatabase() {
   if (userCount > 0) {
     seedDefaultAdminIfEmpty();
     seedKesantrianViolationsIfEmpty();
+    seedAkademikViolationsIfEmpty();
     seedNewRolesIfEmpty();
     seedPositiveActionsIfEmpty();
     console.log("Database sudah memiliki data, melewati seeder awal.");
@@ -962,7 +994,9 @@ function seedDatabase() {
     { id: "usr_koor", name: "Ustadz Ridwan, Lc (Koordinator)", email: "koordinator@pesantren.id", pass: "koor123", role: "coordinator" },
     { id: "usr_ahmad", name: "Ustadz Ahmad Al-Hafizh", email: "ahmad@pesantren.id", pass: "ahmad123", role: "teacher" },
     { id: "usr_muhammad", name: "Ustadz Muhammad Al-Hafizh", email: "muhammad@pesantren.id", pass: "muhammad123", role: "teacher" },
-    { id: "usr_abdullah", name: "Ustadz Abdullah Al-Hafizh", email: "abdullah@pesantren.id", pass: "abdullah123", role: "teacher" }
+    { id: "usr_abdullah", name: "Ustadz Abdullah Al-Hafizh", email: "abdullah@pesantren.id", pass: "abdullah123", role: "teacher" },
+    { id: "usr_kesantrian", name: "Ustadz Zulkifli, S.Pd.I (Kepala Kesantrian)", email: "kesantrian@pesantren.id", pass: "kesantrian123", role: "kepala_kesantrian" },
+    { id: "usr_guru", name: "Ustadz Herman, S.Pd (Guru Pengajar)", email: "guru@pesantren.id", pass: "guru123", role: "guru" }
   ];
   for (const u of users) {
     if (tombstones.has(u.id)) continue;
@@ -970,32 +1004,6 @@ function seedDatabase() {
       `INSERT OR IGNORE INTO users (id, name, email, password_hash, role, status)
        VALUES (?, ?, ?, ?, ?, 'active')`,
       [u.id, u.name, u.email, u.pass, u.role]
-    );
-  }
-  const teachers = [
-    { id: "tch_ahmad", userId: "usr_ahmad", name: "Ustadz Ahmad Al-Hafizh", phone: "0812-3456-7801" },
-    { id: "tch_muhammad", userId: "usr_muhammad", name: "Ustadz Muhammad Al-Hafizh", phone: "0812-3456-7802" },
-    { id: "tch_abdullah", userId: "usr_abdullah", name: "Ustadz Abdullah Al-Hafizh", phone: "0812-3456-7803" }
-  ];
-  for (const t of teachers) {
-    if (tombstones.has(t.id)) continue;
-    run(
-      `INSERT OR IGNORE INTO teachers (id, user_id, name, phone, status)
-       VALUES (?, ?, ?, ?, 'active')`,
-      [t.id, t.userId, t.name, t.phone]
-    );
-  }
-  const halaqahs = [
-    { id: "hlq_doha", name: "Halaqah Doha", teacherId: "tch_ahmad", sched: "Ba'da Subuh & Ba'da Maghrib", loc: "Masjid Lantai 2 (Sayap Kanan)" },
-    { id: "hlq_makkah", name: "Halaqah Makkah", teacherId: "tch_muhammad", sched: "Ba'da Subuh & Ba'da Ashar", loc: "Ruang Tahfizh A" },
-    { id: "hlq_madinah", name: "Halaqah Madinah", teacherId: "tch_abdullah", sched: "Ba'da Subuh & Ba'da Isya", loc: "Gazebo Barat" }
-  ];
-  for (const h of halaqahs) {
-    if (tombstones.has(h.id)) continue;
-    run(
-      `INSERT OR IGNORE INTO halaqah (id, name, teacher_id, schedule, location, academic_year, status)
-       VALUES (?, ?, ?, ?, ?, '2025/2026', 'active')`,
-      [h.id, h.name, h.teacherId, h.sched, h.loc]
     );
   }
   const violations = [
@@ -1013,174 +1021,22 @@ function seedDatabase() {
   for (const v of violations) {
     if (tombstones.has(v.id)) continue;
     run(
-      `INSERT OR IGNORE INTO violations (id, code, name, category, description, default_points, status)
-       VALUES (?, ?, ?, ?, ?, ?, 'active')`,
+      `INSERT OR IGNORE INTO violations (id, code, name, division, category, description, default_points, status)
+       VALUES (?, ?, ?, 'tahfizh', ?, ?, ?, 'active')`,
       [v.id, v.code, v.name, v.cat, v.desc, v.points]
     );
   }
-  const students = [
-    { id: "std_001", nis: "2025001", name: "Muhammad Abdullah", class: "8A", gender: "L", halaqahId: "hlq_doha" },
-    { id: "std_002", nis: "2025002", name: "Ahmad Farhan Kamil", class: "8A", gender: "L", halaqahId: "hlq_doha" },
-    { id: "std_003", nis: "2025003", name: "Ibrahim Malik Ar-Rasyid", class: "7B", gender: "L", halaqahId: "hlq_doha" },
-    { id: "std_004", nis: "2025004", name: "Zaid bin Tsabit Robbani", class: "9B", gender: "L", halaqahId: "hlq_doha" },
-    { id: "std_005", nis: "2025005", name: "Hasan Al-Banna Pratama", class: "8B", gender: "L", halaqahId: "hlq_makkah" },
-    { id: "std_006", nis: "2025006", name: "Umar Dani Ramadhan", class: "7A", gender: "L", halaqahId: "hlq_makkah" },
-    { id: "std_007", nis: "2025007", name: "Salman Al-Farisi Munir", class: "7C", gender: "L", halaqahId: "hlq_makkah" },
-    { id: "std_008", nis: "2025008", name: "Ali Zainal Abidin", class: "9A", gender: "L", halaqahId: "hlq_madinah" },
-    { id: "std_009", nis: "2025009", name: "Bilal Habasyi Asy-Syahid", class: "8C", gender: "L", halaqahId: "hlq_madinah" },
-    { id: "std_010", nis: "2025010", name: "Usamah bin Zaid Akbar", class: "8A", gender: "L", halaqahId: "hlq_madinah" }
-  ];
-  for (const s of students) {
-    if (tombstones.has(s.id)) continue;
-    run(
-      `INSERT OR IGNORE INTO students (id, student_number, name, class, gender, halaqah_id, academic_year, status)
-       VALUES (?, ?, ?, ?, ?, ?, '2025/2026', 'active')`,
-      [s.id, s.nis, s.name, s.class, s.gender, s.halaqahId]
-    );
-    const hInfo = halaqahs.find((h) => h.id === s.halaqahId);
-    run(
-      `INSERT OR IGNORE INTO student_halaqah_history (id, student_id, halaqah_id, teacher_id, academic_year, class, start_date)
-       VALUES (?, ?, ?, ?, '2025/2026', ?, '2025-07-15')`,
-      ["hist_" + s.id, s.id, s.halaqahId, hInfo?.teacherId || null, s.class]
-    );
-  }
-  const today = (/* @__PURE__ */ new Date()).toISOString().split("T")[0];
-  const sampleRecords = [
-    {
-      id: "rec_001",
-      studentId: "std_001",
-      studentName: "Muhammad Abdullah",
-      studentClass: "8A",
-      halaqahId: "hlq_doha",
-      halaqahName: "Halaqah Doha",
-      teacherId: "tch_ahmad",
-      teacherName: "Ustadz Ahmad Al-Hafizh",
-      violationId: "v_002",
-      violationName: "Tidak murojaah mandiri",
-      points: 4,
-      date: today,
-      time: "05:45",
-      notes: "Lupa membawa buku mutabaah murojaah"
-    },
-    {
-      id: "rec_002",
-      studentId: "std_001",
-      studentName: "Muhammad Abdullah",
-      studentClass: "8A",
-      halaqahId: "hlq_doha",
-      halaqahName: "Halaqah Doha",
-      teacherId: "tch_ahmad",
-      teacherName: "Ustadz Ahmad Al-Hafizh",
-      violationId: "v_004",
-      violationName: "Alpa / Tidak hadir tanpa izin",
-      points: 10,
-      date: today,
-      time: "18:15",
-      notes: "Tidak hadir sesi ba'da maghrib"
-    },
-    {
-      id: "rec_003",
-      studentId: "std_001",
-      studentName: "Muhammad Abdullah",
-      studentClass: "8A",
-      halaqahId: "hlq_doha",
-      halaqahName: "Halaqah Doha",
-      teacherId: "tch_ahmad",
-      teacherName: "Ustadz Ahmad Al-Hafizh",
-      violationId: "v_005",
-      violationName: "Tidak mencapai target bulanan",
-      points: 15,
-      date: "2026-08-28",
-      time: "06:00",
-      notes: "Target Juz 29 baru terselesaikan 12 halaman"
-    },
-    {
-      id: "rec_004",
-      studentId: "std_001",
-      studentName: "Muhammad Abdullah",
-      studentClass: "8A",
-      halaqahId: "hlq_doha",
-      halaqahName: "Halaqah Doha",
-      teacherId: "tch_ahmad",
-      teacherName: "Ustadz Ahmad Al-Hafizh",
-      violationId: "v_007",
-      violationName: "Bercanda berlebihan / mengganggu",
-      points: 8,
-      date: "2026-08-25",
-      time: "18:30",
-      notes: "Bercanda saat menyimak setoran teman"
-    },
-    {
-      id: "rec_005",
-      studentId: "std_005",
-      studentName: "Hasan Al-Banna Pratama",
-      studentClass: "8B",
-      halaqahId: "hlq_makkah",
-      halaqahName: "Halaqah Makkah",
-      teacherId: "tch_muhammad",
-      teacherName: "Ustadz Muhammad Al-Hafizh",
-      violationId: "v_001",
-      violationName: "Terlambat halaqah (>10 menit)",
-      points: 3,
-      date: today,
-      time: "05:40",
-      notes: "Terlambat 15 menit"
-    },
-    {
-      id: "rec_006",
-      studentId: "std_008",
-      studentName: "Ali Zainal Abidin",
-      studentClass: "9A",
-      halaqahId: "hlq_madinah",
-      halaqahName: "Halaqah Madinah",
-      teacherId: "tch_abdullah",
-      teacherName: "Ustadz Abdullah Al-Hafizh",
-      violationId: "v_003",
-      violationName: "Tidak setor hafalan baru",
-      points: 3,
-      date: today,
-      time: "19:40",
-      notes: "Hafalan baru belum mutqin"
-    }
-  ];
-  for (const r of sampleRecords) {
-    if (tombstones.has(r.id) || tombstones.has(r.studentId)) continue;
-    run(
-      `INSERT OR IGNORE INTO violation_records (
-        id, student_id, halaqah_id, teacher_id, violation_id,
-        violation_name_snapshot, points_snapshot, halaqah_name_snapshot,
-        teacher_name_snapshot, student_class_snapshot, academic_year_snapshot,
-        date, time, notes, status, created_by
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '2025/2026', ?, ?, ?, 'active', 'Seeder System')`,
-      [
-        r.id,
-        r.studentId,
-        r.halaqahId,
-        r.teacherId,
-        r.violationId,
-        r.violationName,
-        r.points,
-        r.halaqahName,
-        r.teacherName,
-        r.studentClass,
-        r.date,
-        r.time,
-        r.notes
-      ]
-    );
-  }
-  seedStudentsIfEmpty();
   seedKesantrianViolationsIfEmpty();
-  seedNewRolesIfEmpty();
+  seedAkademikViolationsIfEmpty();
   seedPositiveActionsIfEmpty();
   logAudit({
     userName: "System Initialization",
     action: "SEED_DATABASE",
     tableName: "all",
-    newData: { status: "Database berhasil diinisialisasi dengan data awal realistis" }
+    newData: { status: "Database master aturan dan konfigurasi sistem siap digunakan." }
   });
   persistDb(false);
-  console.log("Seeding SQLite lokal selesai!");
+  console.log("Inisialisasi database master berhasil.");
 }
 
 // server/src/routes/auth.ts
@@ -1750,9 +1606,11 @@ router5.get("/", (req, res) => {
              COALESCE(SUM(CASE WHEN vr.status = 'active' THEN vr.points_snapshot ELSE 0 END), 0) as gross_total_points,
              COALESCE(SUM(CASE WHEN vr.status = 'active' AND vr.division = 'tahfizh' THEN vr.points_snapshot ELSE 0 END), 0) as gross_tahfizh_points,
              COALESCE(SUM(CASE WHEN vr.status = 'active' AND vr.division = 'kesantrian' THEN vr.points_snapshot ELSE 0 END), 0) as gross_kesantrian_points,
+             COALESCE(SUM(CASE WHEN vr.status = 'active' AND vr.division = 'akademik' THEN vr.points_snapshot ELSE 0 END), 0) as gross_akademik_points,
              COUNT(CASE WHEN vr.status = 'active' THEN 1 ELSE NULL END) as violation_count,
              COUNT(CASE WHEN vr.status = 'active' AND vr.division = 'tahfizh' THEN 1 ELSE NULL END) as tahfizh_violation_count,
-             COUNT(CASE WHEN vr.status = 'active' AND vr.division = 'kesantrian' THEN 1 ELSE NULL END) as kesantrian_violation_count
+             COUNT(CASE WHEN vr.status = 'active' AND vr.division = 'kesantrian' THEN 1 ELSE NULL END) as kesantrian_violation_count,
+             COUNT(CASE WHEN vr.status = 'active' AND vr.division = 'akademik' THEN 1 ELSE NULL END) as akademik_violation_count
       FROM students s
       LEFT JOIN halaqah h ON h.id = s.halaqah_id
       LEFT JOIN teachers t ON t.id = h.teacher_id
@@ -1765,6 +1623,7 @@ router5.get("/", (req, res) => {
              COALESCE(SUM(points_deducted), 0) as total_deducted,
              COALESCE(SUM(CASE WHEN division = 'tahfizh' THEN points_deducted ELSE 0 END), 0) as tahfizh_deducted,
              COALESCE(SUM(CASE WHEN division = 'kesantrian' THEN points_deducted ELSE 0 END), 0) as kesantrian_deducted,
+             COALESCE(SUM(CASE WHEN division = 'akademik' THEN points_deducted ELSE 0 END), 0) as akademik_deducted,
              COUNT(*) as positive_count
       FROM positive_records
       WHERE status = 'active'
@@ -1777,25 +1636,31 @@ router5.get("/", (req, res) => {
     const enriched = students.map((s) => {
       const grossTahfizh = Number(s.gross_tahfizh_points || 0);
       const grossKesantrian = Number(s.gross_kesantrian_points || 0);
+      const grossAkademik = Number(s.gross_akademik_points || 0);
       const dInfo = deductionsMap.get(s.id) || {};
       const deductedTahfizh = Number(dInfo.tahfizh_deducted || 0);
       const deductedKesantrian = Number(dInfo.kesantrian_deducted || 0);
+      const deductedAkademik = Number(dInfo.akademik_deducted || 0);
       const totalDeductions = Number(dInfo.total_deducted || 0);
       const positiveCount = Number(dInfo.positive_count || 0);
       const netTahfizh = Math.max(0, grossTahfizh - deductedTahfizh);
       const netKesantrian = Math.max(0, grossKesantrian - deductedKesantrian);
-      const totalNetPts = netTahfizh + netKesantrian;
+      const netAkademik = Math.max(0, grossAkademik - deductedAkademik);
+      const totalNetPts = netTahfizh + netKesantrian + netAkademik;
       const st = getStatusForPoints(totalNetPts, thresholds);
       return {
         ...s,
         total_points: totalNetPts,
         tahfizh_points: netTahfizh,
         kesantrian_points: netKesantrian,
-        gross_total_points: grossTahfizh + grossKesantrian,
+        akademik_points: netAkademik,
+        gross_total_points: grossTahfizh + grossKesantrian + grossAkademik,
         gross_tahfizh_points: grossTahfizh,
         gross_kesantrian_points: grossKesantrian,
+        gross_akademik_points: grossAkademik,
         tahfizh_deductions: deductedTahfizh,
         kesantrian_deductions: deductedKesantrian,
+        akademik_deductions: deductedAkademik,
         total_deductions: totalDeductions,
         positive_count: positiveCount,
         status_info: st
@@ -1843,12 +1708,15 @@ router5.get("/portal/:nis", (req, res) => {
     const activeRecords = records.filter((r) => r.status === "active");
     const grossTahfizh = activeRecords.filter((r) => r.division === "tahfizh").reduce((sum, r) => sum + Number(r.points_snapshot || 0), 0);
     const grossKesantrian = activeRecords.filter((r) => r.division === "kesantrian").reduce((sum, r) => sum + Number(r.points_snapshot || 0), 0);
+    const grossAkademik = activeRecords.filter((r) => r.division === "akademik").reduce((sum, r) => sum + Number(r.points_snapshot || 0), 0);
     const activePosRecords = positiveRecords.filter((r) => r.status === "active");
     const deductedTahfizh = activePosRecords.filter((r) => r.division === "tahfizh").reduce((sum, r) => sum + Number(r.points_deducted || 0), 0);
     const deductedKesantrian = activePosRecords.filter((r) => r.division === "kesantrian").reduce((sum, r) => sum + Number(r.points_deducted || 0), 0);
+    const deductedAkademik = activePosRecords.filter((r) => r.division === "akademik").reduce((sum, r) => sum + Number(r.points_deducted || 0), 0);
     const netTahfizh = Math.max(0, grossTahfizh - deductedTahfizh);
     const netKesantrian = Math.max(0, grossKesantrian - deductedKesantrian);
-    const totalNetPoints = netTahfizh + netKesantrian;
+    const netAkademik = Math.max(0, grossAkademik - deductedAkademik);
+    const totalNetPoints = netTahfizh + netKesantrian + netAkademik;
     const statusInfo = getStatusForPoints(totalNetPoints, thresholds);
     const settings = get("SELECT * FROM school_settings LIMIT 1") || null;
     return res.json({
@@ -1857,12 +1725,15 @@ router5.get("/portal/:nis", (req, res) => {
         total_points: totalNetPoints,
         tahfizh_points: netTahfizh,
         kesantrian_points: netKesantrian,
-        gross_total_points: grossTahfizh + grossKesantrian,
+        akademik_points: netAkademik,
+        gross_total_points: grossTahfizh + grossKesantrian + grossAkademik,
         gross_tahfizh_points: grossTahfizh,
         gross_kesantrian_points: grossKesantrian,
+        gross_akademik_points: grossAkademik,
         tahfizh_deductions: deductedTahfizh,
         kesantrian_deductions: deductedKesantrian,
-        total_deductions: deductedTahfizh + deductedKesantrian,
+        akademik_deductions: deductedAkademik,
+        total_deductions: deductedTahfizh + deductedKesantrian + deductedAkademik,
         status_info: statusInfo
       },
       records,
@@ -1904,12 +1775,15 @@ router5.get("/:id", (req, res) => {
     const activeRecords = records.filter((r) => r.status === "active");
     const grossTahfizh = activeRecords.filter((r) => r.division === "tahfizh").reduce((sum, r) => sum + Number(r.points_snapshot || 0), 0);
     const grossKesantrian = activeRecords.filter((r) => r.division === "kesantrian").reduce((sum, r) => sum + Number(r.points_snapshot || 0), 0);
+    const grossAkademik = activeRecords.filter((r) => r.division === "akademik").reduce((sum, r) => sum + Number(r.points_snapshot || 0), 0);
     const activePosRecords = positiveRecords.filter((r) => r.status === "active");
     const deductedTahfizh = activePosRecords.filter((r) => r.division === "tahfizh").reduce((sum, r) => sum + Number(r.points_deducted || 0), 0);
     const deductedKesantrian = activePosRecords.filter((r) => r.division === "kesantrian").reduce((sum, r) => sum + Number(r.points_deducted || 0), 0);
+    const deductedAkademik = activePosRecords.filter((r) => r.division === "akademik").reduce((sum, r) => sum + Number(r.points_deducted || 0), 0);
     const netTahfizh = Math.max(0, grossTahfizh - deductedTahfizh);
     const netKesantrian = Math.max(0, grossKesantrian - deductedKesantrian);
-    const totalNetPoints = netTahfizh + netKesantrian;
+    const netAkademik = Math.max(0, grossAkademik - deductedAkademik);
+    const totalNetPoints = netTahfizh + netKesantrian + netAkademik;
     const statusInfo = getStatusForPoints(totalNetPoints, thresholds);
     const history = query(`
       SELECT sh.*, h.name as halaqah_name, t.name as teacher_name
@@ -1925,12 +1799,15 @@ router5.get("/:id", (req, res) => {
         total_points: totalNetPoints,
         tahfizh_points: netTahfizh,
         kesantrian_points: netKesantrian,
-        gross_total_points: grossTahfizh + grossKesantrian,
+        akademik_points: netAkademik,
+        gross_total_points: grossTahfizh + grossKesantrian + grossAkademik,
         gross_tahfizh_points: grossTahfizh,
         gross_kesantrian_points: grossKesantrian,
+        gross_akademik_points: grossAkademik,
         tahfizh_deductions: deductedTahfizh,
         kesantrian_deductions: deductedKesantrian,
-        total_deductions: deductedTahfizh + deductedKesantrian,
+        akademik_deductions: deductedAkademik,
+        total_deductions: deductedTahfizh + deductedKesantrian + deductedAkademik,
         status_info: statusInfo
       },
       records,
@@ -2241,10 +2118,10 @@ router6.post("/", async (req, res) => {
     if (!name || !category || defaultPoints === void 0 || defaultPoints <= 0) {
       return res.status(400).json({ error: "Nama, kategori, dan poin (>0) wajib diisi" });
     }
-    const cleanDivision = division === "kesantrian" ? "kesantrian" : "tahfizh";
+    const cleanDivision = division === "kesantrian" ? "kesantrian" : division === "akademik" ? "akademik" : "tahfizh";
     let cleanCode = code ? code.trim().toUpperCase() : "";
     if (!cleanCode) {
-      const prefix = cleanDivision === "kesantrian" ? "KS" : "P";
+      const prefix = cleanDivision === "kesantrian" ? "KS" : cleanDivision === "akademik" ? "AK" : "P";
       const last = get(`SELECT code FROM violations WHERE code LIKE "${prefix}%" ORDER BY code DESC LIMIT 1`);
       if (last && last.code.startsWith(prefix)) {
         const numPart = parseInt(last.code.replace(prefix, ""), 10);
@@ -2537,7 +2414,7 @@ router7.post("/", async (req, res) => {
     if (!violation) {
       return res.status(404).json({ error: "Jenis pelanggaran tidak ditemukan" });
     }
-    const finalDivision = division === "kesantrian" ? "kesantrian" : violation.division === "kesantrian" ? "kesantrian" : "tahfizh";
+    const finalDivision = division === "kesantrian" ? "kesantrian" : division === "akademik" ? "akademik" : violation.division || "tahfizh";
     const actualHalaqahId = halaqahId || student.halaqah_id;
     let halaqahName = "Tanpa Halaqah";
     let teacherId = null;
@@ -2566,6 +2443,17 @@ router7.post("/", async (req, res) => {
       } else {
         teacherName = createdBy || "Bagian Kesantrian";
       }
+    } else if (finalDivision === "akademik") {
+      if (locationName && locationName.trim()) {
+        halaqahName = locationName.trim();
+      } else {
+        halaqahName = "Ruang Kelas / KBM";
+      }
+      if (supervisorName && supervisorName.trim()) {
+        teacherName = supervisorName.trim();
+      } else {
+        teacherName = createdBy || "Guru Mata Pelajaran";
+      }
     }
     const today = /* @__PURE__ */ new Date();
     const finalDate = date || today.toISOString().split("T")[0];
@@ -2582,8 +2470,8 @@ router7.post("/", async (req, res) => {
         recordId,
         student.id,
         finalDivision,
-        finalDivision === "kesantrian" ? null : actualHalaqahId || null,
-        finalDivision === "kesantrian" ? null : teacherId || null,
+        finalDivision === "tahfizh" ? actualHalaqahId || null : null,
+        finalDivision === "tahfizh" ? teacherId || null : null,
         violation.id,
         violation.name,
         // Snapshot name
@@ -2606,13 +2494,15 @@ router7.post("/", async (req, res) => {
     const totalPointsRow = get(`
       SELECT COALESCE(SUM(points_snapshot), 0) as total,
              COALESCE(SUM(CASE WHEN division = 'tahfizh' THEN points_snapshot ELSE 0 END), 0) as tahfizh_points,
-             COALESCE(SUM(CASE WHEN division = 'kesantrian' THEN points_snapshot ELSE 0 END), 0) as kesantrian_points
+             COALESCE(SUM(CASE WHEN division = 'kesantrian' THEN points_snapshot ELSE 0 END), 0) as kesantrian_points,
+             COALESCE(SUM(CASE WHEN division = 'akademik' THEN points_snapshot ELSE 0 END), 0) as akademik_points
       FROM violation_records
       WHERE student_id = ? AND status = 'active'
     `, [student.id]);
     const newTotalPoints = Number(totalPointsRow?.total || 0);
     const tahfizhPoints = Number(totalPointsRow?.tahfizh_points || 0);
     const kesantrianPoints = Number(totalPointsRow?.kesantrian_points || 0);
+    const akademikPoints = Number(totalPointsRow?.akademik_points || 0);
     logAudit({
       userName: createdBy,
       action: "RECORD_VIOLATION",
@@ -2625,7 +2515,8 @@ router7.post("/", async (req, res) => {
         points: violation.default_points,
         newTotalPoints,
         tahfizhPoints,
-        kesantrianPoints
+        kesantrianPoints,
+        akademikPoints
       }
     });
     await persistDb();
@@ -2638,7 +2529,8 @@ router7.post("/", async (req, res) => {
       points: violation.default_points,
       newTotalPoints,
       tahfizhPoints,
-      kesantrianPoints
+      kesantrianPoints,
+      akademikPoints
     });
   } catch (err) {
     console.error("Record violation error:", err);
@@ -2749,18 +2641,22 @@ router7.get("/stats", (req, res) => {
     const tahfizhTotalPoints = get('SELECT COALESCE(SUM(vr.points_snapshot), 0) as total FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.status = "active" AND vr.division = "tahfizh"')?.total || 0;
     const kesantrianRecordsCount = get('SELECT COUNT(*) as count FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.status = "active" AND vr.division = "kesantrian"')?.count || 0;
     const kesantrianTotalPoints = get('SELECT COALESCE(SUM(vr.points_snapshot), 0) as total FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.status = "active" AND vr.division = "kesantrian"')?.total || 0;
+    const akademikRecordsCount = get('SELECT COUNT(*) as count FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.status = "active" AND vr.division = "akademik"')?.count || 0;
+    const akademikTotalPoints = get('SELECT COALESCE(SUM(vr.points_snapshot), 0) as total FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.status = "active" AND vr.division = "akademik"')?.total || 0;
     const todayCount = get(`SELECT COUNT(*) as count FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.date = ? AND vr.status = "active" ${divisionFilterSql}`, [today])?.count || 0;
     const monthCount = get(`SELECT COUNT(*) as count FROM violation_records vr JOIN students s ON s.id = vr.student_id AND s.status = "active" WHERE vr.date LIKE ? AND vr.status = "active" ${divisionFilterSql}`, [`${currentMonth}%`])?.count || 0;
     const totalPositiveRecords = get(`SELECT COUNT(*) as count FROM positive_records pr JOIN students s ON s.id = pr.student_id AND s.status = "active" WHERE pr.status = "active" ${hasDivisionFilter ? `AND pr.division = '${division}'` : ""}`)?.count || 0;
     const totalPointsDeducted = get(`SELECT COALESCE(SUM(pr.points_deducted), 0) as total FROM positive_records pr JOIN students s ON s.id = pr.student_id AND s.status = "active" WHERE pr.status = "active" ${hasDivisionFilter ? `AND pr.division = '${division}'` : ""}`)?.total || 0;
     const tahfizhDeductedPoints = get('SELECT COALESCE(SUM(pr.points_deducted), 0) as total FROM positive_records pr JOIN students s ON s.id = pr.student_id AND s.status = "active" WHERE pr.status = "active" AND pr.division = "tahfizh"')?.total || 0;
     const kesantrianDeductedPoints = get('SELECT COALESCE(SUM(pr.points_deducted), 0) as total FROM positive_records pr JOIN students s ON s.id = pr.student_id AND s.status = "active" WHERE pr.status = "active" AND pr.division = "kesantrian"')?.total || 0;
+    const akademikDeductedPoints = get('SELECT COALESCE(SUM(pr.points_deducted), 0) as total FROM positive_records pr JOIN students s ON s.id = pr.student_id AND s.status = "active" WHERE pr.status = "active" AND pr.division = "akademik"')?.total || 0;
     const thresholds = query("SELECT * FROM point_thresholds ORDER BY sort_order ASC");
     const deductionsList = query(`
       SELECT student_id,
              COALESCE(SUM(points_deducted), 0) as total_deducted,
              COALESCE(SUM(CASE WHEN division = 'tahfizh' THEN points_deducted ELSE 0 END), 0) as tahfizh_deducted,
-             COALESCE(SUM(CASE WHEN division = 'kesantrian' THEN points_deducted ELSE 0 END), 0) as kesantrian_deducted
+             COALESCE(SUM(CASE WHEN division = 'kesantrian' THEN points_deducted ELSE 0 END), 0) as kesantrian_deducted,
+             COALESCE(SUM(CASE WHEN division = 'akademik' THEN points_deducted ELSE 0 END), 0) as akademik_deducted
       FROM positive_records
       WHERE status = 'active'
       GROUP BY student_id
@@ -2774,6 +2670,7 @@ router7.get("/stats", (req, res) => {
              COALESCE(SUM(vr.points_snapshot), 0) as gross_total_points,
              COALESCE(SUM(CASE WHEN vr.division = 'tahfizh' THEN vr.points_snapshot ELSE 0 END), 0) as gross_tahfizh_points,
              COALESCE(SUM(CASE WHEN vr.division = 'kesantrian' THEN vr.points_snapshot ELSE 0 END), 0) as gross_kesantrian_points,
+             COALESCE(SUM(CASE WHEN vr.division = 'akademik' THEN vr.points_snapshot ELSE 0 END), 0) as gross_akademik_points,
              COUNT(vr.id) as violation_count
       FROM students s
       LEFT JOIN halaqah h ON h.id = s.halaqah_id
@@ -2786,11 +2683,14 @@ router7.get("/stats", (req, res) => {
       const d = deductionsMap.get(s.id) || {};
       const deductedTahfizh = Number(d.tahfizh_deducted || 0);
       const deductedKesantrian = Number(d.kesantrian_deducted || 0);
+      const deductedAkademik = Number(d.akademik_deducted || 0);
       const grossTahfizh = Number(s.gross_tahfizh_points || 0);
       const grossKesantrian = Number(s.gross_kesantrian_points || 0);
+      const grossAkademik = Number(s.gross_akademik_points || 0);
       const netTahfizh = Math.max(0, grossTahfizh - deductedTahfizh);
       const netKesantrian = Math.max(0, grossKesantrian - deductedKesantrian);
-      const netTotal = hasDivisionFilter ? division === "tahfizh" ? netTahfizh : netKesantrian : netTahfizh + netKesantrian;
+      const netAkademik = Math.max(0, grossAkademik - deductedAkademik);
+      const netTotal = hasDivisionFilter ? division === "tahfizh" ? netTahfizh : division === "kesantrian" ? netKesantrian : netAkademik : netTahfizh + netKesantrian + netAkademik;
       return {
         id: s.id,
         name: s.name,
@@ -2801,9 +2701,11 @@ router7.get("/stats", (req, res) => {
         gross_points: Number(s.gross_total_points || 0),
         tahfizh_points: netTahfizh,
         kesantrian_points: netKesantrian,
+        akademik_points: netAkademik,
         tahfizh_deductions: deductedTahfizh,
         kesantrian_deductions: deductedKesantrian,
-        total_deductions: deductedTahfizh + deductedKesantrian,
+        akademik_deductions: deductedAkademik,
+        total_deductions: deductedTahfizh + deductedKesantrian + deductedAkademik,
         violation_count: s.violation_count
       };
     });
@@ -2856,10 +2758,13 @@ router7.get("/stats", (req, res) => {
         tahfizhTotalPoints,
         kesantrianRecordsCount,
         kesantrianTotalPoints,
+        akademikRecordsCount,
+        akademikTotalPoints,
         totalPositiveRecords,
         totalPointsDeducted,
         tahfizhDeductedPoints,
         kesantrianDeductedPoints,
+        akademikDeductedPoints,
         netTotalPoints: Math.max(0, totalPoints - totalPointsDeducted)
       },
       topStudents,
@@ -3043,7 +2948,7 @@ router10.get("/", (req, res) => {
     const { division, category, status } = req.query;
     let sql = "SELECT * FROM positive_actions WHERE 1=1";
     const params = [];
-    if (division && (division === "tahfizh" || division === "kesantrian")) {
+    if (division && division !== "all") {
       sql += " AND division = ?";
       params.push(division);
     }
@@ -3203,7 +3108,7 @@ router11.get("/", (req, res) => {
       sql += " AND pr.student_id = ?";
       params.push(student_id);
     }
-    if (division && (division === "tahfizh" || division === "kesantrian")) {
+    if (division && division !== "all") {
       sql += " AND pr.division = ?";
       params.push(division);
     }
@@ -3290,7 +3195,7 @@ router11.post("/", async (req, res) => {
     const now = /* @__PURE__ */ new Date();
     const recordDate = date || now.toISOString().split("T")[0];
     const recordTime = time || now.toTimeString().substring(0, 5);
-    const halaqahName = division === "kesantrian" ? locationName || "Asrama & Kesantrian" : student.halaqah_name || "Halaqah Mandiri";
+    const halaqahName = division === "kesantrian" ? locationName || "Asrama & Kesantrian" : division === "akademik" ? locationName || "Ruang Kelas / KBM" : student.halaqah_name || "Halaqah Mandiri";
     const teacherName = supervisorName || student.teacher_name || actorName || "Pembimbing";
     const recordId = "pos_" + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
     run(
