@@ -1,32 +1,66 @@
-# React + TypeScript + Vite
+# Sistem Pencatatan IMBS (Imam Muzani Boarding School)
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Sistem Informasi Terpadu Pencatatan Pelanggaran, Poin Positif/Prestasi, dan Kedisiplinan Santri Halaqah Al-Qur'an & Kesantrian IMBS.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Panduan Menjalankan Sistem (Localhost)
 
-## React Compiler
+### 1. Prasyarat
+- **Node.js** (v18 atau lebih baru)
+- **NPM** atau package manager yang kompatibel
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 2. Menjalankan Server & Aplikasi Sekaligus
+Jalankan perintah berikut di root folder:
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm run dev:all
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Perintah ini akan menjalankan dua service secara bersamaan:
+1. **Backend Server (Express + SQLite)**:
+   - Alamat: [http://localhost:5000](http://localhost:5000)
+   - API Endpoint: [http://localhost:5000/api](http://localhost:5000/api)
+2. **Frontend Client (Vite + React)**:
+   - Alamat Local: [http://localhost:5173](http://localhost:5173)
+   - Akses Perangkat Lain di Jaringan yang Sama (LAN/WiFi): `http://<IP_KOMPUTER>:5173` (otomatis aktif via `host: true` di Vite)
+
+---
+
+## 🛠️ Script yang Tersedia
+
+| Perintah | Deskripsi |
+| :--- | :--- |
+| `npm run dev:all` | Menjalankan Backend Server (port 5000) dan Frontend Vite (port 5173) secara bersamaan |
+| `npm run dev` | Menjalankan Frontend Vite saja |
+| `npm run server` | Menjalankan Backend Server Node.js (tsx watch) saja |
+| `npm run build` | Melakukan build frontend dan bundling backend untuk production / Vercel deployment |
+| `npm run lint` | Menjalankan audit kode dengan Oxlint |
+
+---
+
+## 📁 Struktur Proyek
+
+```text
+├── api/                # Output bundle serverless untuk Vercel
+├── public/             # Asset statis, logo, favicon, dan web manifest
+├── server/
+│   ├── data/           # Database SQLite lokal (halaqah.db - gitignored)
+│   └── src/            # Express routes, controllers, DB schema, dan cloud storage provider
+├── src/                # Kode sumber React (Pages, Components, Context, Services)
+├── .env.example        # Contoh variabel lingkungan
+├── .gitignore          # Konfigurasi proteksi file credential, build, dan DB lokal
+├── package.json        # Dependensi dan script NPM
+└── vite.config.ts      # Konfigurasi Vite & proxy backend
+```
+
+---
+
+## 🔒 Konfigurasi Keamanan & Gitignore
+
+File-file berikut telah diproteksi dan dikecualikan dari Git repository secara otomatis:
+- `.env*` (kredensial dan variabel rahasia)
+- `node_modules/`
+- `dist/` dan hasil build
+- `server/data/*.db*` (database SQLite lokal santri/transaksi)
+- Log dan temporary files

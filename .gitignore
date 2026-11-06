@@ -12,21 +12,24 @@ build/
 
 # Environment & Credentials
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 *.pem
 
 # SQLite Databases & Storage
 server/data/*.db
 server/data/*.db-journal
+server/data/*.db-wal
+server/data/*.db-shm
 server/data/*.sqlite
 server/data/*.sqlite-journal
 server/data/*.sqlite3
 *.db
 *.sqlite
 *.sqlite3
+*.db-wal
+*.db-shm
+!server/data/.gitkeep
 
 # Logs & Diagnostics
 logs/
@@ -48,6 +51,7 @@ lerna-debug.log*
 *.sw?
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # Temporary, Cache & Scratch Dirs
 scratch/
@@ -57,3 +61,4 @@ temp/
 coverage/
 *.tsbuildinfo
 vite.config.ts.timestamp*
+

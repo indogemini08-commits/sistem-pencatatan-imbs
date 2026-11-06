@@ -795,7 +795,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   </div>
                   <ol className="list-decimal list-inside space-y-1.5 text-xs text-slate-600 pl-1">
                     <li>Buka dashboard Vercel Anda di <code className="bg-white px-1.5 py-0.5 rounded text-brand-700 font-semibold border border-brand-200">vercel.com</code></li>
-                    <li>Pilih proyek Anda <strong className="text-slate-800">sistem-pelanggaran</strong></li>
+                    <li>Pilih proyek Anda <strong className="text-slate-800">sistem-pencatatan-imbs</strong></li>
                     <li>Klik tab <strong className="text-slate-800">Storage</strong> di bagian atas</li>
                     <li>Klik tombol <strong className="text-slate-800">Connect Store</strong> &rarr; pilih <strong className="text-brand-700">Postgres (Neon)</strong> atau <strong className="text-brand-700">KV</strong></li>
                     <li>Klik <strong className="text-slate-800">Connect</strong>. Vercel akan otomatis menyuntikkan database cloud bersama tanpa perlu konfigurasi manual!</li>

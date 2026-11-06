@@ -1,6 +1,6 @@
 {
-  "short_name": "Poin Halaqah",
-  "name": "Sistem Pelanggaran & Poin Santri Halaqah",
+  "short_name": "Pencatatan IMBS",
+  "name": "Sistem Pencatatan IMBS - Pelanggaran & Poin Santri",
   "icons": [
     {
       "src": "/logo.svg",
