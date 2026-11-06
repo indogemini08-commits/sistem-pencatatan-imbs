@@ -437,27 +437,27 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
       </div>
 
       {/* Filter and Search Card */}
-      <div className="bg-white dark:bg-[#111726]/90 p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] shadow-sm space-y-3 sm:space-y-4 transition-colors">
+      <div className="glass-panel p-3.5 sm:p-5 space-y-3 sm:space-y-4">
         <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
           {/* Global Search */}
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari nama, NIS, atau halaqah..."
-              className="w-full min-h-[44px] text-xs sm:text-sm pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              className="w-full min-h-[44px] text-xs sm:text-sm pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.14] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white/90 dark:bg-[#161d31]/90 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 font-semibold shadow-inner"
             />
           </div>
 
           {/* Filter Kelas */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 sm:whitespace-nowrap">Kelas:</span>
+            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 sm:whitespace-nowrap">Kelas:</span>
             <select
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
-              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100"
+              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.14] focus:border-indigo-500 bg-white/90 dark:bg-[#161d31]/90 text-slate-900 dark:text-slate-100 font-semibold shadow-inner"
             >
               <option value="all">Semua Kelas</option>
               {uniqueClasses.map((c) => (
@@ -470,11 +470,11 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
           {/* Filter Halaqah */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 sm:whitespace-nowrap">Halaqah:</span>
+            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 sm:whitespace-nowrap">Halaqah:</span>
             <select
               value={selectedHalaqah}
               onChange={(e) => setSelectedHalaqah(e.target.value)}
-              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100"
+              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.14] focus:border-indigo-500 bg-white/90 dark:bg-[#161d31]/90 text-slate-900 dark:text-slate-100 font-semibold shadow-inner"
             >
               <option value="all">Semua Halaqah</option>
               {halaqahs.map((h) => (
@@ -487,7 +487,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
           {/* Sort Control */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 sm:whitespace-nowrap">Urutkan:</span>
+            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 sm:whitespace-nowrap">Urutkan:</span>
             <select
               value={`${sortBy}-${sortDir}`}
               onChange={(e) => {
@@ -495,7 +495,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 setSortBy(by);
                 setSortDir(dir as 'asc' | 'desc');
               }}
-              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100"
+              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.14] focus:border-indigo-500 bg-white/90 dark:bg-[#161d31]/90 text-slate-900 dark:text-slate-100 font-semibold shadow-inner"
             >
               <option value="name-asc">Nama (A - Z)</option>
               <option value="name-desc">Nama (Z - A)</option>
@@ -508,9 +508,9 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
         </div>
 
         {/* Total stats count indicator */}
-        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-white/[0.06]">
+        <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 font-semibold pt-2 border-t border-slate-200/80 dark:border-white/[0.08]">
           <span>
-            Menampilkan <strong>{filteredStudents.length}</strong> dari <strong>{students.length}</strong> santri
+            Menampilkan <strong className="text-slate-900 dark:text-white font-black">{filteredStudents.length}</strong> dari <strong className="text-slate-900 dark:text-white font-black">{students.length}</strong> santri
           </span>
           {(search || selectedClass !== 'all' || selectedHalaqah !== 'all') && (
             <button
@@ -519,7 +519,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 setSelectedClass('all');
                 setSelectedHalaqah('all');
               }}
-              className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-semibold min-h-[36px] px-2 flex items-center cursor-pointer"
+              className="text-indigo-600 dark:text-indigo-400 hover:underline font-bold"
             >
               Reset Filter
             </button>
@@ -658,17 +658,17 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
       {/* ========================================== */}
       {/* DESKTOP TABLE VIEW (hidden md:block)       */}
       {/* ========================================== */}
-      <div className="hidden md:block bg-white dark:bg-[#111726]/90 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] shadow-sm overflow-hidden transition-colors">
+      <div className="hidden md:block glass-panel overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm">
-            <thead className="bg-slate-50/80 dark:bg-slate-900/70 text-slate-500 dark:text-slate-400 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200/90 dark:border-white/[0.08]">
+            <thead className="bg-slate-100/90 dark:bg-white/[0.06] text-slate-800 dark:text-slate-200 uppercase text-[11px] font-black tracking-wider border-b-2 border-slate-200/90 dark:border-white/[0.1]">
               <tr>
                 <th className="px-4 py-3.5 text-center w-10">
                   <input
                     type="checkbox"
                     checked={allFilteredSelected}
                     onChange={toggleSelectAll}
-                    className="w-4 h-4 rounded border-slate-300 dark:border-white/[0.1] text-rose-600 focus:ring-rose-500 cursor-pointer"
+                    className="w-4 h-4 rounded border-slate-300 dark:border-white/[0.14] text-rose-600 focus:ring-rose-500 cursor-pointer"
                     title="Pilih semua"
                   />
                 </th>
@@ -682,46 +682,46 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 <th className="px-4 py-3.5 text-center w-28">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
+            <tbody className="divide-y divide-slate-200/70 dark:divide-white/[0.06]">
               {filteredStudents.map((s, idx) => (
-                <tr key={s.id} className={`hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-colors ${selectedIds.has(s.id) ? 'bg-rose-50/50 dark:bg-rose-950/20' : ''}`}>
+                <tr key={s.id} className={`hover:bg-indigo-50/70 dark:hover:bg-indigo-500/10 transition-colors ${selectedIds.has(s.id) ? 'bg-rose-50/70 dark:bg-rose-950/30' : ''}`}>
                   <td className="px-4 py-3.5 text-center">
                     <input
                       type="checkbox"
                       checked={selectedIds.has(s.id)}
                       onChange={() => toggleSelectStudent(s.id)}
-                      className="w-4 h-4 rounded border-slate-300 dark:border-white/[0.1] text-rose-600 focus:ring-rose-500 cursor-pointer"
+                      className="w-4 h-4 rounded border-slate-300 dark:border-white/[0.14] text-rose-600 focus:ring-rose-500 cursor-pointer"
                     />
                   </td>
-                  <td className="px-4 py-3.5 text-center font-bold text-slate-400">
+                  <td className="px-4 py-3.5 text-center font-black text-slate-700 dark:text-slate-300">
                     {idx + 1}
                   </td>
-                  <td className="px-4 py-3.5 font-mono text-slate-600 dark:text-slate-400 font-semibold">
+                  <td className="px-4 py-3.5 font-mono text-slate-700 dark:text-slate-300 font-bold">
                     {s.student_number}
                   </td>
                   <td className="px-4 py-3.5">
                     <button
                       onClick={() => onSelectStudent(s.id)}
-                      className="font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left cursor-pointer"
+                      className="font-black text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left cursor-pointer"
                     >
                       {s.name}
                     </button>
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">
                       {s.gender === 'L' ? 'Laki-laki' : 'Perempuan'} • TA: {s.academic_year}
                     </p>
                   </td>
                   <td className="px-4 py-3.5 text-center">
-                    <span className="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-300">
+                    <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-black text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 shadow-xs">
                       {s.class}
                     </span>
                   </td>
                   <td className="px-4 py-3.5">
-                    <p className="font-semibold text-slate-800 dark:text-slate-200">{s.halaqah_name || 'Tanpa Halaqah'}</p>
-                    <p className="text-[11px] text-slate-500 dark:text-slate-400">{s.teacher_name || '-'}</p>
+                    <p className="font-bold text-slate-900 dark:text-white">{s.halaqah_name || 'Tanpa Halaqah'}</p>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">{s.teacher_name || '-'}</p>
                   </td>
                   <td className="px-4 py-3.5 text-center">
                     <div className="inline-flex items-center gap-1.5 flex-wrap justify-center">
-                      <span className="inline-block px-2.5 py-1 rounded-full text-xs font-black bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/40">
+                      <span className="inline-block px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-900/50 shadow-xs">
                         {s.total_points} Poin
                       </span>
                       {(s.total_deductions || 0) > 0 && (

@@ -159,7 +159,22 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#0b0f19] saas-ambient-light dark:saas-ambient-dark text-slate-900 dark:text-slate-100 flex transition-colors duration-200 selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0b0f19] saas-ambient-light dark:saas-ambient-dark text-slate-900 dark:text-slate-100 flex transition-colors duration-200 selection:bg-indigo-500 selection:text-white relative overflow-x-hidden">
+      {/* Persistent Ambient Background Mesh Lighting for True Glassmorphism */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        {/* Top-Left Glowing Violet/Purple Orb */}
+        <div className="absolute -top-36 -left-36 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-purple-600/25 via-indigo-600/20 to-transparent blur-[110px] dark:from-purple-600/35 dark:via-indigo-500/25" />
+
+        {/* Top-Right Glowing Cyan/Sky Orb */}
+        <div className="absolute -top-24 -right-24 w-[450px] h-[450px] rounded-full bg-gradient-to-bl from-cyan-400/25 via-blue-600/20 to-transparent blur-[110px] dark:from-cyan-500/30 dark:via-blue-600/25" />
+
+        {/* Center Glowing Fuchsia/Indigo Bloom */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[550px] h-[380px] rounded-full bg-gradient-to-tr from-fuchsia-600/15 via-purple-600/15 to-transparent blur-[130px] dark:from-fuchsia-600/25 dark:via-purple-600/20" />
+
+        {/* Bottom-Left Indigo/Emerald Bloom */}
+        <div className="absolute -bottom-36 left-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-indigo-700/20 via-sky-600/15 to-transparent blur-[120px] dark:from-indigo-700/35 dark:via-sky-600/20" />
+      </div>
+
       {/* Sidebar for Desktop (Fixed full height) & Mobile Drawer */}
       <Sidebar
         currentTab={currentTab}
@@ -178,7 +193,7 @@ export function App() {
       />
 
       {/* Main Content Shell (Smoothly offset by lg:pl-64 on desktop) */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-64">
+      <div className="flex-1 flex flex-col min-w-0 lg:pl-64 relative z-10">
         {/* Top Navbar */}
         <Navbar
           currentUser={currentUser}

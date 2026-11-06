@@ -222,7 +222,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess, settings, onOpenPa
               <div className="absolute -inset-1.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 rounded-3xl blur-md opacity-35" />
 
               {/* Main Card Container */}
-              <div className="relative bg-white/95 dark:bg-[#111726]/95 backdrop-blur-2xl rounded-3xl p-6 sm:p-9 shadow-2xl border border-slate-200/80 dark:border-white/[0.08] text-slate-900 dark:text-white transition-colors duration-300">
+              <div className="relative glass-panel p-6 sm:p-9 shadow-2xl text-slate-900 dark:text-white transition-colors duration-300">
                 
                 {/* Header within Card */}
                 <div className="mb-6">

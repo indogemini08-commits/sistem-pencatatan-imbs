@@ -225,9 +225,9 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
       {/* Grid: Riwayat Pelanggaran/Kebaikan & History Halaqah */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Records Box */}
-        <div className="lg:col-span-2 bg-white dark:bg-[#111726]/90 rounded-3xl border border-slate-200/90 dark:border-white/[0.08] shadow-sm overflow-hidden transition-colors">
+        <div className="lg:col-span-2 glass-panel overflow-hidden">
           {/* Sub Tab Switcher: Pelanggaran vs Kebaikan */}
-          <div className="px-5 pt-4 border-b border-slate-100 dark:border-white/[0.08] flex items-center gap-2 bg-slate-50/60 dark:bg-slate-900/40">
+          <div className="px-5 pt-4 border-b border-slate-200/80 dark:border-white/[0.08] flex items-center gap-2 bg-slate-50/60 dark:bg-slate-900/40">
             <button
               onClick={() => setActiveHistoryTab('violations')}
               className={`flex items-center gap-2 py-2.5 px-4 font-bold text-xs sm:text-sm border-b-2 transition-all cursor-pointer ${
@@ -500,8 +500,8 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
         </div>
 
         {/* Riwayat Halaqah Santri */}
-        <div className="bg-white dark:bg-[#111726]/90 rounded-3xl border border-slate-200/90 dark:border-white/[0.08] shadow-sm p-5 sm:p-6 space-y-4 transition-colors">
-          <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100 dark:border-white/[0.08]">
+        <div className="glass-panel p-5 sm:p-6 space-y-4">
+          <div className="flex items-center gap-2.5 pb-3 border-b border-slate-200/80 dark:border-white/[0.08]">
             <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400">
               <BookOpen className="w-5 h-5" />
             </div>

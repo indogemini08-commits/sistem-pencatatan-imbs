@@ -685,7 +685,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
             {/* VIEW 2: Desktop Table (screens >= md) */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm">
-                <thead className="bg-slate-50/80 dark:bg-[#161d31] text-slate-500 dark:text-slate-400 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200 dark:border-white/[0.08]">
+                <thead className="bg-slate-100/90 dark:bg-white/[0.06] text-slate-800 dark:text-slate-200 uppercase text-[11px] font-black tracking-wider border-b-2 border-slate-200/90 dark:border-white/[0.1]">
                   <tr>
                     <th className="px-4 py-3.5 text-center w-10">
                       <input

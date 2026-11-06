@@ -273,16 +273,16 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
         {portalData && (
           <div className="space-y-6 sm:space-y-8 animate-scale-in">
             {/* Header Hasil & Tombol Reset */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111726] p-4 rounded-2xl border border-white/[0.08]">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 glass-panel p-4">
               <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-300">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Menampilkan Data Santri: <strong className="text-white">{portalData.student.name}</strong> (NIS: {portalData.student.student_number})</span>
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
+                <span>Menampilkan Data Santri: <strong className="text-white font-black">{portalData.student.name}</strong> (NIS: {portalData.student.student_number})</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={handleExportPDF}
-                  className="px-3.5 py-2 text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl transition-all flex items-center gap-1.5 shadow-soft cursor-pointer"
+                  className="px-3.5 py-2 text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl transition-all flex items-center gap-1.5 shadow-md shadow-indigo-600/25 cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Cetak Lembar PDF</span>
@@ -290,7 +290,7 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                 <button
                   type="button"
                   onClick={handleResetSearch}
-                  className="px-3.5 py-2 text-xs font-bold text-slate-300 hover:text-white bg-[#161d31] hover:bg-[#1e2742] border border-white/[0.1] rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+                  className="px-3.5 py-2 text-xs font-bold text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 border border-white/15 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Cari Santri Lain</span>
@@ -299,7 +299,7 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
             </div>
 
             {/* Profile & Status Card */}
-            <div className="bg-[#111726] rounded-3xl border border-white/[0.08] p-6 sm:p-8 space-y-6 shadow-xl">
+            <div className="glass-panel p-6 sm:p-8 space-y-6 shadow-2xl">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 {/* Left: Avatar & Bio */}
                 <div className="flex items-start sm:items-center gap-4">

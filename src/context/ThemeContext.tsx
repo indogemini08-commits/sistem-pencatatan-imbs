@@ -20,12 +20,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (savedTheme === 'light' || savedTheme === 'dark') {
         return savedTheme;
       }
-      // Default to user's system preference or dark/light
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-      }
     }
-    return 'light';
+    // Default to 'dark' to showcase modern LearnZimTPS SaaS aesthetic out-of-the-box
+    return 'dark';
   });
 
   useEffect(() => {

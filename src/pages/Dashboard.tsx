@@ -621,18 +621,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Total Santri */}
         <div className="saas-card-glow p-4 sm:p-5">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">
+            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
               Total Santri
             </span>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center shadow-inner shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-purple-100/90 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300 flex items-center justify-center ring-1 ring-purple-400/40 shadow-xs shrink-0">
               <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
           <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
             {stats?.summary.totalStudents || 0}
           </p>
-          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-emerald-700 dark:text-emerald-400 font-extrabold">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_#10b981]" />
             <span>Santri aktif pondok</span>
           </div>
         </div>
@@ -640,17 +640,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Poin Netto Terpadu */}
         <div className="saas-card-glow p-4 sm:p-5">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">
+            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
               Poin Netto
             </span>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center shadow-inner shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-rose-100/90 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 flex items-center justify-center ring-1 ring-rose-400/40 shadow-xs shrink-0">
               <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
           <p className="mt-2 text-2xl sm:text-3xl font-black text-rose-600 dark:text-rose-400">
             {stats?.summary.netTotalPoints !== undefined ? stats.summary.netTotalPoints : (stats?.summary.totalPoints || 0)}
           </p>
-          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
+          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 font-bold truncate">
             <span>{stats?.summary.totalRecords || 0} kasus aktif</span>
           </div>
         </div>
@@ -658,17 +658,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Poin Dikurangi (Reward) */}
         <div className="saas-card-glow p-4 sm:p-5">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">
+            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
               Poin Dikurangi
             </span>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shadow-inner shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-emerald-100/90 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 flex items-center justify-center ring-1 ring-emerald-400/40 shadow-xs shrink-0">
               <Award className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
           <p className="mt-2 text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400">
             -{stats?.summary.totalPointsDeducted || 0}
           </p>
-          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-emerald-600 dark:text-emerald-400 font-bold truncate">
+          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-emerald-700 dark:text-emerald-400 font-extrabold truncate">
             <span>{stats?.summary.totalPositiveRecords || 0} kebaikan tercatat</span>
           </div>
         </div>
@@ -676,17 +676,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Divisi Tahfizh */}
         <div className="saas-card-glow p-4 sm:p-5">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">
+            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
               Divisi Tahfizh
             </span>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400 flex items-center justify-center shadow-inner shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-cyan-100/90 dark:bg-cyan-950/80 text-cyan-700 dark:text-cyan-300 flex items-center justify-center ring-1 ring-cyan-400/40 shadow-xs shrink-0">
               <BookOpen className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
           <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
             {stats?.summary.tahfizhTotalPoints || 0}
           </p>
-          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
+          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 font-semibold truncate">
             <span>Ded: -{stats?.summary.tahfizhDeductedPoints || 0} • {stats?.summary.tahfizhRecordsCount || 0} kjdn</span>
           </div>
         </div>
@@ -694,17 +694,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Divisi Kesantrian */}
         <div className="saas-card-glow p-4 sm:p-5 col-span-2 sm:col-span-1">
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">
+            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-wider truncate">
               Divisi Kesantrian
             </span>
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center shadow-inner shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-amber-100/90 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 flex items-center justify-center ring-1 ring-amber-400/40 shadow-xs shrink-0">
               <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
           </div>
           <p className="mt-2 text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
             {stats?.summary.kesantrianTotalPoints || 0}
           </p>
-          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 font-medium truncate">
+          <div className="mt-1 flex items-center gap-1.5 text-[11px] text-slate-600 dark:text-slate-300 font-semibold truncate">
             <span>Ded: -{stats?.summary.kesantrianDeductedPoints || 0} • {stats?.summary.kesantrianRecordsCount || 0} kjdn</span>
           </div>
         </div>
@@ -1042,7 +1042,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm">
-                <thead className="bg-slate-50/80 dark:bg-white/[0.03] text-slate-500 dark:text-slate-400 font-bold uppercase text-[11px] border-b border-slate-200/80 dark:border-white/[0.08]">
+                <thead className="bg-slate-100/90 dark:bg-white/[0.06] text-slate-800 dark:text-slate-200 font-black uppercase text-[11px] border-b-2 border-slate-200/90 dark:border-white/[0.1]">
                   <tr>
                     <th className="px-4 py-3 text-center w-12">#</th>
                     <th className="px-4 py-3">Nama Santri</th>

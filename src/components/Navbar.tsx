@@ -127,13 +127,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-20 h-16 sm:h-18 bg-white/80 dark:bg-[#0b101d]/85 backdrop-blur-xl border-b border-slate-200/90 dark:border-white/[0.08] px-4 sm:px-6 lg:px-8 flex items-center justify-between shadow-xs transition-colors duration-200">
+    <header className="sticky top-0 z-20 h-16 sm:h-18 bg-white/75 dark:bg-[#0b101d]/80 backdrop-blur-2xl border-b border-slate-200/90 dark:border-white/[0.1] px-4 sm:px-6 lg:px-8 flex items-center justify-between shadow-xs transition-colors duration-200">
       {/* Left: Mobile Toggle & Desktop Breadcrumb */}
       <div className="flex items-center gap-3 sm:gap-4">
         {/* Mobile Hamburger Menu */}
         <button
           onClick={onToggleSidebar}
-          className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] border border-slate-200/80 dark:border-white/[0.08] transition-colors"
+          className="lg:hidden p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.08] border border-slate-300/80 dark:border-white/[0.1] transition-colors"
           aria-label="Buka Menu"
         >
           <Menu className="w-5 h-5" />
@@ -163,14 +163,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Desktop Active Section Title with Icon */}
         <div className="hidden lg:flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/60 shadow-xs">
+          <div className="p-2 rounded-xl bg-indigo-100/90 dark:bg-indigo-950/70 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/80 shadow-xs">
             <TabIcon className="w-4 h-4" />
           </div>
           <div>
-            <h1 className="text-sm font-extrabold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-sm font-black text-slate-900 dark:text-white tracking-tight">
               {activeTabMeta.label}
             </h1>
-            <p className="text-[11px] text-slate-400 dark:text-slate-400 font-medium">
+            <p className="text-[11px] text-slate-600 dark:text-slate-300 font-semibold">
               {settings?.school_name || "Pesantren Tahfizh Al-Qur'an"}
             </p>
           </div>
@@ -179,7 +179,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Middle: SaaS Search Bar (Desktop) */}
       <div className="hidden xl:flex items-center relative min-w-[260px] 2xl:min-w-[320px]">
-        <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+        <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
         <input
           type="text"
           placeholder="Cari santri, NIS, halaqah..."
@@ -188,14 +188,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               onSelectTab('students');
             }
           }}
-          className="w-full pl-9 pr-4 py-1.5 text-xs rounded-full bg-slate-100/90 dark:bg-white/[0.06] border border-slate-200/90 dark:border-white/[0.08] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+          className="w-full pl-9 pr-4 py-1.5 text-xs rounded-full bg-white/80 dark:bg-white/[0.08] border border-slate-300 dark:border-white/[0.14] text-slate-900 dark:text-white placeholder:text-slate-500 dark:placeholder:text-slate-400 font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-inner transition-all"
         />
       </div>
 
       {/* Right: Academic Year Pill, Quick Action, Theme, Notifications & Profile */}
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Academic Year Pill */}
-        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100/90 dark:bg-white/[0.06] border border-slate-200/90 dark:border-white/[0.08] text-xs text-slate-700 dark:text-slate-300 font-semibold shadow-xs">
+        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/85 dark:bg-white/[0.08] border border-slate-300 dark:border-white/[0.12] text-xs text-slate-800 dark:text-slate-200 font-bold shadow-xs">
           <Calendar className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
           <span>T.A. {settings?.current_academic_year || '2025/2026'}</span>
         </div>

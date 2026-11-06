@@ -241,25 +241,28 @@ export const HalaqahPage: React.FC<HalaqahPageProps> = ({
         {halaqahs.map((h) => (
           <div
             key={h.id}
-            className="bg-white dark:bg-[#111726]/90 rounded-3xl border border-slate-200/90 dark:border-white/[0.08] p-6 shadow-sm hover:shadow-card hover:border-indigo-500/40 transition-all flex flex-col justify-between space-y-4"
+            className="glass-panel p-6 flex flex-col justify-between space-y-4 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300"
           >
+            {/* Ambient Corner Flare */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-indigo-500/10 via-purple-500/5 to-transparent rounded-bl-full pointer-events-none" />
+
             <div>
               <div className="flex items-start justify-between">
-                <div className="p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 ring-1 ring-indigo-500/20">
+                <div className="p-3.5 rounded-2xl bg-gradient-to-tr from-indigo-600/20 via-purple-600/20 to-transparent dark:from-indigo-500/30 dark:via-purple-500/20 text-indigo-700 dark:text-indigo-300 ring-1 ring-indigo-500/30 shadow-inner">
                   <BookOpen className="w-6 h-6" />
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5">
                   <button
                     onClick={() => handleOpenEdit(h)}
                     title="Edit Nama Halaqah & Pengampu"
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-colors cursor-pointer"
+                    className="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-300 bg-slate-100/90 dark:bg-white/10 hover:bg-amber-100/90 dark:hover:bg-amber-950/50 border border-slate-200 dark:border-white/10 transition-all cursor-pointer shadow-xs active:scale-95"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setHalaqahToDelete(h)}
                     title="Hapus Halaqah"
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
+                    className="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:text-rose-700 dark:hover:text-rose-300 bg-slate-100/90 dark:bg-white/10 hover:bg-rose-100/90 dark:hover:bg-rose-950/50 border border-slate-200 dark:border-white/10 transition-all cursor-pointer shadow-xs active:scale-95"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -267,35 +270,38 @@ export const HalaqahPage: React.FC<HalaqahPageProps> = ({
               </div>
 
               {/* Halaqah Title */}
-              <h2 className="text-xl font-black text-slate-900 dark:text-white mt-3 tracking-tight">
+              <h2 className="text-xl font-black text-slate-900 dark:text-white mt-3.5 tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                 {h.name}
               </h2>
-              <p className="text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 px-2.5 py-0.5 rounded-md inline-block mt-1 border border-indigo-200 dark:border-indigo-900/40">
-                Muhafizh: {h.teacher_name || 'Belum Ditentukan'}
-              </p>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-indigo-100/90 dark:bg-indigo-950/80 border border-indigo-300/80 dark:border-indigo-800 text-xs font-bold text-indigo-950 dark:text-indigo-200 mt-2 shadow-xs">
+                <UserCheck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                <span>Muhafizh: {h.teacher_name || 'Belum Ditentukan'}</span>
+              </div>
 
-              {/* Meta details */}
-              <div className="mt-4 space-y-2 text-xs text-slate-600 dark:text-slate-400">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Jadwal: {h.schedule || "Ba'da Subuh"}</span>
+              {/* Meta details with High Contrast Pills */}
+              <div className="mt-4 space-y-2 text-xs font-semibold text-slate-800 dark:text-slate-200">
+                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-100/80 dark:bg-white/[0.04] border border-slate-200/70 dark:border-white/[0.08]">
+                  <Clock className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                  <span className="truncate">Jadwal: {h.schedule || "Ba'da Subuh"}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Lokasi: {h.location || 'Masjid'}</span>
+                <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-100/80 dark:bg-white/[0.04] border border-slate-200/70 dark:border-white/[0.08]">
+                  <MapPin className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                  <span className="truncate">Lokasi: {h.location || 'Masjid'}</span>
                 </div>
               </div>
             </div>
 
-            {/* Bottom Card Action: View Students */}
-            <div className="pt-4 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700 dark:text-slate-300">
-                <Users className="w-4 h-4 text-indigo-500" />
-                <span>{h.student_count || 0} Santri Terdaftar</span>
+            {/* Bottom Card Action: View Students with Interactive Button */}
+            <div className="pt-4 border-t border-slate-200/80 dark:border-white/10 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-black text-slate-900 dark:text-white">
+                <div className="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                  {h.student_count || 0}
+                </div>
+                <span>Santri Terdaftar</span>
               </div>
               <button
                 onClick={() => handleViewStudents(h)}
-                className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 flex items-center gap-1 cursor-pointer"
+                className="px-3.5 py-1.5 rounded-xl font-bold text-xs bg-indigo-50 hover:bg-gradient-to-r hover:from-purple-600 hover:to-indigo-600 hover:text-white dark:bg-indigo-950/70 dark:hover:bg-indigo-600 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/60 transition-all flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95"
               >
                 <Eye className="w-3.5 h-3.5" />
                 <span>Lihat Santri</span>
@@ -476,58 +482,68 @@ export const HalaqahPage: React.FC<HalaqahPageProps> = ({
       {/* ==================================================== */}
       {viewStudentsHalaqah &&
         createPortal(
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-md overflow-y-auto animate-scale-in">
-            <div className="relative w-full max-w-lg m-auto h-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] flex flex-col bg-white dark:bg-[#111726] rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200/90 dark:border-white/[0.08] overflow-hidden transition-colors">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/[0.08] flex-shrink-0">
-              <div>
-                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                  Santri {viewStudentsHalaqah.name}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Muhafizh: {viewStudentsHalaqah.teacher_name || '-'}
-                </p>
-              </div>
-              <button
-                onClick={() => setViewStudentsHalaqah(null)}
-                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="mt-4 divide-y divide-slate-100 dark:divide-white/[0.06] overflow-y-auto pr-1 flex-1">
-              {studentsInHalaqah.map((s) => (
-                <div key={s.id} className="py-2.5 flex items-center justify-between">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-scale-in">
+            <div className="relative w-full max-w-lg m-auto h-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] flex flex-col bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-2xl rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-white/60 dark:border-white/15 overflow-hidden transition-colors">
+              <div className="flex items-center justify-between pb-3.5 border-b border-slate-200/80 dark:border-white/10 flex-shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 flex items-center justify-center ring-1 ring-indigo-500/30">
+                    <Users className="w-5 h-5" />
+                  </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">{s.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      NIS: {s.student_number} • Kelas {s.class}
+                    <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
+                      Santri {viewStudentsHalaqah.name}
+                    </h3>
+                    <p className="text-xs font-semibold text-indigo-700 dark:text-indigo-300">
+                      Muhafizh: {viewStudentsHalaqah.teacher_name || '-'}
                     </p>
                   </div>
-                  <span className="text-xs font-bold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 px-2.5 py-0.5 rounded-md border border-rose-200 dark:border-rose-900/40">
-                    {s.total_points} Poin
-                  </span>
                 </div>
-              ))}
+                <button
+                  onClick={() => setViewStudentsHalaqah(null)}
+                  className="p-1.5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
 
-              {studentsInHalaqah.length === 0 && !loadingStudents && (
-                <p className="text-center py-8 text-slate-400 text-xs">
-                  Belum ada santri terdaftar di halaqah ini.
-                </p>
-              )}
-            </div>
+              <div className="mt-4 divide-y divide-slate-100 dark:divide-white/[0.08] overflow-y-auto pr-1 flex-1 space-y-1">
+                {studentsInHalaqah.map((s) => (
+                  <div key={s.id} className="py-3 px-2 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-white/[0.04] rounded-xl transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                        {s.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold text-slate-900 dark:text-white">{s.name}</p>
+                        <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                          NIS: {s.student_number} • Kelas {s.class}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-xs font-black text-rose-700 dark:text-rose-300 bg-rose-100 dark:bg-rose-950/70 px-2.5 py-1 rounded-xl border border-rose-300 dark:border-rose-900/60 shadow-xs">
+                      {s.total_points} Poin
+                    </span>
+                  </div>
+                ))}
 
-            <div className="pt-4 border-t border-slate-100 dark:border-white/[0.08] text-right flex-shrink-0">
-              <button
-                onClick={() => setViewStudentsHalaqah(null)}
-                className="px-4 py-2 text-xs font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl transition-colors cursor-pointer"
-              >
-                Tutup
-              </button>
+                {studentsInHalaqah.length === 0 && !loadingStudents && (
+                  <div className="py-12 text-center text-slate-500 dark:text-slate-400 text-xs sm:text-sm">
+                    Belum ada santri terdaftar di halaqah ini.
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-4 border-t border-slate-200/80 dark:border-white/10 text-right flex-shrink-0">
+                <button
+                  onClick={() => setViewStudentsHalaqah(null)}
+                  className="px-5 py-2.5 text-xs font-black bg-slate-200/80 dark:bg-white/10 hover:bg-slate-300 dark:hover:bg-white/20 text-slate-800 dark:text-white rounded-xl transition-all cursor-pointer"
+                >
+                  Tutup
+                </button>
+              </div>
             </div>
-          </div>
-        </div>,
-        document.body
+          </div>,
+          document.body
       )}
 
       {/* Confirm Delete */}
