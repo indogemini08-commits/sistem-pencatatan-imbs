@@ -7,8 +7,42 @@
     @apply bg-slate-50 text-slate-900 min-h-screen antialiased transition-colors duration-200;
   }
   .dark body {
-    @apply bg-[#091122] text-slate-100;
+    @apply bg-[#0b0f19] text-slate-100;
   }
+}
+
+/* SaaS Ambient Background Glows */
+.saas-ambient-dark {
+  background-color: #0b0f19;
+  background-image: 
+    radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 15%, rgba(168, 85, 247, 0.07) 0%, transparent 35%),
+    radial-gradient(circle at 50% 85%, rgba(59, 130, 246, 0.06) 0%, transparent 45%);
+}
+
+.saas-ambient-light {
+  background-color: #f8fafc;
+  background-image: 
+    radial-gradient(circle at 15% 10%, rgba(224, 231, 255, 0.6) 0%, transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(243, 232, 255, 0.5) 0%, transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(239, 246, 255, 0.6) 0%, transparent 50%);
+}
+
+/* Glassmorphism & SaaS Card Utilities */
+.saas-card {
+  @apply bg-white dark:bg-[#111726]/90 border border-slate-200/90 dark:border-white/[0.07] rounded-2xl sm:rounded-3xl shadow-sm hover:shadow-md transition-all duration-300;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.saas-card-glow {
+  @apply bg-white dark:bg-[#111726]/90 border border-slate-200/90 dark:border-white/[0.08] rounded-2xl sm:rounded-3xl shadow-sm transition-all duration-300;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.dark .saas-card-glow:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.15);
 }
 
 /* Custom Scrollbar */
@@ -28,10 +62,10 @@
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #1e293b;
 }
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #334155;
 }
 
 /* Universal Responsive Modal Utilities */

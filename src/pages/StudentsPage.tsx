@@ -381,11 +381,13 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
       {/* Page Title & Action Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7 text-brand-600 shrink-0" />
+          <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20 shrink-0">
+              <GraduationCap className="w-5 h-5" />
+            </div>
             <span>Data Santri Halaqah</span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
             Kelola santri, import dari Excel dengan template resmi, dan pantau status poin.
           </p>
         </div>
@@ -396,7 +398,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
           {selectedIds.size > 0 && (
             <button
               onClick={() => setShowBulkConfirm(true)}
-              className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 active:scale-[0.98] animate-pulse-once"
+              className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 active:scale-[0.98] animate-pulse-once cursor-pointer"
             >
               <Trash2 className="w-4 h-4" />
               <span>Hapus {selectedIds.size} Santri</span>
@@ -405,7 +407,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
           <button
             onClick={handleOpenAddModal}
-            className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition-all flex items-center gap-2 active:scale-[0.98]"
+            className="w-full sm:w-auto justify-center min-h-[44px] px-4.5 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Tambah Santri</span>
@@ -418,24 +420,24 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
               setImportSuccessMsg('');
               setIsImportModalOpen(true);
             }}
-            className="w-full sm:w-auto justify-center min-h-[44px] px-3.5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl border border-slate-300 shadow-sm transition-all flex items-center gap-2 active:scale-[0.98]"
+            className="w-full sm:w-auto justify-center min-h-[44px] px-3.5 py-2.5 bg-white dark:bg-[#111726] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl border border-slate-300 dark:border-white/[0.1] shadow-sm transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer"
           >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+            <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
             <span>Import Excel</span>
           </button>
 
           <button
             onClick={handleExportStudents}
-            className="w-full sm:w-auto justify-center min-h-[44px] px-3.5 py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-semibold rounded-xl border border-slate-300 shadow-sm transition-all flex items-center gap-2 active:scale-[0.98]"
+            className="w-full sm:w-auto justify-center min-h-[44px] px-3.5 py-2.5 bg-white dark:bg-[#111726] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl border border-slate-300 dark:border-white/[0.1] shadow-sm transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer"
           >
-            <Download className="w-4 h-4 text-brand-600" />
+            <Download className="w-4 h-4 text-indigo-500" />
             <span>Export Excel</span>
           </button>
         </div>
       </div>
 
       {/* Filter and Search Card */}
-      <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-soft space-y-3 sm:space-y-4">
+      <div className="bg-white dark:bg-[#111726]/90 p-3.5 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] shadow-sm space-y-3 sm:space-y-4 transition-colors">
         <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
           {/* Global Search */}
           <div className="relative">
@@ -445,17 +447,17 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari nama, NIS, atau halaqah..."
-              className="w-full min-h-[44px] text-xs sm:text-sm pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 bg-white"
+              className="w-full min-h-[44px] text-xs sm:text-sm pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
           </div>
 
           {/* Filter Kelas */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 sm:whitespace-nowrap">Kelas:</span>
+            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 sm:whitespace-nowrap">Kelas:</span>
             <select
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
-              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-white"
+              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100"
             >
               <option value="all">Semua Kelas</option>
               {uniqueClasses.map((c) => (
@@ -468,11 +470,11 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
           {/* Filter Halaqah */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 sm:whitespace-nowrap">Halaqah:</span>
+            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 sm:whitespace-nowrap">Halaqah:</span>
             <select
               value={selectedHalaqah}
               onChange={(e) => setSelectedHalaqah(e.target.value)}
-              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-white"
+              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100"
             >
               <option value="all">Semua Halaqah</option>
               {halaqahs.map((h) => (
@@ -485,7 +487,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
           {/* Sort Control */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 sm:whitespace-nowrap">Urutkan:</span>
+            <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 sm:whitespace-nowrap">Urutkan:</span>
             <select
               value={`${sortBy}-${sortDir}`}
               onChange={(e) => {
@@ -493,7 +495,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 setSortBy(by);
                 setSortDir(dir as 'asc' | 'desc');
               }}
-              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-white"
+              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100"
             >
               <option value="name-asc">Nama (A - Z)</option>
               <option value="name-desc">Nama (Z - A)</option>
@@ -506,7 +508,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
         </div>
 
         {/* Total stats count indicator */}
-        <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-white/[0.06]">
           <span>
             Menampilkan <strong>{filteredStudents.length}</strong> dari <strong>{students.length}</strong> santri
           </span>
@@ -517,7 +519,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 setSelectedClass('all');
                 setSelectedHalaqah('all');
               }}
-              className="text-brand-600 hover:text-brand-700 font-semibold min-h-[36px] px-2 flex items-center"
+              className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-semibold min-h-[36px] px-2 flex items-center cursor-pointer"
             >
               Reset Filter
             </button>
@@ -531,15 +533,17 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
       {/* ========================================== */}
       <div className="block md:hidden space-y-3">
         {filteredStudents.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-400">
+          <div className="bg-white dark:bg-[#111726] rounded-2xl border border-slate-200/90 dark:border-white/[0.08] p-8 text-center text-slate-400">
             Tidak ditemukan data santri yang cocok dengan filter.
           </div>
         ) : (
           filteredStudents.map((s, idx) => (
             <div
               key={s.id}
-              className={`rounded-2xl border shadow-soft p-3.5 space-y-3 transition-colors ${
-                selectedIds.has(s.id) ? 'bg-rose-50/40 border-rose-300' : 'bg-white border-slate-200 hover:border-brand-300'
+              className={`rounded-2xl border shadow-sm p-3.5 space-y-3 transition-colors ${
+                selectedIds.has(s.id)
+                  ? 'bg-rose-50/50 dark:bg-rose-950/30 border-rose-300 dark:border-rose-900/50'
+                  : 'bg-white dark:bg-[#111726]/90 border-slate-200/90 dark:border-white/[0.08]'
               }`}
             >
               {/* Card Header: Checkbox, NIS, Nama, Gender & Status */}
@@ -549,21 +553,21 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                     type="checkbox"
                     checked={selectedIds.has(s.id)}
                     onChange={() => toggleSelectStudent(s.id)}
-                    className="w-4 h-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer shrink-0 mt-1"
+                    className="w-4 h-4 rounded border-slate-300 dark:border-white/[0.1] text-rose-600 focus:ring-rose-500 cursor-pointer shrink-0 mt-1"
                   />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5 flex-wrap mb-1">
-                      <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700">
+                      <span className="font-mono text-[11px] font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                         {s.student_number}
                       </span>
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-brand-50 text-brand-700 border border-brand-200">
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-900/40">
                         Kelas {s.class}
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={() => onSelectStudent(s.id)}
-                      className="font-black text-slate-900 hover:text-brand-600 text-base transition-colors text-left line-clamp-1 active:text-brand-700"
+                      className="font-black text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 text-base transition-colors text-left line-clamp-1 cursor-pointer"
                     >
                       {s.name}
                     </button>
@@ -582,35 +586,35 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
               </div>
 
               {/* Halaqah & Pengampu */}
-              <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs">
-                <p className="font-bold text-slate-800 flex items-center gap-1.5">
-                  <BookOpen className="w-3.5 h-3.5 text-brand-600 shrink-0" />
+              <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-white/[0.06] text-xs">
+                <p className="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                  <BookOpen className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
                   <span>{s.halaqah_name || 'Tanpa Halaqah'}</span>
                 </p>
-                <p className="text-[11px] text-slate-500 ml-5 mt-0.5">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 ml-5 mt-0.5">
                   Ustadz: {s.teacher_name || '-'}
                 </p>
               </div>
 
               {/* Points Summary & Deductions */}
-              <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+              <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-white/[0.06]">
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="px-2.5 py-1 rounded-full text-xs font-black bg-rose-50 text-rose-700 border border-rose-200">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-black bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/40">
                     {s.total_points} Poin
                   </span>
                   {(s.total_deductions || 0) > 0 && (
-                    <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                    <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
                       ★ -{s.total_deductions}
                     </span>
                   )}
                 </div>
 
                 {(s.tahfizh_points !== undefined || s.kesantrian_points !== undefined) && (
-                  <div className="flex items-center gap-1 text-[10px] font-bold text-slate-600">
-                    <span className="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                  <div className="flex items-center gap-1 text-[10px] font-bold text-slate-600 dark:text-slate-400">
+                    <span className="text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40">
                       T: {s.tahfizh_points || 0}
                     </span>
-                    <span className="text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200">
+                    <span className="text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900/40">
                       K: {s.kesantrian_points || 0}
                     </span>
                   </div>
@@ -622,7 +626,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 <button
                   type="button"
                   onClick={() => onSelectStudent(s.id)}
-                  className="min-h-[40px] px-2 py-1.5 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold text-xs flex items-center justify-center gap-1 border border-brand-200 active:scale-95 transition-all"
+                  className="min-h-[40px] px-2 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-bold text-xs flex items-center justify-center gap-1 border border-indigo-200 dark:border-indigo-800 active:scale-95 transition-all cursor-pointer"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   <span>Profil</span>
@@ -631,7 +635,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 <button
                   type="button"
                   onClick={() => handleOpenEditModal(s)}
-                  className="min-h-[40px] px-2 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold text-xs flex items-center justify-center gap-1 border border-amber-200 active:scale-95 transition-all"
+                  className="min-h-[40px] px-2 py-1.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-700 dark:text-amber-300 font-bold text-xs flex items-center justify-center gap-1 border border-amber-200 dark:border-amber-800 active:scale-95 transition-all cursor-pointer"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                   <span>Edit</span>
@@ -640,7 +644,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 <button
                   type="button"
                   onClick={() => setStudentToDelete(s)}
-                  className="min-h-[40px] px-2 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs flex items-center justify-center gap-1 border border-rose-200 active:scale-95 transition-all"
+                  className="min-h-[40px] px-2 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/50 text-rose-700 dark:text-rose-300 font-bold text-xs flex items-center justify-center gap-1 border border-rose-200 dark:border-rose-800 active:scale-95 transition-all cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Hapus</span>
@@ -654,17 +658,17 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
       {/* ========================================== */}
       {/* DESKTOP TABLE VIEW (hidden md:block)       */}
       {/* ========================================== */}
-      <div className="hidden md:block bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden">
+      <div className="hidden md:block bg-white dark:bg-[#111726]/90 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] shadow-sm overflow-hidden transition-colors">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm">
-            <thead className="bg-slate-50 text-slate-500 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+            <thead className="bg-slate-50/80 dark:bg-slate-900/70 text-slate-500 dark:text-slate-400 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200/90 dark:border-white/[0.08]">
               <tr>
                 <th className="px-4 py-3.5 text-center w-10">
                   <input
                     type="checkbox"
                     checked={allFilteredSelected}
                     onChange={toggleSelectAll}
-                    className="w-4 h-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer"
+                    className="w-4 h-4 rounded border-slate-300 dark:border-white/[0.1] text-rose-600 focus:ring-rose-500 cursor-pointer"
                     title="Pilih semua"
                   />
                 </th>
@@ -678,27 +682,27 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 <th className="px-4 py-3.5 text-center w-28">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
               {filteredStudents.map((s, idx) => (
-                <tr key={s.id} className={`hover:bg-slate-50/80 transition-colors ${selectedIds.has(s.id) ? 'bg-rose-50/50' : ''}`}>
+                <tr key={s.id} className={`hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-colors ${selectedIds.has(s.id) ? 'bg-rose-50/50 dark:bg-rose-950/20' : ''}`}>
                   <td className="px-4 py-3.5 text-center">
                     <input
                       type="checkbox"
                       checked={selectedIds.has(s.id)}
                       onChange={() => toggleSelectStudent(s.id)}
-                      className="w-4 h-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer"
+                      className="w-4 h-4 rounded border-slate-300 dark:border-white/[0.1] text-rose-600 focus:ring-rose-500 cursor-pointer"
                     />
                   </td>
                   <td className="px-4 py-3.5 text-center font-bold text-slate-400">
                     {idx + 1}
                   </td>
-                  <td className="px-4 py-3.5 font-mono text-slate-600 font-semibold">
+                  <td className="px-4 py-3.5 font-mono text-slate-600 dark:text-slate-400 font-semibold">
                     {s.student_number}
                   </td>
                   <td className="px-4 py-3.5">
                     <button
                       onClick={() => onSelectStudent(s.id)}
-                      className="font-bold text-slate-900 hover:text-brand-600 transition-colors text-left"
+                      className="font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left cursor-pointer"
                     >
                       {s.name}
                     </button>
@@ -707,22 +711,22 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                     </p>
                   </td>
                   <td className="px-4 py-3.5 text-center">
-                    <span className="px-2 py-0.5 rounded-lg bg-slate-100 font-bold text-slate-700">
+                    <span className="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 font-bold text-slate-700 dark:text-slate-300">
                       {s.class}
                     </span>
                   </td>
                   <td className="px-4 py-3.5">
-                    <p className="font-semibold text-slate-800">{s.halaqah_name || 'Tanpa Halaqah'}</p>
-                    <p className="text-[11px] text-slate-500">{s.teacher_name || '-'}</p>
+                    <p className="font-semibold text-slate-800 dark:text-slate-200">{s.halaqah_name || 'Tanpa Halaqah'}</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">{s.teacher_name || '-'}</p>
                   </td>
                   <td className="px-4 py-3.5 text-center">
                     <div className="inline-flex items-center gap-1.5 flex-wrap justify-center">
-                      <span className="inline-block px-2.5 py-1 rounded-full text-xs font-black bg-rose-50 text-rose-700 border border-rose-200">
+                      <span className="inline-block px-2.5 py-1 rounded-full text-xs font-black bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/40">
                         {s.total_points} Poin
                       </span>
                       {(s.total_deductions || 0) > 0 && (
                         <span
-                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300"
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
                           title={`Pengurangan Melalui Kegiatan Baik: -${s.total_deductions} Poin`}
                         >
                           <span>★</span>
@@ -731,16 +735,16 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                       )}
                     </div>
                     {(s.tahfizh_points !== undefined || s.kesantrian_points !== undefined) && (
-                      <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-slate-500 mt-1">
+                      <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1">
                         <span
-                          className="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200"
-                          title={`Poin Bersih Tahfizh: ${s.tahfizh_points || 0} (${s.tahfizh_deductions ? `dikurangi ${s.tahfizh_deductions}` : 'tanpa pengurangan'})`}
+                          className="text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40"
+                          title={`Poin Bersih Tahfizh: ${s.tahfizh_points || 0}`}
                         >
                           T: {s.tahfizh_points || 0}
                         </span>
                         <span
-                          className="text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded border border-blue-200"
-                          title={`Poin Bersih Kesantrian: ${s.kesantrian_points || 0} (${s.kesantrian_deductions ? `dikurangi ${s.kesantrian_deductions}` : 'tanpa pengurangan'})`}
+                          className="text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900/40"
+                          title={`Poin Bersih Kesantrian: ${s.kesantrian_points || 0}`}
                         >
                           K: {s.kesantrian_points || 0}
                         </span>
@@ -758,21 +762,21 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                       <button
                         onClick={() => onSelectStudent(s.id)}
                         title="Lihat Profil Santri"
-                        className="p-1.5 rounded-lg text-slate-500 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+                        className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors cursor-pointer"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleOpenEditModal(s)}
                         title="Edit Data Santri"
-                        className="p-1.5 rounded-lg text-slate-500 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                        className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-colors cursor-pointer"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => setStudentToDelete(s)}
                         title="Hapus Santri"
-                        className="p-1.5 rounded-lg text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                        className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -783,7 +787,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
               {filteredStudents.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="text-center py-12 text-slate-400">
+                  <td colSpan={9} className="text-center py-12 text-slate-400">
                     Tidak ditemukan data santri yang cocok dengan filter.
                   </td>
                 </tr>
@@ -798,24 +802,24 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
       {/* ==================================================== */}
       {(isAddModalOpen || isEditModalOpen) &&
         createPortal(
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto animate-scale-in">
-            <div className="relative w-full max-w-lg m-auto h-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] flex flex-col bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden">
-            {/* Header with Islamic Navy Gradient */}
-            <div className="bg-gradient-to-r from-navy-900 via-navy-800 to-brand-800 text-white p-5 sm:p-6 relative shrink-0">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-md overflow-y-auto animate-scale-in">
+            <div className="relative w-full max-w-lg m-auto h-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] flex flex-col bg-white dark:bg-[#111726] rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/90 dark:border-white/[0.08] overflow-hidden transition-colors">
+            {/* Header with SaaS Indigo Gradient */}
+            <div className="bg-gradient-to-r from-[#0d1222] via-[#1e1b4b] to-[#0f172a] text-white p-5 sm:p-6 relative shrink-0 border-b border-indigo-500/20">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-white/10 rounded-2xl backdrop-blur-sm ring-1 ring-white/20">
+                  <div className="p-2.5 bg-indigo-500/20 rounded-2xl backdrop-blur-sm ring-1 ring-indigo-400/30">
                     {isAddModalOpen ? (
-                      <UserPlus className="w-6 h-6 text-brand-300" />
+                      <UserPlus className="w-6 h-6 text-indigo-300" />
                     ) : (
-                      <UserCheck className="w-6 h-6 text-brand-300" />
+                      <UserCheck className="w-6 h-6 text-indigo-300" />
                     )}
                   </div>
                   <div>
-                    <h3 className="text-lg sm:text-xl font-bold tracking-tight">
+                    <h3 className="text-lg sm:text-xl font-bold tracking-tight text-white">
                       {isAddModalOpen ? 'Tambah Data Santri' : 'Edit Profil Santri'}
                     </h3>
-                    <p className="text-xs text-brand-200 font-light">
+                    <p className="text-xs text-indigo-200/80 font-light">
                       {isAddModalOpen
                         ? 'Daftarkan santri baru ke dalam sistem & halaqah'
                         : 'Perbarui biodata dan penempatan halaqah santri'}
@@ -827,7 +831,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                     setIsAddModalOpen(false);
                     setIsEditModalOpen(false);
                   }}
-                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors"
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-colors cursor-pointer"
                   aria-label="Tutup modal"
                 >
                   <X className="w-5 h-5" />
@@ -841,16 +845,16 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
             >
               <div className="p-5 sm:p-6 space-y-4 overflow-y-auto overscroll-contain flex-1 min-h-0">
                 {formError && (
-                  <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm rounded-xl flex items-center gap-2.5 animate-scale-in">
-                    <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+                  <div className="p-3.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 text-rose-700 dark:text-rose-200 text-xs sm:text-sm rounded-xl flex items-center gap-2.5 animate-scale-in">
+                    <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
                     <span className="font-medium">{formError}</span>
                   </div>
                 )}
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                      <Hash className="w-3.5 h-3.5 text-brand-600" />
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                      <Hash className="w-3.5 h-3.5 text-indigo-500" />
                       <span>NIS / No. Induk</span>
                     </label>
                     <input
@@ -858,13 +862,13 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                       value={formNIS}
                       onChange={(e) => setFormNIS(e.target.value)}
                       placeholder="Misal: 2025001"
-                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 bg-slate-50/50 hover:bg-white transition-colors"
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-slate-50/50 dark:bg-[#161d31] text-slate-900 dark:text-slate-100 hover:bg-white transition-colors"
                       required
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                      <GraduationCap className="w-3.5 h-3.5 text-brand-600" />
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                      <GraduationCap className="w-3.5 h-3.5 text-indigo-500" />
                       <span>Kelas</span>
                     </label>
                     <input
@@ -872,15 +876,15 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                       value={formClass}
                       onChange={(e) => setFormClass(e.target.value)}
                       placeholder="Contoh: 7A / 8B / 9C"
-                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 bg-slate-50/50 hover:bg-white transition-colors"
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-slate-50/50 dark:bg-[#161d31] text-slate-900 dark:text-slate-100 hover:bg-white transition-colors"
                       required
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                    <UserIcon className="w-3.5 h-3.5 text-brand-600" />
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                    <UserIcon className="w-3.5 h-3.5 text-indigo-500" />
                     <span>Nama Lengkap Santri</span>
                   </label>
                   <input
@@ -888,29 +892,29 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
                     placeholder="Masukkan nama lengkap santri..."
-                    className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 bg-slate-50/50 hover:bg-white transition-colors"
+                    className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-slate-50/50 dark:bg-[#161d31] text-slate-900 dark:text-slate-100 hover:bg-white transition-colors"
                     required
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                      <Users className="w-3.5 h-3.5 text-brand-600" />
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                      <Users className="w-3.5 h-3.5 text-indigo-500" />
                       <span>Jenis Kelamin</span>
                     </label>
                     <select
                       value={formGender}
                       onChange={(e) => setFormGender(e.target.value as 'L' | 'P')}
-                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-slate-50/50 hover:bg-white font-medium transition-colors"
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 bg-slate-50/50 dark:bg-[#161d31] text-slate-900 dark:text-slate-100 font-medium transition-colors"
                     >
                       <option value="L">Laki-laki (Ikhwan)</option>
                       <option value="P">Perempuan (Akhawat)</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-brand-600" />
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-indigo-500" />
                       <span>Tahun Ajaran</span>
                     </label>
                     <input
@@ -918,20 +922,20 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                       value={formYear}
                       onChange={(e) => setFormYear(e.target.value)}
                       placeholder="2025/2026"
-                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-slate-50/50 hover:bg-white font-medium transition-colors"
+                      className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 bg-slate-50/50 dark:bg-[#161d31] text-slate-900 dark:text-slate-100 font-medium transition-colors"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                    <BookOpen className="w-3.5 h-3.5 text-brand-600" />
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                    <BookOpen className="w-3.5 h-3.5 text-indigo-500" />
                     <span>Penempatan Halaqah Al-Qur'an</span>
                   </label>
                   <select
                     value={formHalaqahId}
                     onChange={(e) => setFormHalaqahId(e.target.value)}
-                    className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-slate-50/50 hover:bg-white font-medium transition-colors"
+                    className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 bg-slate-50/50 dark:bg-[#161d31] text-slate-900 dark:text-slate-100 font-medium transition-colors"
                   >
                     <option value="">-- Belum Ditempatkan (Tanpa Halaqah) --</option>
                     {halaqahs.map((h) => (
@@ -943,21 +947,21 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 </div>
               </div>
 
-              <div className="p-3.5 sm:p-5 bg-slate-50/70 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-slate-100 shrink-0">
+              <div className="p-3.5 sm:p-5 bg-slate-50/80 dark:bg-slate-900/80 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 border-t border-slate-100 dark:border-white/[0.06] shrink-0">
                 <button
                   type="button"
                   onClick={() => {
                     setIsAddModalOpen(false);
                     setIsEditModalOpen(false);
                   }}
-                  className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors shadow-sm active:scale-[0.98] flex items-center"
+                  className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-[#161d31] hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-white/[0.1] rounded-xl transition-colors shadow-sm active:scale-[0.98] flex items-center cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={formSubmitting}
-                  className="w-full sm:w-auto justify-center min-h-[44px] px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-brand-600 to-navy-800 hover:from-brand-700 hover:to-navy-900 rounded-xl shadow-md transition-all disabled:opacity-50 flex items-center gap-2 active:scale-[0.98]"
+                  className="w-full sm:w-auto justify-center min-h-[44px] px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50 flex items-center gap-2 active:scale-[0.98] cursor-pointer"
                 >
                   {formSubmitting ? (
                     <>
@@ -966,7 +970,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                     </>
                   ) : (
                     <>
-                      <CheckCircle2 className="w-4 h-4 text-brand-300" />
+                      <CheckCircle2 className="w-4 h-4 text-white/90" />
                       <span>{isAddModalOpen ? 'Simpan Santri' : 'Perbarui Data Santri'}</span>
                     </>
                   )}
@@ -983,42 +987,42 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
       {/* ==================================================== */}
       {isImportModalOpen &&
         createPortal(
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-sm overflow-y-auto animate-scale-in">
-            <div className="relative w-full max-w-2xl m-auto h-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] flex flex-col bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200 overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-md overflow-y-auto animate-scale-in">
+            <div className="relative w-full max-w-2xl m-auto h-auto max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] flex flex-col bg-white dark:bg-[#111726] rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-2xl border border-slate-200/90 dark:border-white/[0.08] overflow-y-auto transition-colors">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/[0.08]">
               <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
+                <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400">
                   <FileSpreadsheet className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">Import Data Santri dari Excel</h3>
-                  <p className="text-xs text-slate-500">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">Import Data Santri dari Excel</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Sistem akan memvalidasi dan menyimpan langsung ke database relasional
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setIsImportModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+                className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Template Download Notice */}
-            <div className="mt-4 p-4 rounded-2xl bg-brand-50 border border-brand-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="mt-4 p-4 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div>
-                <h4 className="text-xs sm:text-sm font-bold text-brand-900">
+                <h4 className="text-xs sm:text-sm font-bold text-indigo-950 dark:text-indigo-200">
                   Unduh Template Excel Resmi (.xlsx)
                 </h4>
-                <p className="text-xs text-brand-700 mt-0.5">
+                <p className="text-xs text-indigo-700 dark:text-indigo-300 mt-0.5">
                   Gunakan format kolom yang telah disesuaikan agar data tervalidasi dengan sempurna.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={downloadStudentImportTemplate}
-                className="px-3.5 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5 whitespace-nowrap"
+                className="px-3.5 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5 whitespace-nowrap cursor-pointer"
               >
                 <FileDown className="w-4 h-4" />
                 <span>Unduh Template</span>
@@ -1027,9 +1031,9 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
             {/* File Upload Zone */}
             <div className="mt-4">
-              <label className="block border-2 border-dashed border-slate-300 hover:border-brand-500 rounded-2xl p-6 text-center cursor-pointer bg-slate-50/50 hover:bg-brand-50/30 transition-all">
+              <label className="block border-2 border-dashed border-slate-300 dark:border-white/[0.1] hover:border-indigo-500 rounded-2xl p-6 text-center cursor-pointer bg-slate-50/50 dark:bg-[#161d31]/50 hover:bg-indigo-50/20 transition-all">
                 <UploadCloud className="w-10 h-10 text-slate-400 mx-auto mb-2" />
-                <span className="text-sm font-bold text-slate-700 block">
+                <span className="text-sm font-bold text-slate-700 dark:text-slate-200 block">
                   {importFile ? importFile.name : 'Pilih file Excel (.xlsx / .csv)'}
                 </span>
                 <span className="text-xs text-slate-400 block mt-1">
@@ -1046,8 +1050,8 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
             {/* Success Feedback */}
             {importSuccessMsg && (
-              <div className="mt-4 p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs sm:text-sm flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
+              <div className="mt-4 p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 text-emerald-800 dark:text-emerald-200 rounded-xl text-xs sm:text-sm flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
                 <span>{importSuccessMsg}</span>
               </div>
             )}
@@ -1056,15 +1060,15 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
             {parsedRows.length > 0 && (
               <div className="mt-5 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
                     Preview Data Validasi
                   </h4>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="px-2.5 py-1 bg-emerald-100 text-emerald-800 font-bold rounded-lg">
+                    <span className="px-2.5 py-1 bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 font-bold rounded-lg border border-emerald-200 dark:border-emerald-800">
                       ✓ {importValidCount} Data Siap Disimpan
                     </span>
                     {importErrors.length > 0 && (
-                      <span className="px-2.5 py-1 bg-rose-100 text-rose-800 font-bold rounded-lg">
+                      <span className="px-2.5 py-1 bg-rose-100 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300 font-bold rounded-lg border border-rose-200 dark:border-rose-800">
                         ✗ {importErrors.length} Baris Error
                       </span>
                     )}
@@ -1073,7 +1077,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
                 {/* Errors list if any */}
                 {importErrors.length > 0 && (
-                  <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 space-y-1 max-h-24 overflow-y-auto">
+                  <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-xl text-xs text-rose-800 dark:text-rose-200 space-y-1 max-h-24 overflow-y-auto">
                     {importErrors.map((err, i) => (
                       <p key={i}>
                         • Baris {err.row}: {err.error}
@@ -1083,9 +1087,9 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 )}
 
                 {/* Table Preview */}
-                <div className="max-h-48 overflow-y-auto border border-slate-200 rounded-xl">
+                <div className="max-h-48 overflow-y-auto border border-slate-200 dark:border-white/[0.08] rounded-xl">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-100 text-slate-600 font-bold sticky top-0">
+                    <thead className="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold sticky top-0">
                       <tr>
                         <th className="px-3 py-2">NIS</th>
                         <th className="px-3 py-2">Nama</th>
@@ -1093,13 +1097,13 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                         <th className="px-3 py-2">Halaqah</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
                       {parsedRows.slice(0, 8).map((r, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50">
-                          <td className="px-3 py-2 font-mono">{r.student_number}</td>
-                          <td className="px-3 py-2 font-medium">{r.name}</td>
-                          <td className="px-3 py-2">{r.class}</td>
-                          <td className="px-3 py-2">{r.halaqah || '-'}</td>
+                        <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-white/[0.02]">
+                          <td className="px-3 py-2 font-mono text-slate-700 dark:text-slate-300">{r.student_number}</td>
+                          <td className="px-3 py-2 font-medium text-slate-900 dark:text-white">{r.name}</td>
+                          <td className="px-3 py-2 text-slate-600 dark:text-slate-400">{r.class}</td>
+                          <td className="px-3 py-2 text-slate-600 dark:text-slate-400">{r.halaqah || '-'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -1109,11 +1113,11 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 sm:pt-5 mt-4 sm:mt-5 border-t border-slate-100">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2.5 sm:gap-3 pt-4 sm:pt-5 mt-4 sm:mt-5 border-t border-slate-100 dark:border-white/[0.08]">
               <button
                 type="button"
                 onClick={() => setIsImportModalOpen(false)}
-                className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors flex items-center"
+                className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors flex items-center cursor-pointer"
               >
                 Tutup
               </button>
@@ -1122,7 +1126,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                   type="button"
                   onClick={handleConfirmImport}
                   disabled={importing || importValidCount === 0}
-                  className="w-full sm:w-auto justify-center min-h-[44px] px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-md transition-all flex items-center gap-2 disabled:opacity-50 active:scale-[0.98]"
+                  className="w-full sm:w-auto justify-center min-h-[44px] px-5 py-2.5 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 rounded-xl shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2 disabled:opacity-50 active:scale-[0.98] cursor-pointer"
                 >
                   {importing ? (
                     <>

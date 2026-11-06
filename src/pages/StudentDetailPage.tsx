@@ -102,17 +102,17 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
 
   if (!student) {
     return (
-      <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-soft text-center space-y-4 max-w-md mx-auto my-12 animate-scale-in">
-        <div className="w-14 h-14 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto ring-8 ring-rose-50/50">
+      <div className="bg-white dark:bg-[#111726] rounded-3xl p-8 border border-slate-200/90 dark:border-white/[0.08] shadow-soft text-center space-y-4 max-w-md mx-auto my-12 animate-scale-in">
+        <div className="w-14 h-14 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 rounded-2xl flex items-center justify-center mx-auto ring-8 ring-rose-50/50 dark:ring-rose-900/20">
           <AlertTriangle className="w-7 h-7" />
         </div>
-        <h2 className="text-lg font-bold text-slate-900">Data Santri Tidak Ditemukan</h2>
-        <p className="text-xs text-slate-500 leading-relaxed">
+        <h2 className="text-lg font-bold text-slate-900 dark:text-white">Data Santri Tidak Ditemukan</h2>
+        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
           Santri ini mungkin telah dihapus dari sistem atau sudah tidak aktif lagi.
         </p>
         <button
           onClick={onBack}
-          className="px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-xl shadow-md transition-all inline-flex items-center gap-2"
+          className="px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-md transition-all inline-flex items-center gap-2 cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Kembali ke Halaman Sebelumnya</span>
@@ -127,7 +127,7 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
       <div className="flex items-center justify-between">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-xl hover:bg-slate-100 transition-colors"
+          className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white px-3 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Kembali ke Data Santri</span>
@@ -135,7 +135,7 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
 
         <button
           onClick={handlePrintPDF}
-          className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition-all flex items-center gap-2"
+          className="px-4.5 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center gap-2 cursor-pointer active:scale-[0.98]"
         >
           <FileText className="w-4 h-4" />
           <span>Cetak Surat Rekap (PDF)</span>
@@ -143,73 +143,73 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
       </div>
 
       {/* Main Profile Header Card */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-soft">
+      <div className="bg-white dark:bg-[#111726]/90 rounded-3xl p-6 sm:p-8 border border-slate-200/90 dark:border-white/[0.08] shadow-sm transition-colors">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           {/* Avatar & Bio */}
           <div className="flex items-center gap-4 sm:gap-5">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-brand-700 to-navy-900 text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-lg ring-4 ring-brand-500/20 flex-shrink-0">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-indigo-800 text-white flex items-center justify-center font-black text-2xl sm:text-3xl shadow-lg shadow-indigo-500/25 ring-4 ring-indigo-500/20 flex-shrink-0">
               {student.name.charAt(0).toUpperCase()}
             </div>
 
             <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                   {student.name}
                 </h1>
-                <span className="text-xs px-2 py-0.5 rounded-md bg-slate-100 font-mono font-bold text-slate-600">
+                <span className="text-xs px-2.5 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 font-mono font-bold text-slate-600 dark:text-slate-300">
                   NIS: {student.student_number}
                 </span>
               </div>
 
-              <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs sm:text-sm text-slate-600">
-                <span className="flex items-center gap-1">
-                  <GraduationCap className="w-4 h-4 text-brand-600" />
-                  Kelas: <strong>{student.class}</strong> ({student.gender === 'L' ? 'Ikhwan' : 'Akhawat'})
+              <div className="flex flex-wrap items-center gap-y-1 gap-x-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                <span className="flex items-center gap-1.5">
+                  <GraduationCap className="w-4 h-4 text-indigo-500" />
+                  Kelas: <strong className="text-slate-800 dark:text-slate-200">{student.class}</strong> ({student.gender === 'L' ? 'Ikhwan' : 'Akhawat'})
                 </span>
-                <span className="flex items-center gap-1">
-                  <BookOpen className="w-4 h-4 text-brand-600" />
-                  Halaqah: <strong>{student.halaqah_name || 'Belum diplot'}</strong>
+                <span className="flex items-center gap-1.5">
+                  <BookOpen className="w-4 h-4 text-indigo-500" />
+                  Halaqah: <strong className="text-slate-800 dark:text-slate-200">{student.halaqah_name || 'Belum diplot'}</strong>
                 </span>
-                <span className="flex items-center gap-1">
-                  <User className="w-4 h-4 text-brand-600" />
-                  Muhafizh: <strong>{student.teacher_name || '-'}</strong>
+                <span className="flex items-center gap-1.5">
+                  <User className="w-4 h-4 text-indigo-500" />
+                  Muhafizh: <strong className="text-slate-800 dark:text-slate-200">{student.teacher_name || '-'}</strong>
                 </span>
               </div>
             </div>
           </div>
 
           {/* TOTAL POIN & STATUS BOX WITH DIVISION & REWARD BREAKDOWN */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-gradient-to-br from-slate-50 to-blue-50/50 p-4 sm:p-5 rounded-2xl border border-blue-100 shadow-inner w-full md:w-auto justify-between md:justify-end">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-slate-50 dark:bg-slate-900/60 p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] shadow-inner w-full md:w-auto justify-between md:justify-end">
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
                 Total Poin Bersih (Net)
               </span>
               <div className="flex items-baseline gap-1.5">
-                <span className="text-3xl sm:text-4xl font-black text-rose-600 tracking-tight">
+                <span className="text-3xl sm:text-4xl font-black text-rose-600 dark:text-rose-400 tracking-tight">
                   {student.total_points}
                 </span>
-                <span className="text-xs font-bold text-slate-600">POIN</span>
+                <span className="text-xs font-bold text-slate-600 dark:text-slate-400">POIN</span>
                 {(student.total_deductions || 0) > 0 && (
-                  <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200 flex items-center gap-0.5 ml-1">
+                  <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 flex items-center gap-0.5 ml-1">
                     <MinusCircle className="w-3 h-3" />
                     -{student.total_deductions} Kebaikan
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-2 pt-1 flex-wrap">
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-100/70 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-emerald-100/70 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1">
                   <BookOpen className="w-3 h-3" />
                   Tahfizh: {student.tahfizh_points || 0} pts
                 </span>
-                <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-100/70 text-blue-800 border border-blue-200 flex items-center gap-1">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-100/70 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800 flex items-center gap-1">
                   <Building2 className="w-3 h-3" />
                   Kesantrian: {student.kesantrian_points || 0} pts
                 </span>
               </div>
             </div>
 
-            <div className="border-t sm:border-t-0 sm:border-l border-slate-200 pt-3 sm:pt-0 sm:pl-4 space-y-1 w-full sm:w-auto">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+            <div className="border-t sm:border-t-0 sm:border-l border-slate-200 dark:border-white/[0.08] pt-3 sm:pt-0 sm:pl-4 space-y-1 w-full sm:w-auto">
+              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
                 Status Pembinaan
               </span>
               <StatusBadge
@@ -225,41 +225,41 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
       {/* Grid: Riwayat Pelanggaran/Kebaikan & History Halaqah */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Records Box */}
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-soft overflow-hidden">
+        <div className="lg:col-span-2 bg-white dark:bg-[#111726]/90 rounded-3xl border border-slate-200/90 dark:border-white/[0.08] shadow-sm overflow-hidden transition-colors">
           {/* Sub Tab Switcher: Pelanggaran vs Kebaikan */}
-          <div className="px-5 pt-4 border-b border-slate-100 flex items-center gap-2 bg-slate-50/60">
+          <div className="px-5 pt-4 border-b border-slate-100 dark:border-white/[0.08] flex items-center gap-2 bg-slate-50/60 dark:bg-slate-900/40">
             <button
               onClick={() => setActiveHistoryTab('violations')}
-              className={`flex items-center gap-2 py-2.5 px-4 font-bold text-xs sm:text-sm border-b-2 transition-all ${
+              className={`flex items-center gap-2 py-2.5 px-4 font-bold text-xs sm:text-sm border-b-2 transition-all cursor-pointer ${
                 activeHistoryTab === 'violations'
-                  ? 'border-brand-600 text-brand-700 bg-white rounded-t-xl'
-                  : 'border-transparent text-slate-500 hover:text-slate-800'
+                  ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-[#111726] rounded-t-xl'
+                  : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              <History className="w-4 h-4 text-brand-600" />
+              <History className="w-4 h-4 text-indigo-500" />
               <span>Riwayat Pelanggaran ({records.length})</span>
             </button>
             <button
               onClick={() => setActiveHistoryTab('rewards')}
-              className={`flex items-center gap-2 py-2.5 px-4 font-bold text-xs sm:text-sm border-b-2 transition-all ${
+              className={`flex items-center gap-2 py-2.5 px-4 font-bold text-xs sm:text-sm border-b-2 transition-all cursor-pointer ${
                 activeHistoryTab === 'rewards'
-                  ? 'border-emerald-600 text-emerald-700 bg-white rounded-t-xl'
-                  : 'border-transparent text-slate-500 hover:text-slate-800'
+                  ? 'border-emerald-600 text-emerald-600 dark:text-emerald-400 bg-white dark:bg-[#111726] rounded-t-xl'
+                  : 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
               }`}
             >
-              <Award className="w-4 h-4 text-emerald-600" />
+              <Award className="w-4 h-4 text-emerald-500" />
               <span>Kebaikan & Pengurangan Poin ({positiveRecords.length})</span>
             </button>
           </div>
 
-          <div className="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                 {activeHistoryTab === 'violations'
                   ? 'Daftar Catatan Pelanggaran'
                   : 'Daftar Kegiatan Baik & Pemulihan Poin'}
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {activeHistoryTab === 'violations'
                   ? `Total ${records.length} kejadian tercatat dalam sistem`
                   : `Total ${positiveRecords.length} kegiatan baik memotong poin pelanggaran`}
@@ -267,23 +267,23 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
             </div>
 
             {/* Division Filter Pills */}
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900/70 p-1 rounded-xl text-xs font-bold border border-slate-200/50 dark:border-white/[0.06]">
               <button
                 onClick={() => setRecordDivisionFilter('all')}
-                className={`px-3 py-1.5 rounded-lg transition-all ${
+                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
                   recordDivisionFilter === 'all'
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white dark:bg-[#161d31] text-slate-900 dark:text-white shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 Semua ({activeHistoryTab === 'violations' ? records.length : positiveRecords.length})
               </button>
               <button
                 onClick={() => setRecordDivisionFilter('tahfizh')}
-                className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 ${
+                className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
                   recordDivisionFilter === 'tahfizh'
                     ? 'bg-emerald-600 text-white shadow-sm'
-                    : 'text-slate-600 hover:text-emerald-700'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400'
                 }`}
               >
                 <BookOpen className="w-3 h-3" />
@@ -291,10 +291,10 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
               </button>
               <button
                 onClick={() => setRecordDivisionFilter('kesantrian')}
-                className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 ${
+                className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer ${
                   recordDivisionFilter === 'kesantrian'
-                    ? 'bg-blue-600 text-white shadow-sm'
-                    : 'text-slate-600 hover:text-blue-700'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400'
                 }`}
               >
                 <Building2 className="w-3 h-3" />
@@ -303,11 +303,11 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
             </div>
           </div>
 
-          <div className="divide-y divide-slate-100 overflow-x-auto">
+          <div className="divide-y divide-slate-100 dark:divide-white/[0.06] overflow-x-auto">
             {activeHistoryTab === 'violations' ? (
               /* Violations Table */
               <table className="w-full text-left text-xs sm:text-sm">
-                <thead className="bg-slate-50 text-slate-500 uppercase text-[11px] font-bold">
+                <thead className="bg-slate-50/80 dark:bg-slate-900/70 text-slate-500 dark:text-slate-400 uppercase text-[11px] font-bold border-b border-slate-200/90 dark:border-white/[0.08]">
                   <tr>
                     <th className="px-4 py-3">Tanggal & Waktu</th>
                     <th className="px-4 py-3">Divisi</th>
@@ -317,15 +317,15 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                     <th className="px-4 py-3 text-center">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
                   {filteredRecords.map((r) => {
                     const isKesantrian = r.division === 'kesantrian';
                     const isCancelled = r.status === 'cancelled';
 
                     return (
-                      <tr key={r.id} className="hover:bg-slate-50/80">
+                      <tr key={r.id} className="hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-colors">
                         <td className="px-4 py-3 whitespace-nowrap">
-                          <p className="font-semibold text-slate-800">{r.date}</p>
+                          <p className="font-semibold text-slate-800 dark:text-slate-200">{r.date}</p>
                           <p className="text-[11px] text-slate-400">{r.time} WIB</p>
                         </td>
 
@@ -333,8 +333,8 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                           <span
                             className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md border ${
                               isKesantrian
-                                ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-900/40'
+                                : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/40'
                             }`}
                           >
                             {isKesantrian ? (
@@ -352,23 +352,23 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                         </td>
 
                         <td className="px-4 py-3">
-                          <p className="font-bold text-slate-900">{r.violation_name_snapshot}</p>
+                          <p className="font-bold text-slate-900 dark:text-white">{r.violation_name_snapshot}</p>
                           {r.notes && (
-                            <p className="text-[11px] text-slate-500 italic mt-0.5">"{r.notes}"</p>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 italic mt-0.5">"{r.notes}"</p>
                           )}
                         </td>
 
                         <td className="px-4 py-3">
-                          <p className="font-medium text-slate-800">{r.halaqah_name_snapshot}</p>
-                          <p className="text-[11px] text-slate-500">{r.teacher_name_snapshot}</p>
+                          <p className="font-medium text-slate-800 dark:text-slate-200">{r.halaqah_name_snapshot}</p>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400">{r.teacher_name_snapshot}</p>
                         </td>
 
                         <td className="px-4 py-3 text-center">
                           <span
                             className={`px-2 py-0.5 rounded-md font-bold text-xs ${
                               isCancelled
-                                ? 'line-through bg-slate-100 text-slate-400'
-                                : 'text-rose-600 bg-rose-50 border border-rose-200'
+                                ? 'line-through bg-slate-100 dark:bg-slate-800 text-slate-400'
+                                : 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/40'
                             }`}
                           >
                             +{r.points_snapshot}
@@ -377,11 +377,11 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
 
                         <td className="px-4 py-3 text-center">
                           {isCancelled ? (
-                            <span className="text-[11px] font-semibold text-rose-500 bg-rose-50 px-2 py-0.5 rounded">
+                            <span className="text-[11px] font-semibold text-rose-500 bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded border border-rose-200 dark:border-rose-900/40">
                               Dibatalkan
                             </span>
                           ) : (
-                            <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                            <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40">
                               Aktif
                             </span>
                           )}
@@ -402,7 +402,7 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
             ) : (
               /* Rewards & Positive Deeds Table */
               <table className="w-full text-left text-xs sm:text-sm">
-                <thead className="bg-slate-50 text-slate-500 uppercase text-[11px] font-bold">
+                <thead className="bg-slate-50/80 dark:bg-slate-900/70 text-slate-500 dark:text-slate-400 uppercase text-[11px] font-bold border-b border-slate-200/90 dark:border-white/[0.08]">
                   <tr>
                     <th className="px-4 py-3">Tanggal & Waktu</th>
                     <th className="px-4 py-3">Divisi</th>
@@ -412,15 +412,15 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                     <th className="px-4 py-3 text-center">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
                   {filteredPositiveRecords.map((r) => {
                     const isKesantrian = r.division === 'kesantrian';
                     const isCancelled = r.status === 'cancelled';
 
                     return (
-                      <tr key={r.id} className="hover:bg-slate-50/80">
+                      <tr key={r.id} className="hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-colors">
                         <td className="px-4 py-3 whitespace-nowrap">
-                          <p className="font-semibold text-slate-800">{r.date}</p>
+                          <p className="font-semibold text-slate-800 dark:text-slate-200">{r.date}</p>
                           <p className="text-[11px] text-slate-400">{r.time} WIB</p>
                         </td>
 
@@ -428,8 +428,8 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                           <span
                             className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md border ${
                               isKesantrian
-                                ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-900/40'
+                                : 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-900/40'
                             }`}
                           >
                             {isKesantrian ? (
@@ -447,23 +447,23 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
                         </td>
 
                         <td className="px-4 py-3">
-                          <p className="font-bold text-slate-900">{r.action_name_snapshot}</p>
+                          <p className="font-bold text-slate-900 dark:text-white">{r.action_name_snapshot}</p>
                           {r.notes && (
-                            <p className="text-[11px] text-slate-500 italic mt-0.5">"{r.notes}"</p>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 italic mt-0.5">"{r.notes}"</p>
                           )}
                         </td>
 
                         <td className="px-4 py-3">
-                          <p className="font-medium text-slate-800">{r.halaqah_name_snapshot || 'Pesantren'}</p>
-                          <p className="text-[11px] text-slate-500">{r.teacher_name_snapshot}</p>
+                          <p className="font-medium text-slate-800 dark:text-slate-200">{r.halaqah_name_snapshot || 'Pesantren'}</p>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400">{r.teacher_name_snapshot}</p>
                         </td>
 
                         <td className="px-4 py-3 text-center whitespace-nowrap">
                           <span
                             className={`px-2.5 py-1 rounded-full font-bold text-xs inline-flex items-center gap-1 ${
                               isCancelled
-                                ? 'line-through bg-slate-100 text-slate-400'
-                                : 'text-emerald-700 bg-emerald-100 border border-emerald-300'
+                                ? 'line-through bg-slate-100 dark:bg-slate-800 text-slate-400'
+                                : 'text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/50 border border-emerald-300 dark:border-emerald-800'
                             }`}
                           >
                             <MinusCircle className="w-3.5 h-3.5" />
@@ -473,11 +473,11 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
 
                         <td className="px-4 py-3 text-center">
                           {isCancelled ? (
-                            <span className="text-[11px] font-semibold text-rose-500 bg-rose-50 px-2 py-0.5 rounded">
+                            <span className="text-[11px] font-semibold text-rose-500 bg-rose-50 dark:bg-rose-950/40 px-2 py-0.5 rounded border border-rose-200 dark:border-rose-900/40">
                               Dibatalkan
                             </span>
                           ) : (
-                            <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                            <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40">
                               Aktif
                             </span>
                           )}
@@ -500,28 +500,28 @@ export const StudentDetailPage: React.FC<StudentDetailPageProps> = ({
         </div>
 
         {/* Riwayat Halaqah Santri */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-soft p-5 sm:p-6 space-y-4">
-          <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-            <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
+        <div className="bg-white dark:bg-[#111726]/90 rounded-3xl border border-slate-200/90 dark:border-white/[0.08] shadow-sm p-5 sm:p-6 space-y-4 transition-colors">
+          <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100 dark:border-white/[0.08]">
+            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400">
               <BookOpen className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-900">Histori Halaqah</h2>
-              <p className="text-xs text-slate-500">Perjalanan kelas & pengampu</p>
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">Histori Halaqah</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Perjalanan kelas & pengampu</p>
             </div>
           </div>
 
-          <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+          <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-800">
             {history.map((h, idx) => (
               <div key={h.id || idx} className="relative">
-                <div className="absolute -left-6 top-1.5 w-3 h-3 rounded-full bg-brand-600 ring-4 ring-white" />
+                <div className="absolute -left-6 top-1.5 w-3 h-3 rounded-full bg-indigo-600 ring-4 ring-white dark:ring-[#111726]" />
                 <div>
-                  <span className="text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">
+                  <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 px-2 py-0.5 rounded border border-indigo-200 dark:border-indigo-900/40">
                     Tahun Ajaran {h.academic_year}
                   </span>
-                  <p className="text-sm font-bold text-slate-900 mt-1">{h.halaqah_name}</p>
-                  <p className="text-xs text-slate-500">Muhafizh: {h.teacher_name || 'Ustadz Pengampu'}</p>
-                  <p className="text-[11px] text-slate-400">Mulai: {h.start_date}</p>
+                  <p className="text-sm font-bold text-slate-900 dark:text-white mt-1">{h.halaqah_name}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Muhafizh: {h.teacher_name || 'Ustadz Pengampu'}</p>
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500">Mulai: {h.start_date}</p>
                 </div>
               </div>
             ))}

@@ -243,16 +243,16 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
 
   return createPortal(
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-hidden animate-fade-in">
-      {/* Backdrop with rich Islamic blur */}
+      {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity"
+        className="fixed inset-0 bg-slate-950/75 backdrop-blur-md transition-opacity"
         onClick={onClose}
       />
 
       {/* Modal Dialog */}
-      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-emerald-100 flex flex-col max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] overflow-hidden m-auto z-10">
+      <div className="relative w-full max-w-2xl bg-white dark:bg-[#111726] rounded-3xl shadow-2xl border border-emerald-100 dark:border-white/[0.08] flex flex-col max-h-[calc(100vh-2rem)] sm:max-h-[calc(100vh-4rem)] overflow-hidden m-auto z-10 transition-colors">
         {/* Header with Emerald Gradient */}
-        <div className="px-4 sm:px-6 py-3.5 sm:py-5 bg-gradient-to-r from-emerald-900 via-teal-900 to-emerald-950 text-white flex items-center justify-between border-b border-emerald-800 shrink-0">
+        <div className="px-4 sm:px-6 py-3.5 sm:py-5 bg-gradient-to-r from-emerald-950 via-teal-950 to-emerald-900 text-white flex items-center justify-between border-b border-emerald-500/20 shrink-0">
           <div className="flex items-center gap-2.5 sm:gap-3">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 shadow-inner shrink-0">
               <Award className="w-5 h-5 text-emerald-300" />
@@ -273,15 +273,15 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 transition-colors shrink-0"
+            className="p-2 rounded-xl text-emerald-200 hover:text-white hover:bg-white/10 transition-colors shrink-0 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Division Segmented Switcher */}
-        <div className="px-3.5 sm:px-6 pt-3 pb-2 bg-slate-50 border-b border-slate-200/80 shrink-0">
-          <div className="grid grid-cols-1 sm:grid-cols-2 p-1 bg-slate-200/80 rounded-2xl gap-1">
+        <div className="px-3.5 sm:px-6 pt-3 pb-2 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200/80 dark:border-white/[0.08] shrink-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 p-1 bg-slate-200/80 dark:bg-black/40 rounded-2xl gap-1">
             <button
               type="button"
               onClick={() => {
@@ -289,13 +289,13 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                 setSelectedActionId('');
                 setErrorMsg('');
               }}
-              className={`flex items-center justify-center gap-2 min-h-[42px] py-2 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              className={`flex items-center justify-center gap-2 min-h-[42px] py-2 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 division === 'tahfizh'
-                  ? 'bg-white text-emerald-800 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                  ? 'bg-white dark:bg-[#161d31] text-emerald-800 dark:text-emerald-300 shadow-sm border border-emerald-100 dark:border-emerald-500/30'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
               }`}
             >
-              <BookOpen className="w-4 h-4 text-emerald-600 shrink-0" />
+              <BookOpen className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>Divisi Tahfizh (Halaqah)</span>
             </button>
             <button
@@ -305,13 +305,13 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                 setSelectedActionId('');
                 setErrorMsg('');
               }}
-              className={`flex items-center justify-center gap-2 min-h-[42px] py-2 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+              className={`flex items-center justify-center gap-2 min-h-[42px] py-2 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 division === 'kesantrian'
-                  ? 'bg-white text-emerald-800 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                  ? 'bg-white dark:bg-[#161d31] text-emerald-800 dark:text-emerald-300 shadow-sm border border-emerald-100 dark:border-emerald-500/30'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'
               }`}
             >
-              <Building2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <Building2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <span>Divisi Kesantrian (Asrama)</span>
             </button>
           </div>
@@ -322,31 +322,31 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
           {successData ? (
             /* Success State */
             <div className="py-8 text-center space-y-4 animate-scale-in">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner border border-emerald-200">
+              <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto shadow-inner border border-emerald-200 dark:border-emerald-800">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
               <div>
-                <h4 className="text-xl font-black text-slate-900">
+                <h4 className="text-xl font-black text-slate-900 dark:text-white">
                   Kegiatan Baik Berhasil Dicatat!
                 </h4>
-                <p className="text-sm text-slate-600 mt-1">
+                <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
                   Poin pelanggaran{' '}
-                  <span className="font-bold text-slate-900">{successData.studentName}</span>{' '}
-                  pada <span className="font-bold text-emerald-700 capitalize">Divisi {division}</span> berhasil dikurangi{' '}
-                  <span className="inline-flex items-center gap-1 font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                  <span className="font-bold text-slate-900 dark:text-white">{successData.studentName}</span>{' '}
+                  pada <span className="font-bold text-emerald-700 dark:text-emerald-400 capitalize">Divisi {division}</span> berhasil dikurangi{' '}
+                  <span className="inline-flex items-center gap-1 font-black text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800">
                     <MinusCircle className="w-3.5 h-3.5" /> {successData.pointsDeducted} Poin
                   </span>
                 </p>
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs text-slate-600 max-w-md mx-auto text-left space-y-1.5">
+              <div className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-white/[0.08] rounded-2xl p-4 text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto text-left space-y-1.5">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Kegiatan / Prestasi:</span>
-                  <span className="font-semibold text-slate-800">{successData.actionName}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Kegiatan / Prestasi:</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-100">{successData.actionName}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Divisi Pengurang:</span>
-                  <span className="font-semibold text-emerald-700 uppercase">{division}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Divisi Pengurang:</span>
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-400 uppercase">{division}</span>
                 </div>
               </div>
 
@@ -354,7 +354,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-5 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors"
+                  className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                 >
                   Catat Kebaikan Lain
                 </button>
@@ -365,7 +365,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                       onClose();
                       onViewHistory();
                     }}
-                    className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
+                    className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                   >
                     <Award className="w-3.5 h-3.5" />
                     <span>Lihat Riwayat Kebaikan</span>
@@ -378,7 +378,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                       onClose();
                       onViewStudent(successData.studentId);
                     }}
-                    className="px-5 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5"
+                    className="px-5 py-2.5 rounded-xl bg-slate-700 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                   >
                     <User className="w-3.5 h-3.5" />
                     <span>Lihat Profil Santri</span>
@@ -387,7 +387,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors"
+                  className="px-5 py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 text-xs font-bold transition-colors cursor-pointer"
                 >
                   Tutup
                 </button>
@@ -397,7 +397,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
             /* Main Input Form */
             <form onSubmit={handleSubmit} className="space-y-4">
               {errorMsg && (
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-700 flex items-center gap-2">
+                <div className="p-3 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 rounded-2xl text-xs text-rose-700 dark:text-rose-300 flex items-center gap-2">
                   <X className="w-4 h-4 text-rose-500 shrink-0" />
                   <span>{errorMsg}</span>
                 </div>
@@ -408,14 +408,14 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                 /* Tahfizh: Pick Halaqah then Pick Student */
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
-                      <Users className="w-3.5 h-3.5 text-emerald-600" />
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
+                      <Users className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                       <span>Halaqah Al-Qur'an</span>
                     </label>
                     <select
                       value={selectedHalaqahId}
                       onChange={(e) => setSelectedHalaqahId(e.target.value)}
-                      className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                      className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       required
                     >
                       {halaqahs.map((h) => (
@@ -427,14 +427,14 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
-                      <User className="w-3.5 h-3.5 text-emerald-600" />
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
+                      <User className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                       <span>Pilih Santri</span>
                     </label>
                     <select
                       value={selectedStudentId}
                       onChange={(e) => setSelectedStudentId(e.target.value)}
-                      className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                      className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                       required
                     >
                       <option value="">-- Pilih Santri --</option>
@@ -449,8 +449,8 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
               ) : (
                 /* Kesantrian: Direct Student Search */
                 <div className="space-y-2">
-                  <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
-                    <User className="w-3.5 h-3.5 text-emerald-600" />
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                    <User className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                     <span>Pilih Santri (Pencarian Langsung)</span>
                   </label>
                   <div className="relative">
@@ -460,10 +460,10 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                       placeholder="Ketik Nama, NIS, atau Kelas santri..."
                       value={searchStudentQuery}
                       onChange={(e) => setSearchStudentQuery(e.target.value)}
-                      className="w-full text-xs sm:text-sm pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                      className="w-full text-xs sm:text-sm pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     />
                   </div>
-                  <div className="max-h-36 overflow-y-auto border border-slate-200 rounded-xl divide-y divide-slate-100 bg-slate-50/50">
+                  <div className="max-h-36 overflow-y-auto border border-slate-200 dark:border-white/[0.08] rounded-xl divide-y divide-slate-100 dark:divide-white/[0.06] bg-slate-50/50 dark:bg-[#161d31]/50">
                     {filteredStudents.length === 0 ? (
                       <p className="text-xs text-slate-400 text-center py-4">Santri tidak ditemukan</p>
                     ) : (
@@ -475,14 +475,14 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                             key={s.id}
                             onClick={() => setSelectedStudentId(s.id)}
                             className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between transition-colors ${
-                              isSelected ? 'bg-emerald-100/70 text-emerald-900 font-bold' : 'hover:bg-slate-100'
+                              isSelected ? 'bg-emerald-100/70 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-300 font-bold' : 'hover:bg-slate-100 dark:hover:bg-white/5'
                             }`}
                           >
                             <div>
-                              <span className="font-semibold">{s.name}</span>{' '}
-                              <span className="text-slate-500">({s.student_number} - Kls {s.class})</span>
+                              <span className="font-semibold text-slate-800 dark:text-slate-200">{s.name}</span>{' '}
+                              <span className="text-slate-500 dark:text-slate-400">({s.student_number} - Kls {s.class})</span>
                             </div>
-                            <span className="text-[11px] px-2 py-0.5 rounded-md bg-white border border-slate-200">
+                            <span className="text-[11px] px-2 py-0.5 rounded-md bg-white dark:bg-[#111726] border border-slate-200 dark:border-white/[0.08] text-slate-700 dark:text-slate-300">
                               {s.total_points} Poin
                             </span>
                           </button>
@@ -495,8 +495,8 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
 
               {/* Pick Master Good Deed / Positive Action */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-slate-700 flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>Jenis Kegiatan Baik / Prestasi</span>
                 </label>
                 <select
@@ -505,7 +505,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                     setSelectedActionId(e.target.value);
                     if (e.target.value) setCustomActionName('');
                   }}
-                  className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                  className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 >
                   <option value="">-- Pilih Aturan Kebaikan ({division.toUpperCase()}) --</option>
                   {currentDivisionActions.map((a) => (
@@ -520,13 +520,13 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
               {/* Custom action name if selected */}
               {selectedActionId === '__custom__' && (
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-slate-700">Nama Kegiatan Baik Kustom</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Nama Kegiatan Baik Kustom</label>
                   <input
                     type="text"
                     placeholder="Contoh: Juara 1 Pidato Bahasa Arab, Inisiatif membantu musibah..."
                     value={customActionName}
                     onChange={(e) => setCustomActionName(e.target.value)}
-                    className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                    className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     required
                   />
                 </div>
@@ -535,12 +535,12 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
               {/* Deduction Points & Supervisor */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
                     <span className="flex items-center gap-1">
-                      <MinusCircle className="w-3.5 h-3.5 text-emerald-600" />
+                      <MinusCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                       <span>Bobot Pengurangan Poin</span>
                     </span>
-                    <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                    <span className="text-[10px] text-emerald-700 dark:text-emerald-300 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
                       -{customPoints} Pts
                     </span>
                   </label>
@@ -550,13 +550,13 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                     max="50"
                     value={customPoints}
                     onChange={(e) => setCustomPoints(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white font-mono font-bold text-emerald-700"
+                    className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] font-mono font-bold text-emerald-700 dark:text-emerald-400 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
                     <User className="w-3.5 h-3.5 text-slate-500" />
                     <span>Pembimbing / Pencatat</span>
                   </label>
@@ -565,7 +565,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                     value={supervisorName}
                     onChange={(e) => setSupervisorName(e.target.value)}
                     placeholder="Nama Ustadz / Pembina..."
-                    className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                    className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
               </div>
@@ -573,7 +573,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
               {/* Date & Time */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5 text-slate-500" />
                     <span>Tanggal</span>
                   </label>
@@ -581,12 +581,12 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                     type="date"
                     value={recordDate}
                     onChange={(e) => setRecordDate(e.target.value)}
-                    className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                    className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5 text-slate-500" />
                     <span>Waktu</span>
                   </label>
@@ -594,14 +594,14 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                     type="time"
                     value={recordTime}
                     onChange={(e) => setRecordTime(e.target.value)}
-                    className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                    className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               {/* Notes */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
                   <FileText className="w-3.5 h-3.5 text-slate-500" />
                   <span>Catatan Apresiasi / Dokumentasi Kegiatan (Opsional)</span>
                 </label>
@@ -610,13 +610,13 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Deskripsikan prestasi atau kegiatan positif yang dilakukan santri..."
-                  className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                  className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 />
               </div>
 
               {/* Notice */}
-              <div className="p-3 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 flex items-start gap-2 text-[11px] text-emerald-800">
-                <HelpCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+              <div className="p-3 rounded-2xl bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-900/40 flex items-start gap-2 text-[11px] text-emerald-800 dark:text-emerald-300">
+                <HelpCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                 <p>
                   Poin ini akan secara otomatis memotong poin pelanggaran aktif santri pada{' '}
                   <span className="font-bold capitalize">Divisi {division}</span>. Jika santri memiliki 0 pelanggaran, nilai poin santri tetap 0 (tidak minus).
@@ -628,14 +628,14 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-bold text-slate-700 hover:bg-slate-100 transition-colors flex items-center"
+                  className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={submitting || !selectedStudentId}
-                  className="w-full sm:w-auto justify-center min-h-[44px] px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs sm:text-sm font-bold shadow-lg shadow-emerald-600/20 disabled:opacity-50 transition-all flex items-center gap-2 active:scale-[0.98]"
+                  className="w-full sm:w-auto justify-center min-h-[44px] px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs sm:text-sm font-bold shadow-lg shadow-emerald-600/20 disabled:opacity-50 transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer"
                 >
                   {submitting ? (
                     <span>Menyimpan...</span>

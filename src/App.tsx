@@ -159,7 +159,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#091122] text-slate-900 dark:text-slate-100 flex transition-colors duration-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0b0f19] saas-ambient-light dark:saas-ambient-dark text-slate-900 dark:text-slate-100 flex transition-colors duration-200 selection:bg-indigo-500 selection:text-white">
       {/* Sidebar for Desktop (Fixed full height) & Mobile Drawer */}
       <Sidebar
         currentTab={currentTab}

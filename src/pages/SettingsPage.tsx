@@ -178,13 +178,11 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
   const processImageFile = (file: File) => {
     setLogoFileError('');
 
-    // Validate type
     if (!file.type.startsWith('image/')) {
       setLogoFileError('Format file tidak didukung. Harap pilih file gambar (PNG, JPG, JPEG, SVG, WebP).');
       return;
     }
 
-    // Validate size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       setLogoFileError('Ukuran file gambar terlalu besar (maksimal 5 MB).');
       return;
@@ -279,21 +277,23 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
     <div className="space-y-6 animate-scale-in">
       {/* Title & Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-            <div className="p-2.5 bg-brand-50 text-brand-600 rounded-2xl border border-brand-100 shadow-sm">
-              <Settings className="w-6 h-6" />
-            </div>
-            <span>Pengaturan Lembaga & Sistem</span>
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Ubah identitas aplikasi, unggah logo dari perangkat, format Kop Surat PDF, dan konfigurasi ambang batas status poin.
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-500/20 shadow-inner shrink-0">
+            <Settings className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              Pengaturan Lembaga & Sistem
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+              Ubah identitas aplikasi, unggah logo dari perangkat, format Kop Surat PDF, dan konfigurasi ambang batas status poin.
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Tabs Switcher */}
-      <div className="flex items-center gap-2 p-1.5 bg-slate-200/70 dark:bg-slate-900/80 rounded-2xl max-w-xl border border-slate-200/80 dark:border-slate-800">
+      <div className="flex items-center gap-1.5 p-1.5 bg-slate-200/70 dark:bg-[#111726] rounded-2xl max-w-xl border border-slate-300/60 dark:border-white/[0.08] shadow-soft">
         <button
           onClick={() => {
             setActiveSubTab('school');
@@ -302,8 +302,8 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           }}
           className={`flex-1 py-2.5 px-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all ${
             activeSubTab === 'school'
-              ? 'bg-white dark:bg-slate-800 text-brand-700 dark:text-brand-300 shadow-sm'
-              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/50'
+              ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/25'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/[0.04]'
           }`}
         >
           <Building className="w-4 h-4" />
@@ -318,8 +318,8 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           }}
           className={`flex-1 py-2.5 px-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all ${
             activeSubTab === 'thresholds'
-              ? 'bg-white dark:bg-slate-800 text-brand-700 dark:text-brand-300 shadow-sm'
-              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/50'
+              ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/25'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/[0.04]'
           }`}
         >
           <Sliders className="w-4 h-4" />
@@ -335,8 +335,8 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           }}
           className={`flex-1 py-2.5 px-3 text-xs sm:text-sm font-bold flex items-center justify-center gap-2 rounded-xl transition-all ${
             activeSubTab === 'sync'
-              ? 'bg-white dark:bg-slate-800 text-brand-700 dark:text-brand-300 shadow-sm'
-              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-800/50'
+              ? 'bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-500/25'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/[0.04]'
           }`}
         >
           <Cloud className="w-4 h-4" />
@@ -346,43 +346,41 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
       {/* Feedback Alerts */}
       {successMsg && (
-        <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm rounded-2xl flex items-center gap-3 shadow-sm animate-scale-in">
-          <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-          <span className="font-medium">{successMsg}</span>
+        <div className="p-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-900 dark:text-emerald-300 text-xs sm:text-sm rounded-2xl flex items-center gap-3 shadow-soft animate-scale-in">
+          <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <span className="font-semibold">{successMsg}</span>
         </div>
       )}
 
       {errorMsg && (
-        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm rounded-2xl flex items-center gap-3 shadow-sm animate-scale-in">
-          <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0" />
-          <span className="font-medium">{errorMsg}</span>
+        <div className="p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-900 dark:text-rose-300 text-xs sm:text-sm rounded-2xl flex items-center gap-3 shadow-soft animate-scale-in">
+          <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0" />
+          <span className="font-semibold">{errorMsg}</span>
         </div>
       )}
 
-      {/* ==================================================== */}
-      {/* SUB-TAB 1: IDENTITAS SEKOLAH & LOGO UPLOAD          */}
-      {/* ==================================================== */}
+      {/* SUB-TAB 1: IDENTITAS SEKOLAH & LOGO UPLOAD */}
       {activeSubTab === 'school' && (
         <form onSubmit={handleSaveSchoolSettings} className="space-y-6">
-          {/* LOGO UPLOAD SECTION (DARI PERANGKAT DEVICE) */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-soft space-y-5">
-            <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-              <div className="p-2 bg-brand-50 text-brand-600 rounded-xl">
+          {/* LOGO UPLOAD SECTION */}
+          <div className="saas-card p-6 sm:p-7 space-y-5">
+            <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-white/[0.08]">
+              <div className="p-2.5 bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-xl border border-indigo-500/20">
                 <ImageIcon className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-slate-900">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Logo Aplikasi & Lembaga (Upload dari Perangkat)
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Logo akan otomatis tampil di Navbar atas, halaman Login, dan Kop Surat resmi PDF.
                 </p>
               </div>
             </div>
 
             {logoFileError && (
-              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
+              <div className="p-3 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-700 dark:text-rose-300 text-xs rounded-xl flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
                 <span>{logoFileError}</span>
               </div>
             )}
@@ -400,22 +398,22 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   onClick={() => fileInputRef.current?.click()}
                   className={`border-2 border-dashed rounded-3xl p-6 sm:p-8 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-3 ${
                     isDragging
-                      ? 'border-brand-500 bg-brand-50/50 ring-4 ring-brand-500/10 scale-[1.01]'
-                      : 'border-slate-300 hover:border-brand-500 bg-slate-50/60 hover:bg-brand-50/20'
+                      ? 'border-indigo-500 bg-indigo-500/10 ring-4 ring-indigo-500/20 scale-[1.01]'
+                      : 'border-slate-300 dark:border-white/[0.12] hover:border-indigo-500 dark:hover:border-indigo-400 bg-slate-50/60 dark:bg-[#161d31]/60 hover:bg-indigo-50/20 dark:hover:bg-indigo-500/5'
                   }`}
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-brand-100/80 text-brand-700 flex items-center justify-center shadow-inner">
+                  <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shadow-inner border border-indigo-500/20">
                     <Upload className="w-7 h-7" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-800">
+                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200">
                       Klik untuk Pilih Gambar dari Perangkat HP / Laptop
                     </p>
-                    <p className="text-xs text-slate-500 mt-0.5">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                       Atau seret dan lepas (drag & drop) file gambar ke kotak ini
                     </p>
                   </div>
-                  <div className="flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+                  <div className="flex items-center gap-2 text-[11px] text-slate-400 dark:text-slate-500 font-medium">
                     <span>Format: PNG, JPG, JPEG, SVG, WebP</span>
                     <span>•</span>
                     <span>Maksimal 5 MB</span>
@@ -430,13 +428,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 </div>
 
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500">
+                  <span className="text-slate-500 dark:text-slate-400">
                     Ingin menggunakan logo bawaan pesantren?
                   </span>
                   <button
                     type="button"
                     onClick={handleResetToDefaultLogo}
-                    className="text-brand-600 hover:text-brand-700 font-bold flex items-center gap-1.5 hover:underline"
+                    className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-bold flex items-center gap-1.5 hover:underline"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Reset ke Logo Standar</span>
@@ -446,20 +444,20 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
               {/* Live Preview Cards */}
               <div className="lg:col-span-5 space-y-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block">
                   Pratinjau Tampilan (Live Preview)
                 </span>
 
                 {/* Preview on Dark Navbar */}
-                <div className="p-4 rounded-2xl bg-navy-950 text-white border border-navy-800 shadow-md">
-                  <span className="text-[10px] uppercase tracking-wider text-brand-300 font-bold block mb-2">
+                <div className="p-4 rounded-2xl bg-[#0d1222] text-white border border-white/[0.08] shadow-md">
+                  <span className="text-[10px] uppercase tracking-wider text-indigo-400 font-bold block mb-2">
                     Pratinjau di Header / Navbar:
                   </span>
                   <div className="flex items-center gap-3">
                     <img
                       src={logoUrl || '/logo.svg'}
                       alt="Logo Preview"
-                      className="w-10 h-10 object-contain rounded-xl bg-white/10 p-1 ring-2 ring-white/20"
+                      className="w-10 h-10 object-contain rounded-xl bg-white/10 p-1 ring-1 ring-white/20"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/logo.svg';
                       }}
@@ -476,11 +474,11 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 </div>
 
                 {/* Preview on Official Paper / Kop Surat */}
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                  <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold block mb-2">
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#161d31] border border-slate-200 dark:border-white/[0.08]">
+                  <span className="text-[10px] uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold block mb-2">
                     Pratinjau di Kop Surat PDF:
                   </span>
-                  <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200">
+                  <div className="flex items-center gap-3 bg-white dark:bg-[#111726] p-3 rounded-xl border border-slate-200 dark:border-white/[0.08]">
                     <img
                       src={logoUrl || '/logo.svg'}
                       alt="Logo Preview"
@@ -489,11 +487,11 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                         (e.target as HTMLImageElement).src = '/logo.svg';
                       }}
                     />
-                    <div className="text-center flex-1">
-                      <p className="text-xs font-bold text-navy-950 uppercase truncate">
+                    <div className="text-center flex-1 truncate">
+                      <p className="text-xs font-bold text-slate-900 dark:text-white uppercase truncate">
                         {schoolName || 'PESANTREN TAHFIZH'}
                       </p>
-                      <p className="text-[9px] font-bold text-brand-700 truncate">
+                      <p className="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 truncate">
                         {kopSuratText || 'DIVISI HALAQAH TAHFIZH'}
                       </p>
                     </div>
@@ -504,16 +502,16 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           </div>
 
           {/* FORM IDENTITAS SEKOLAH */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-soft space-y-6">
-            <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-              <div className="p-2 bg-brand-50 text-brand-600 rounded-xl">
+          <div className="saas-card p-6 sm:p-7 space-y-6">
+            <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-white/[0.08]">
+              <div className="p-2.5 bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-xl border border-indigo-500/20">
                 <Building className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-base sm:text-lg font-bold text-slate-900">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                   Informasi Sekolah & Aplikasi
                 </h2>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Informasi ini akan tercantum di kop surat resmi, laporan PDF, dan header aplikasi.
                 </p>
               </div>
@@ -522,8 +520,8 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* Nama Aplikasi */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-brand-600" />
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                   Nama Aplikasi
                 </label>
                 <input
@@ -531,15 +529,15 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   value={appName}
                   onChange={(e) => setAppName(e.target.value)}
                   placeholder="Sistem Poin Santri Halaqah"
-                  className="w-full text-sm px-4 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 bg-white font-medium"
+                  className="w-full text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-medium outline-none"
                   required
                 />
               </div>
 
               {/* Nama Sekolah / Lembaga */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <Building className="w-3.5 h-3.5 text-brand-600" />
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <Building className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                   Nama Lembaga / Pesantren
                 </label>
                 <input
@@ -547,15 +545,15 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   value={schoolName}
                   onChange={(e) => setSchoolName(e.target.value)}
                   placeholder="Pesantren Tahfizh Al-Qur'an Imam Asy-Syathibi"
-                  className="w-full text-sm px-4 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 bg-white font-medium"
+                  className="w-full text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-medium outline-none"
                   required
                 />
               </div>
 
               {/* Alamat Lengkap */}
               <div className="md:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-brand-600" />
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                   Alamat Lengkap Pesantren / Lembaga
                 </label>
                 <textarea
@@ -563,15 +561,15 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="Jl. Karang Anyar No. 45, Kompleks Islamic Center, Bogor, Jawa Barat"
                   rows={2}
-                  className="w-full text-sm px-4 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 bg-white font-medium"
+                  className="w-full text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-medium outline-none"
                   required
                 />
               </div>
 
               {/* No. Telepon / Kontak */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <Phone className="w-3.5 h-3.5 text-brand-600" />
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                   Nomor Telepon / Kontak Resmi
                 </label>
                 <input
@@ -579,14 +577,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="0811-9876-5432 / (0251) 8345678"
-                  className="w-full text-sm px-4 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-white"
+                  className="w-full text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 outline-none"
                 />
               </div>
 
               {/* Email Lembaga */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <Mail className="w-3.5 h-3.5 text-brand-600" />
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                   Email Resmi Lembaga
                 </label>
                 <input
@@ -594,14 +592,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="tahfizh@pesantren.sch.id"
-                  className="w-full text-sm px-4 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-white"
+                  className="w-full text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 outline-none"
                 />
               </div>
 
               {/* Teks Sub-Kop Surat */}
               <div className="md:col-span-2">
-                <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <FileText className="w-3.5 h-3.5 text-brand-600" />
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                   Teks Baris Kedua Kop Surat (Sub-Lembaga / Bidang)
                 </label>
                 <input
@@ -609,13 +607,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   value={kopSuratText}
                   onChange={(e) => setKopSuratText(e.target.value)}
                   placeholder="BIDANG PENDIDIKAN DAN KEPENGASUHAN - DIVISI HALAQAH TAHFIZH"
-                  className="w-full text-sm px-4 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-white font-semibold uppercase"
+                  className="w-full text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-semibold uppercase outline-none"
                 />
               </div>
 
               {/* Tahun Ajaran */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                   Tahun Ajaran Berjalan
                 </label>
                 <input
@@ -623,16 +621,16 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   value={academicYear}
                   onChange={(e) => setAcademicYear(e.target.value)}
                   placeholder="2025/2026"
-                  className="w-full text-sm px-4 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-white font-bold"
+                  className="w-full text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-bold outline-none"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end pt-5 border-t border-slate-100">
+            <div className="flex justify-end pt-5 border-t border-slate-100 dark:border-white/[0.08]">
               <button
                 type="submit"
                 disabled={saving}
-                className="px-7 py-3 bg-gradient-to-r from-brand-600 to-navy-900 hover:from-brand-500 hover:to-navy-800 text-white font-bold rounded-2xl shadow-lg transition-all flex items-center gap-2 transform active:scale-98 disabled:opacity-50"
+                className="px-7 py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/25 transition-all flex items-center gap-2 transform active:scale-98 disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />
                 <span>{saving ? 'Menyimpan...' : 'Simpan Pengaturan Lembaga'}</span>
@@ -642,17 +640,15 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         </form>
       )}
 
-      {/* ==================================================== */}
-      {/* SUB-TAB 2: BATAS POIN (THRESHOLDS MANAGEMENT)        */}
-      {/* ==================================================== */}
+      {/* SUB-TAB 2: BATAS POIN (THRESHOLDS MANAGEMENT) */}
       {activeSubTab === 'thresholds' && (
-        <form onSubmit={handleSaveThresholds} className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-soft space-y-6">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <form onSubmit={handleSaveThresholds} className="saas-card p-6 sm:p-7 space-y-6">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/[0.08]">
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
                 Pengaturan Status Ambang Batas Poin
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Angka batas poin tidak di-hardcode dan dapat disesuaikan dengan pedoman kepengasuhan pondok.
               </p>
             </div>
@@ -662,12 +658,12 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             {thresholds.map((th, idx) => (
               <div
                 key={th.id || idx}
-                className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-3 hover:border-brand-200 transition-colors"
+                className="p-5 rounded-2xl border border-slate-200 dark:border-white/[0.08] bg-slate-50/50 dark:bg-[#161d31] space-y-3 hover:border-indigo-400/50 transition-colors"
               >
                 <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
                   {/* Min Poin */}
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-500 mb-1">
+                    <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
                       Min Poin
                     </label>
                     <input
@@ -676,13 +672,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                       onChange={(e) =>
                         handleThresholdChange(idx, 'minimum_points', parseInt(e.target.value, 10) || 0)
                       }
-                      className="w-full text-sm px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold text-slate-900"
+                      className="w-full text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#111726] font-bold text-slate-900 dark:text-white outline-none focus:border-indigo-500"
                     />
                   </div>
 
                   {/* Max Poin */}
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-500 mb-1">
+                    <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
                       Maks Poin
                     </label>
                     <input
@@ -691,13 +687,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                       onChange={(e) =>
                         handleThresholdChange(idx, 'maximum_points', parseInt(e.target.value, 10) || 0)
                       }
-                      className="w-full text-sm px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold text-slate-900"
+                      className="w-full text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#111726] font-bold text-slate-900 dark:text-white outline-none focus:border-indigo-500"
                     />
                   </div>
 
                   {/* Status Label */}
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-500 mb-1">
+                    <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
                       Label Status
                     </label>
                     <input
@@ -705,13 +701,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                       value={th.status_name}
                       onChange={(e) => handleThresholdChange(idx, 'status_name', e.target.value)}
                       placeholder="AMAN / PERLU PEMBINAAN..."
-                      className="w-full text-sm px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold text-brand-700 uppercase"
+                      className="w-full text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#111726] font-bold text-indigo-600 dark:text-indigo-400 uppercase outline-none focus:border-indigo-500"
                     />
                   </div>
 
                   {/* Preview Badge */}
                   <div>
-                    <label className="block text-[11px] font-bold text-slate-500 mb-1">
+                    <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
                       Tampilan Badge
                     </label>
                     <div className="pt-1">
@@ -722,7 +718,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
 
                 {/* Deskripsi */}
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 mb-1">
+                  <label className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1">
                     Tindakan / Deskripsi Arahan
                   </label>
                   <input
@@ -730,18 +726,18 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                     value={th.description || ''}
                     onChange={(e) => handleThresholdChange(idx, 'description', e.target.value)}
                     placeholder="Bimbingan oleh muhafizh / Surat peringatan..."
-                    className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 bg-white"
+                    className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#111726] text-slate-900 dark:text-white outline-none focus:border-indigo-500"
                   />
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-slate-100">
+          <div className="flex justify-end pt-4 border-t border-slate-100 dark:border-white/[0.08]">
             <button
               type="submit"
               disabled={saving}
-              className="px-7 py-3 bg-gradient-to-r from-brand-600 to-navy-900 hover:from-brand-500 hover:to-navy-800 text-white font-bold rounded-2xl shadow-lg transition-all flex items-center gap-2 transform active:scale-98 disabled:opacity-50"
+              className="px-7 py-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-2xl shadow-lg shadow-indigo-500/25 transition-all flex items-center gap-2 transform active:scale-98 disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? 'Menyimpan...' : 'Simpan Perubahan Batas Poin'}</span>
@@ -754,26 +750,26 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
       {activeSubTab === 'sync' && (
         <div className="space-y-6">
           {/* Cloud Persistence Status Card */}
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-sm relative overflow-hidden">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+          <div className="saas-card p-6 sm:p-7 relative overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-white/[0.08]">
               <div className="flex items-center gap-3">
-                <div className={`p-3 rounded-2xl ${cloudInfo?.isConnected ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-brand-50 text-brand-600 border border-brand-200'}`}>
+                <div className={`p-3 rounded-2xl ${cloudInfo?.isConnected ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20' : 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20'}`}>
                   <Cloud className="w-6 h-6" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-slate-900">Status Penyimpanan & Sinkronisasi Cloud</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Memastikan data sinkron ketika link web app dibuka di HP, laptop, atau perangkat lain</p>
+                  <h2 className="text-lg font-black text-slate-900 dark:text-white">Status Penyimpanan & Sinkronisasi Cloud</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Memastikan data sinkron ketika link web app dibuka di HP, laptop, atau perangkat lain</p>
                 </div>
               </div>
 
               <div>
                 {cloudInfo?.isConnected ? (
-                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black bg-emerald-100/80 text-emerald-800 border border-emerald-300 shadow-sm">
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/30 shadow-soft">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     {cloudInfo.provider === 'postgres' ? 'Cloud Postgres (Neon) Terhubung' : 'Cloud Storage Terhubung'}
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black bg-amber-100/80 text-amber-800 border border-amber-300 shadow-sm">
+                  <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-black bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30 shadow-soft">
                     <span className="w-2 h-2 rounded-full bg-amber-500"></span>
                     Sinkronisasi Klien & Serverless Aktif
                   </span>
@@ -782,23 +778,23 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             </div>
 
             <div className="mt-6 space-y-4">
-              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/70 text-xs sm:text-sm text-slate-700 leading-relaxed">
-                <p className="font-bold text-slate-900 mb-1">Informasi Infrastruktur:</p>
+              <div className="p-4 bg-slate-50 dark:bg-[#161d31] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                <p className="font-bold text-slate-900 dark:text-white mb-1">Informasi Infrastruktur:</p>
                 <p>{cloudInfo?.details || 'Memuat status server...'}</p>
               </div>
 
               {!cloudInfo?.isConnected && (
-                <div className="p-5 bg-gradient-to-br from-brand-50/50 to-indigo-50/40 rounded-2xl border border-brand-200/70 text-xs sm:text-sm text-slate-700">
-                  <div className="flex items-center gap-2 text-brand-900 font-bold mb-2">
-                    <Database className="w-4 h-4 text-brand-600" />
+                <div className="p-5 bg-gradient-to-br from-indigo-50/50 to-purple-50/40 dark:from-indigo-500/10 dark:to-purple-500/10 rounded-2xl border border-indigo-200/70 dark:border-indigo-500/20 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                  <div className="flex items-center gap-2 text-indigo-900 dark:text-indigo-300 font-bold mb-2">
+                    <Database className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                     <span>Cara Mengaktifkan Cloud Database Bersama di Vercel (Gratis 100%):</span>
                   </div>
-                  <ol className="list-decimal list-inside space-y-1.5 text-xs text-slate-600 pl-1">
-                    <li>Buka dashboard Vercel Anda di <code className="bg-white px-1.5 py-0.5 rounded text-brand-700 font-semibold border border-brand-200">vercel.com</code></li>
-                    <li>Pilih proyek Anda <strong className="text-slate-800">sistem-pencatatan-imbs</strong></li>
-                    <li>Klik tab <strong className="text-slate-800">Storage</strong> di bagian atas</li>
-                    <li>Klik tombol <strong className="text-slate-800">Connect Store</strong> &rarr; pilih <strong className="text-brand-700">Postgres (Neon)</strong> atau <strong className="text-brand-700">KV</strong></li>
-                    <li>Klik <strong className="text-slate-800">Connect</strong>. Vercel akan otomatis menyuntikkan database cloud bersama tanpa perlu konfigurasi manual!</li>
+                  <ol className="list-decimal list-inside space-y-1.5 text-xs text-slate-600 dark:text-slate-400 pl-1">
+                    <li>Buka dashboard Vercel Anda di <code className="bg-white dark:bg-[#111726] px-1.5 py-0.5 rounded text-indigo-600 dark:text-indigo-400 font-semibold border border-indigo-200 dark:border-indigo-500/30">vercel.com</code></li>
+                    <li>Pilih proyek Anda <strong className="text-slate-800 dark:text-white">sistem-pencatatan-imbs</strong></li>
+                    <li>Klik tab <strong className="text-slate-800 dark:text-white">Storage</strong> di bagian atas</li>
+                    <li>Klik tombol <strong className="text-slate-800 dark:text-white">Connect Store</strong> &rarr; pilih <strong className="text-indigo-600 dark:text-indigo-400">Postgres (Neon)</strong> atau <strong className="text-indigo-600 dark:text-indigo-400">KV</strong></li>
+                    <li>Klik <strong className="text-slate-800 dark:text-white">Connect</strong>. Vercel akan otomatis menyuntikkan database cloud bersama tanpa perlu konfigurasi manual!</li>
                   </ol>
                 </div>
               )}
@@ -808,14 +804,14 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
           {/* Action Hub Card */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Sync Now & Share Link */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-4">
+            <div className="saas-card p-6 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl border border-blue-200">
+                <div className="p-2.5 bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-xl border border-blue-500/20">
                   <RefreshCw className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">Sinkronisasi Sekarang</h3>
-                  <p className="text-xs text-slate-500">Perbarui data perangkat ini dengan data terbaru dari server</p>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Sinkronisasi Sekarang</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Perbarui data perangkat ini dengan data terbaru dari server</p>
                 </div>
               </div>
 
@@ -824,7 +820,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   type="button"
                   onClick={handleManualSync}
                   disabled={isSyncing}
-                  className="flex-1 py-3 px-4 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-xs sm:text-sm disabled:opacity-50"
+                  className="flex-1 py-3 px-4 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm disabled:opacity-50"
                 >
                   <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
                   <span>{isSyncing ? 'Menyinkronkan...' : 'Sinkronkan Sekarang'}</span>
@@ -833,23 +829,23 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 <button
                   type="button"
                   onClick={handleCopyShareLink}
-                  className="py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl border border-slate-200 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
+                  className="py-3 px-4 bg-white dark:bg-[#161d31] hover:bg-slate-50 dark:hover:bg-[#1e2742] text-slate-800 dark:text-slate-200 font-bold rounded-xl border border-slate-300 dark:border-white/[0.1] transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
                 >
-                  {copiedLink ? <Check className="w-4 h-4 text-emerald-600" /> : <Share2 className="w-4 h-4" />}
+                  {copiedLink ? <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> : <Share2 className="w-4 h-4" />}
                   <span>{copiedLink ? 'Tautan Disalin!' : 'Bagikan Tautan'}</span>
                 </button>
               </div>
             </div>
 
             {/* Backup & Restore */}
-            <div className="bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/80 shadow-sm space-y-4">
+            <div className="saas-card p-6 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-200">
+                <div className="p-2.5 bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-xl border border-emerald-500/20">
                   <Database className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">Cadangan & Pemulihan (JSON)</h3>
-                  <p className="text-xs text-slate-500">Amankan data santri, poin, dan pengaturan atau pindahkan ke perangkat lain</p>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Cadangan & Pemulihan (JSON)</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Amankan data santri, poin, dan pengaturan atau pindahkan ke perangkat lain</p>
                 </div>
               </div>
 
@@ -857,13 +853,13 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                 <button
                   type="button"
                   onClick={handleDownloadBackup}
-                  className="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
+                  className="flex-1 py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"
                 >
                   <Download className="w-4 h-4" />
                   <span>Unduh Cadangan</span>
                 </button>
 
-                <label className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl border border-slate-200 transition-all flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer text-center">
+                <label className="flex-1 py-3 px-4 bg-white dark:bg-[#161d31] hover:bg-slate-50 dark:hover:bg-[#1e2742] text-slate-800 dark:text-slate-200 font-bold rounded-xl border border-slate-300 dark:border-white/[0.1] transition-all flex items-center justify-center gap-2 text-xs sm:text-sm cursor-pointer text-center">
                   <Upload className="w-4 h-4" />
                   <span>Pulihkan Data</span>
                   <input
@@ -882,4 +878,3 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
     </div>
   );
 };
-

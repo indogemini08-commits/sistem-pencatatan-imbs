@@ -18,6 +18,8 @@ import {
   Award,
   Building2,
   ShieldCheck,
+  Search,
+  Bell,
 } from 'lucide-react';
 import { User as UserType, SchoolSettings } from '../types';
 import { ThemeToggle } from './ThemeToggle';
@@ -125,13 +127,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-20 h-16 bg-white/95 dark:bg-[#0c162b]/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800/90 px-4 sm:px-6 lg:px-8 flex items-center justify-between shadow-xs transition-colors duration-200">
+    <header className="sticky top-0 z-20 h-16 sm:h-18 bg-white/80 dark:bg-[#0b101d]/85 backdrop-blur-xl border-b border-slate-200/90 dark:border-white/[0.08] px-4 sm:px-6 lg:px-8 flex items-center justify-between shadow-xs transition-colors duration-200">
       {/* Left: Mobile Toggle & Desktop Breadcrumb */}
       <div className="flex items-center gap-3 sm:gap-4">
         {/* Mobile Hamburger Menu */}
         <button
           onClick={onToggleSidebar}
-          className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-700 transition-colors"
+          className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] border border-slate-200/80 dark:border-white/[0.08] transition-colors"
           aria-label="Buka Menu"
         >
           <Menu className="w-5 h-5" />
@@ -142,24 +144,26 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="flex lg:hidden items-center gap-2 cursor-pointer"
           onClick={() => onSelectTab && onSelectTab('dashboard')}
         >
-          <div className="w-8 h-8 rounded-xl bg-navy-950 p-1 flex items-center justify-center ring-1 ring-brand-400/30">
-            <img
-              src={settings?.logo_url || '/logo.svg'}
-              alt="Logo"
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/logo.svg';
-              }}
-            />
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 p-0.5 flex items-center justify-center ring-1 ring-indigo-500/30">
+            <div className="w-full h-full rounded-lg bg-white dark:bg-slate-950 p-1 flex items-center justify-center">
+              <img
+                src={settings?.logo_url || '/logo.svg'}
+                alt="Logo"
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/logo.svg';
+                }}
+              />
+            </div>
           </div>
           <span className="text-sm font-black text-slate-900 dark:text-white truncate">
-            {settings?.app_name || 'Poin Halaqah'}
+            {settings?.app_name || 'Sistem Poin IMBS'}
           </span>
         </div>
 
         {/* Desktop Active Section Title with Icon */}
         <div className="hidden lg:flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 border border-brand-100 dark:border-brand-800/60">
+          <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/60 shadow-xs">
             <TabIcon className="w-4 h-4" />
           </div>
           <div>
@@ -173,11 +177,26 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       </div>
 
-      {/* Right: Academic Year Pill, Quick Action, Profile & Logout */}
-      <div className="flex items-center gap-2 sm:gap-3.5">
+      {/* Middle: SaaS Search Bar (Desktop) */}
+      <div className="hidden xl:flex items-center relative min-w-[260px] 2xl:min-w-[320px]">
+        <Search className="w-3.5 h-3.5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+        <input
+          type="text"
+          placeholder="Cari santri, NIS, halaqah..."
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && onSelectTab) {
+              onSelectTab('students');
+            }
+          }}
+          className="w-full pl-9 pr-4 py-1.5 text-xs rounded-full bg-slate-100/90 dark:bg-white/[0.06] border border-slate-200/90 dark:border-white/[0.08] text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+        />
+      </div>
+
+      {/* Right: Academic Year Pill, Quick Action, Theme, Notifications & Profile */}
+      <div className="flex items-center gap-2 sm:gap-3">
         {/* Academic Year Pill */}
-        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700/80 text-xs text-slate-700 dark:text-slate-200 font-semibold shadow-xs">
-          <Calendar className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
+        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100/90 dark:bg-white/[0.06] border border-slate-200/90 dark:border-white/[0.08] text-xs text-slate-700 dark:text-slate-300 font-semibold shadow-xs">
+          <Calendar className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
           <span>T.A. {settings?.current_academic_year || '2025/2026'}</span>
         </div>
 
@@ -185,7 +204,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {onOpenQuickReward && (
           <button
             onClick={onOpenQuickReward}
-            className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-emerald-600/20 border border-white/10 transition-all transform active:scale-95"
+            className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-xs font-bold rounded-xl shadow-md shadow-emerald-600/20 border border-white/10 transition-all transform active:scale-95"
             title="Catat Kegiatan Baik / Pengurangan Poin Santri"
           >
             <Sparkles className="w-3.5 h-3.5 text-emerald-200" />
@@ -197,39 +216,47 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Quick Violation Record Button */}
         <button
           onClick={onOpenQuickRecord}
-          className="flex items-center gap-2 px-3.5 sm:px-4 py-2 bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-500 hover:to-blue-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-brand-500/20 border border-white/10 transition-all transform active:scale-95"
+          className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-600 text-white text-xs sm:text-xs font-bold rounded-xl shadow-md shadow-indigo-600/25 border border-white/20 transition-all transform active:scale-95"
         >
-          <PlusCircle className="w-4 h-4 text-brand-100" />
+          <PlusCircle className="w-3.5 h-3.5 text-purple-200" />
           <span className="hidden sm:inline">Catat Pelanggaran</span>
-          <span className="sm:hidden font-extrabold">+ Pelanggaran</span>
+          <span className="sm:hidden font-extrabold">+ Catat</span>
+        </button>
+
+        {/* Notification Bell */}
+        <button
+          type="button"
+          title="Notifikasi Aktivitas"
+          className="relative p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] border border-slate-200/80 dark:border-white/[0.08] transition-colors"
+        >
+          <Bell className="w-4 h-4" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-[#0b101d]" />
         </button>
 
         {/* Theme Toggle Switcher (Matahari - Bulan) */}
         <ThemeToggle size="sm" />
 
-        {/* User Meta & Logout */}
-        <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 border-l border-slate-200 dark:border-slate-800">
-          <div className="text-right hidden sm:block">
-            <p className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[150px]">
-              {currentUser?.name || 'Pengguna'}
-            </p>
-            <div className="mt-0.5">{getRoleBadge(currentUser?.role)}</div>
+        {/* User Profile Pill Card (Matching Reference Image) */}
+        <div className="flex items-center gap-2 sm:gap-2.5 pl-1.5 sm:pl-2">
+          <div className="flex items-center gap-2 px-2 py-1 rounded-2xl bg-slate-100/90 dark:bg-white/[0.06] border border-slate-200/90 dark:border-white/[0.08] shadow-xs">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center font-black text-xs shadow-md shadow-indigo-500/25 ring-1 ring-white/20 shrink-0">
+              {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : <User className="w-3.5 h-3.5" />}
+            </div>
+            <div className="text-left hidden sm:block pr-1">
+              <p className="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[120px] leading-tight">
+                {currentUser?.name || 'Pengguna'}
+              </p>
+              <div className="mt-0.5">{getRoleBadge(currentUser?.role)}</div>
+            </div>
+            <button
+              onClick={onLogout}
+              title="Keluar / Logout"
+              className="p-1 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all shrink-0 ml-1"
+              aria-label="Logout"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+            </button>
           </div>
-
-          {/* User Initial Avatar */}
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-navy-900 text-white flex items-center justify-center font-black text-sm shadow-sm ring-2 ring-brand-500/20">
-            {currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : <User className="w-4 h-4" />}
-          </div>
-
-          {/* Logout Button */}
-          <button
-            onClick={onLogout}
-            title="Keluar / Logout"
-            className="p-2 rounded-xl text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-transparent hover:border-rose-200 dark:hover:border-rose-900/50 transition-all"
-            aria-label="Logout"
-          >
-            <LogOut className="w-4 h-4" />
-          </button>
         </div>
       </div>
     </header>

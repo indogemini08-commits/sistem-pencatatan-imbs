@@ -322,18 +322,22 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
       ? 'Pencatatan kedisiplinan asrama, ibadah shalat berjamaah, dan tata tertib santri.'
       : filterDivision === 'tahfizh'
       ? 'Pencatatan kedisiplinan halaqah Al-Quran, mutabaah, hafalan, dan adab halaqah.'
-      : 'Monitoring terpadu mencakup divisi Tahfizh dan Kesantrian dengan akumulasi poin yang sama.';
+      : 'Monitoring terpadu mencakup divisi Tahfizh dan Kesantrian dengan akumulasi poin terintegrasi.';
 
   return (
-    <div className="space-y-4 sm:space-y-6 animate-scale-in">
+    <div className="space-y-5 sm:space-y-6 animate-scale-in">
       {/* Title & Action Buttons */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <History className="w-6 h-6 sm:w-7 sm:h-7 text-brand-600 shrink-0" />
-            <span>{pageTitle}</span>
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500">{pageDesc}</p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-500/20 shadow-inner shrink-0">
+            <History className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+              {pageTitle}
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{pageDesc}</p>
+          </div>
         </div>
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
@@ -341,7 +345,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
           {selectedIds.size > 0 && (
             <button
               onClick={() => setShowBulkConfirm(true)}
-              className="px-4 py-3 sm:py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm sm:text-xs font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto"
+              className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-rose-500/20 transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto"
             >
               <Trash2 className="w-4 h-4" />
               <span>Hapus {selectedIds.size} Catatan</span>
@@ -350,7 +354,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
           <button
             onClick={handleExportPDF}
-            className="px-4 py-3 sm:py-2.5 bg-brand-600 hover:bg-brand-700 text-white text-sm sm:text-xs font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto"
+            className="px-4 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto"
           >
             <FileText className="w-4 h-4" />
             <span>Export PDF (Kop Surat)</span>
@@ -358,26 +362,26 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
           <button
             onClick={handleExportExcel}
-            className="px-3.5 py-3 sm:py-2.5 bg-white hover:bg-slate-50 text-slate-700 text-sm sm:text-xs font-semibold rounded-xl border border-slate-300 shadow-sm transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto"
+            className="px-3.5 py-2.5 bg-white dark:bg-[#161d31] hover:bg-slate-50 dark:hover:bg-[#1e2742] text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-white/[0.1] shadow-soft transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto"
           >
-            <Download className="w-4 h-4 text-emerald-600" />
+            <Download className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Export Excel</span>
           </button>
         </div>
       </div>
 
-      {/* Division Tabs Switcher: Responsive full-width grid on mobile */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 p-1.5 rounded-2xl bg-slate-200/70 dark:bg-slate-900/80 border border-slate-300/60 dark:border-slate-800 text-xs font-bold w-full sm:w-fit gap-1.5 shadow-xs">
+      {/* Division Tabs Switcher */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 p-1.5 rounded-2xl bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] text-xs font-bold w-full sm:w-fit gap-1.5 shadow-soft">
         <button
           onClick={() => setFilterDivision('all')}
           className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
             filterDivision === 'all'
-              ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-md ring-1 ring-slate-300 dark:ring-slate-700'
-              : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300/40 dark:hover:bg-slate-800/60'
+              ? 'bg-white dark:bg-[#1e2742] text-slate-900 dark:text-white shadow-md ring-1 ring-slate-300 dark:ring-white/[0.1]'
+              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
           }`}
         >
           <span>🌐 Rekap Terpadu (Semua)</span>
-          <span className="px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-700 text-[10px] text-slate-600 dark:text-slate-200 font-extrabold border border-slate-200 dark:border-slate-600">
+          <span className="px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-[#111726] text-[10px] text-slate-700 dark:text-slate-300 font-extrabold border border-slate-200 dark:border-white/[0.1]">
             {records.length}
           </span>
         </button>
@@ -386,14 +390,14 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
           onClick={() => setFilterDivision('tahfizh')}
           className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
             filterDivision === 'tahfizh'
-              ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
-              : 'text-slate-600 dark:text-slate-300 hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-slate-300/40 dark:hover:bg-slate-800/60'
+              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-500/20'
+              : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
           }`}
         >
           <BookOpen className="w-3.5 h-3.5" />
           <span>🕌 Pelanggaran Tahfizh</span>
-          <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-            filterDivision === 'tahfizh' ? 'bg-white/20 text-white' : 'bg-slate-300 dark:bg-slate-700 text-slate-700 dark:text-slate-200'
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+            filterDivision === 'tahfizh' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
           }`}>
             {tahfizhRecords.length}
           </span>
@@ -403,23 +407,23 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
           onClick={() => setFilterDivision('kesantrian')}
           className={`py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
             filterDivision === 'kesantrian'
-              ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
-              : 'text-slate-600 dark:text-slate-300 hover:text-blue-700 dark:hover:text-blue-400 hover:bg-slate-300/40 dark:hover:bg-slate-800/60'
+              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20'
+              : 'text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-300/40 dark:hover:bg-white/[0.04]'
           }`}
         >
           <Building2 className="w-3.5 h-3.5" />
           <span>🏢 Pelanggaran Kesantrian</span>
-          <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-            filterDivision === 'kesantrian' ? 'bg-white/20 text-white' : 'bg-slate-300 dark:bg-slate-700 text-slate-700 dark:text-slate-200'
+          <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-extrabold ${
+            filterDivision === 'kesantrian' ? 'bg-white/20 text-white' : 'bg-slate-300/80 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300'
           }`}>
             {kesantrianRecords.length}
           </span>
         </button>
       </div>
 
-      {/* Filter and Date Range Card: Compact padding & stacked layout on mobile */}
-      <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-soft space-y-3 sm:space-y-4">
-        <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+      {/* Filter and Date Range Card */}
+      <div className="saas-card p-4 sm:p-5 space-y-4">
+        <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {/* Global Search */}
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
@@ -428,17 +432,17 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari santri, NIS, pelanggaran..."
-              className="w-full text-sm pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-white min-h-[44px]"
+              className="w-full text-xs sm:text-sm pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-indigo-500 dark:focus:border-indigo-400 min-h-[42px] outline-none"
             />
           </div>
 
           {/* Halaqah Filter */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            <span className="text-xs font-semibold text-slate-500 whitespace-nowrap sm:w-16">Halaqah:</span>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap sm:w-16">Halaqah:</span>
             <select
               value={filterHalaqah}
               onChange={(e) => setFilterHalaqah(e.target.value)}
-              className="w-full text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-white min-h-[44px]"
+              className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 min-h-[42px] outline-none"
             >
               <option value="all">Semua Halaqah</option>
               {halaqahs.map((h) => (
@@ -451,38 +455,38 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
           {/* Tanggal Dari & Sampai */}
           <div className="grid grid-cols-2 sm:contents gap-2">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 whitespace-nowrap sm:w-10">Dari:</span>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
+              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap sm:w-10">Dari:</span>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-white min-h-[44px]"
+                className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 min-h-[42px] outline-none"
               />
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 whitespace-nowrap sm:w-12">Sampai:</span>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
+              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap sm:w-12">Sampai:</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full text-sm px-3 py-2.5 rounded-xl border border-slate-300 focus:border-brand-500 bg-white min-h-[44px]"
+                className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 min-h-[42px] outline-none"
               />
             </div>
           </div>
         </div>
 
-        {/* Secondary Filter Row: Responsive wrap on mobile */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+        {/* Secondary Filter Row */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-white/[0.06]">
           <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-3">
             {/* Status Filter */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-500">Status:</span>
+              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Status:</span>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full sm:w-auto text-xs px-2.5 py-2 rounded-lg border border-slate-300 bg-white min-h-[38px]"
+                className="w-full sm:w-auto text-xs px-2.5 py-2 rounded-lg border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white min-h-[38px] outline-none"
               >
                 <option value="all">Semua Status</option>
                 <option value="active">Aktif</option>
@@ -492,11 +496,11 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
             {/* Kategori Filter */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-500">Kategori:</span>
+              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Kategori:</span>
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="w-full sm:w-auto text-xs px-2.5 py-2 rounded-lg border border-slate-300 bg-white min-h-[38px]"
+                className="w-full sm:w-auto text-xs px-2.5 py-2 rounded-lg border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white min-h-[38px] outline-none"
               >
                 <option value="all">Semua Kategori</option>
                 <option value="Tahfizh">Tahfizh</option>
@@ -511,10 +515,10 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
           {/* Summary metric of current filtered records */}
           <div className="flex items-center justify-between sm:justify-end gap-3 text-xs pt-1 sm:pt-0">
-            <span className="text-slate-500">
-              Kejadian: <strong className="text-slate-900">{filteredRecords.length}</strong>
+            <span className="text-slate-500 dark:text-slate-400">
+              Kejadian: <strong className="text-slate-900 dark:text-white">{filteredRecords.length}</strong>
             </span>
-            <span className="px-3 py-1 bg-rose-50 text-rose-700 font-black rounded-xl border border-rose-200">
+            <span className="px-3 py-1 bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 font-black rounded-xl border border-rose-200 dark:border-rose-500/20 shadow-xs">
               Total: {totalPoints} Poin
             </span>
             {(search || filterHalaqah !== 'all' || filterCategory !== 'all' || startDate || endDate || filterDivision !== 'all' || filterStatus !== 'all') && (
@@ -529,7 +533,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                   setStartDate('');
                   setEndDate('');
                 }}
-                className="text-rose-600 hover:text-rose-700 font-bold ml-1 min-h-[36px] flex items-center"
+                className="text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 font-bold ml-1 min-h-[36px] flex items-center"
               >
                 Reset
               </button>
@@ -539,20 +543,20 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
       </div>
 
       {/* Table & Mobile Cards */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-soft overflow-hidden">
+      <div className="saas-card overflow-hidden">
         {loading ? (
-          <div className="p-8 text-center text-slate-400 text-sm">
-            <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+          <div className="p-12 text-center text-slate-400 text-sm">
+            <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             <span>Memuat data riwayat...</span>
           </div>
         ) : filteredRecords.length === 0 ? (
-          <div className="p-8 text-center text-slate-400 text-sm">
+          <div className="p-12 text-center text-slate-400 text-sm">
             Tidak ada catatan pelanggaran yang cocok dengan kriteria filter.
           </div>
         ) : (
           <>
-            {/* VIEW 1: Mobile Card List (single hand thumb friendly) */}
-            <div className="block md:hidden divide-y divide-slate-100">
+            {/* VIEW 1: Mobile Card List */}
+            <div className="block md:hidden divide-y divide-slate-100 dark:divide-white/[0.06]">
               {filteredRecords.map((r) => {
                 const isCancelled = r.status === 'cancelled';
                 const isKesantrian = r.division === 'kesantrian';
@@ -560,8 +564,12 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                 return (
                   <div
                     key={r.id}
-                    className={`p-3.5 space-y-2.5 transition-colors ${
-                      isCancelled ? 'bg-slate-50/60 opacity-60' : selectedIds.has(r.id) ? 'bg-rose-50/50' : 'hover:bg-slate-50/70'
+                    className={`p-4 space-y-3 transition-colors ${
+                      isCancelled
+                        ? 'bg-slate-50/60 dark:bg-white/[0.02] opacity-60'
+                        : selectedIds.has(r.id)
+                        ? 'bg-rose-50/50 dark:bg-rose-500/10'
+                        : 'hover:bg-slate-50/70 dark:hover:bg-white/[0.02]'
                     }`}
                   >
                     {/* Top Row: Checkbox, Name, NIS, Division Badge */}
@@ -571,16 +579,16 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                           type="checkbox"
                           checked={selectedIds.has(r.id)}
                           onChange={() => toggleSelectRecord(r.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer shrink-0 mt-1"
+                          className="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-rose-600 focus:ring-rose-500 cursor-pointer shrink-0 mt-1"
                         />
                         <div className="min-w-0">
                           <button
                             onClick={() => onSelectStudent && onSelectStudent(r.student_id)}
-                            className="font-bold text-slate-900 text-sm text-left hover:text-brand-600 transition-colors truncate block"
+                            className="font-bold text-slate-900 dark:text-white text-sm text-left hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors truncate block"
                           >
                             {r.student_name}
                           </button>
-                          <p className="text-xs text-slate-400 mt-0.5">
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                             NIS: {r.student_nis} • Kelas {r.student_class_snapshot}
                           </p>
                         </div>
@@ -588,20 +596,20 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
                       <div className="flex items-center gap-1.5 shrink-0">
                         <span
-                          className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2 py-0.5 rounded-md border ${
+                          className={`inline-flex items-center gap-1 text-[10px] font-extrabold px-2.5 py-0.5 rounded-lg border ${
                             isKesantrian
-                              ? 'bg-blue-50 text-blue-700 border-blue-200'
-                              : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
+                              : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20'
                           }`}
                         >
                           {isKesantrian ? 'Kesantrian' : 'Tahfizh'}
                         </span>
                         {isCancelled ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 border border-slate-200">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/[0.06] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/[0.1]">
                             Dibatalkan
                           </span>
                         ) : (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20">
                             Aktif
                           </span>
                         )}
@@ -609,18 +617,18 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                     </div>
 
                     {/* Violation Detail & Points Badge */}
-                    <div className="flex items-start justify-between gap-2 bg-slate-50/80 p-2.5 rounded-xl border border-slate-100">
+                    <div className="flex items-start justify-between gap-3 bg-slate-50/80 dark:bg-[#161d31] p-3 rounded-xl border border-slate-200/70 dark:border-white/[0.06]">
                       <div className="min-w-0 flex-1">
-                        <p className="text-xs font-bold text-slate-800 leading-snug">
+                        <p className="text-xs font-bold text-slate-800 dark:text-slate-200 leading-snug">
                           {r.violation_name_snapshot}
                         </p>
                         {r.notes && (
-                          <p className="text-[11px] text-slate-500 italic mt-0.5 line-clamp-2">
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 italic mt-0.5 line-clamp-2">
                             "{r.notes}"
                           </p>
                         )}
                         {isCancelled && r.cancellation_reason && (
-                          <p className="text-[10px] text-rose-600 font-semibold mt-1">
+                          <p className="text-[10px] text-rose-600 dark:text-rose-400 font-semibold mt-1">
                             Alasan batal: {r.cancellation_reason}
                           </p>
                         )}
@@ -629,10 +637,10 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                       <span
                         className={`inline-block font-black px-2.5 py-1 rounded-xl text-xs shrink-0 ${
                           r.points_snapshot >= 15
-                            ? 'bg-rose-100 text-rose-800 border border-rose-200'
+                            ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-500/30'
                             : r.points_snapshot >= 8
-                            ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                            : 'bg-slate-100 text-slate-800 border border-slate-200'
+                            ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-500/30'
+                            : 'bg-slate-100 dark:bg-white/[0.08] text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-white/[0.1]'
                         }`}
                       >
                         +{r.points_snapshot} Poin
@@ -640,19 +648,19 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                     </div>
 
                     {/* Footer: Date, Location, Actions */}
-                    <div className="flex items-center justify-between gap-2 pt-1 text-[11px] text-slate-500">
+                    <div className="flex items-center justify-between gap-2 pt-1 text-[11px] text-slate-500 dark:text-slate-400">
                       <div>
                         <span>{r.date} • {r.time} WIB</span>
-                        <p className="text-slate-400 truncate max-w-[180px]">
+                        <p className="text-slate-400 dark:text-slate-500 truncate max-w-[180px]">
                           {r.halaqah_name_snapshot} ({r.teacher_name_snapshot || 'Pembina'})
                         </p>
                       </div>
 
-                      <div className="flex items-center gap-1 shrink-0">
+                      <div className="flex items-center gap-1.5 shrink-0">
                         {!isCancelled && (
                           <button
                             onClick={() => setRecordToCancel(r)}
-                            className="px-3 py-1.5 rounded-lg text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-xs font-bold transition-colors min-h-[36px] flex items-center gap-1"
+                            className="px-3 py-1.5 rounded-lg text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 border border-amber-200 dark:border-amber-500/20 text-xs font-bold transition-colors min-h-[36px] flex items-center gap-1"
                           >
                             <Ban className="w-3.5 h-3.5" />
                             <span>Batalkan</span>
@@ -661,7 +669,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                         {canDelete && (
                           <button
                             onClick={() => setRecordToDelete(r)}
-                            className="p-1.5 rounded-lg text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
+                            className="p-1.5 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 border border-transparent hover:border-rose-200 dark:hover:border-rose-500/20 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                             title="Hapus Permanen"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -677,7 +685,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
             {/* VIEW 2: Desktop Table (screens >= md) */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left text-xs sm:text-sm">
-                <thead className="bg-slate-50 text-slate-500 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+                <thead className="bg-slate-50/80 dark:bg-[#161d31] text-slate-500 dark:text-slate-400 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200 dark:border-white/[0.08]">
                   <tr>
                     <th className="px-4 py-3.5 text-center w-10">
                       <input
@@ -690,7 +698,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                             setSelectedIds((prev) => { const n = new Set(prev); filteredRecords.forEach((r) => n.add(r.id)); return n; });
                           }
                         }}
-                        className="w-4 h-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer"
+                        className="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-rose-600 focus:ring-rose-500 cursor-pointer"
                         title="Pilih semua"
                       />
                     </th>
@@ -705,7 +713,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                     <th className="px-4 py-3.5 text-right">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
                   {filteredRecords.map((r, index) => {
                     const isCancelled = r.status === 'cancelled';
                     const isKesantrian = r.division === 'kesantrian';
@@ -713,33 +721,37 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                     return (
                       <tr
                         key={r.id}
-                        className={`hover:bg-slate-50/70 transition-colors ${
-                          isCancelled ? 'bg-slate-50/60 opacity-60' : selectedIds.has(r.id) ? 'bg-rose-50/40' : ''
+                        className={`hover:bg-slate-50/70 dark:hover:bg-white/[0.03] transition-colors ${
+                          isCancelled
+                            ? 'bg-slate-50/60 dark:bg-white/[0.02] opacity-60'
+                            : selectedIds.has(r.id)
+                            ? 'bg-rose-50/40 dark:bg-rose-500/10'
+                            : ''
                         }`}
                       >
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-4 py-3.5 text-center">
                           <input
                             type="checkbox"
                             checked={selectedIds.has(r.id)}
                             onChange={() => toggleSelectRecord(r.id)}
-                            className="w-4 h-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer"
+                            className="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-rose-600 focus:ring-rose-500 cursor-pointer"
                           />
                         </td>
-                        <td className="px-4 py-3 text-center text-xs text-slate-400 font-medium">
+                        <td className="px-4 py-3.5 text-center text-xs text-slate-400 dark:text-slate-500 font-medium">
                           {index + 1}
                         </td>
 
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <div className="font-semibold text-slate-800">{r.date}</div>
-                          <div className="text-[11px] text-slate-400">{r.time} WIB</div>
+                        <td className="px-4 py-3.5 whitespace-nowrap">
+                          <div className="font-semibold text-slate-800 dark:text-slate-200">{r.date}</div>
+                          <div className="text-[11px] text-slate-400 dark:text-slate-500">{r.time} WIB</div>
                         </td>
 
-                        <td className="px-4 py-3 whitespace-nowrap">
+                        <td className="px-4 py-3.5 whitespace-nowrap">
                           <span
-                            className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-md border ${
+                            className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-lg border ${
                               isKesantrian
-                                ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-500/20'
+                                : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20'
                             }`}
                           >
                             {isKesantrian ? (
@@ -756,68 +768,68 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                           </span>
                         </td>
 
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3.5">
                           <button
                             onClick={() => onSelectStudent && onSelectStudent(r.student_id)}
-                            className="text-left font-bold text-slate-900 hover:text-brand-600 hover:underline transition-colors block truncate max-w-[180px]"
+                            className="text-left font-bold text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors block truncate max-w-[180px]"
                           >
                             {r.student_name}
                           </button>
-                          <span className="text-[11px] text-slate-400">
+                          <span className="text-[11px] text-slate-400 dark:text-slate-500">
                             NIS: {r.student_nis} • Kelas {r.student_class_snapshot}
                           </span>
                         </td>
 
-                        <td className="px-4 py-3">
-                          <div className="font-medium text-slate-800">{r.halaqah_name_snapshot}</div>
-                          <div className="text-[11px] text-slate-400">
+                        <td className="px-4 py-3.5">
+                          <div className="font-medium text-slate-800 dark:text-slate-200">{r.halaqah_name_snapshot}</div>
+                          <div className="text-[11px] text-slate-400 dark:text-slate-500">
                             {r.teacher_name_snapshot || 'Pembina'}
                           </div>
                         </td>
 
-                        <td className="px-4 py-3 max-w-xs">
-                          <div className="font-bold text-slate-800">{r.violation_name_snapshot}</div>
+                        <td className="px-4 py-3.5 max-w-xs">
+                          <div className="font-bold text-slate-800 dark:text-slate-200">{r.violation_name_snapshot}</div>
                           {r.notes && (
-                            <div className="text-xs text-slate-500 italic mt-0.5 truncate">
+                            <div className="text-xs text-slate-500 dark:text-slate-400 italic mt-0.5 truncate">
                               "{r.notes}"
                             </div>
                           )}
                           {isCancelled && r.cancellation_reason && (
-                            <div className="text-[11px] text-rose-600 font-semibold mt-1">
+                            <div className="text-[11px] text-rose-600 dark:text-rose-400 font-semibold mt-1">
                               Alasan batal: {r.cancellation_reason}
                             </div>
                           )}
                         </td>
 
-                        <td className="px-4 py-3 text-center whitespace-nowrap">
+                        <td className="px-4 py-3.5 text-center whitespace-nowrap">
                           <span
                             className={`inline-block font-black px-2.5 py-1 rounded-xl text-xs ${
                               isCancelled
-                                ? 'line-through bg-slate-100 text-slate-400'
-                                : 'bg-rose-50 text-rose-700 border border-rose-200'
+                                ? 'line-through bg-slate-100 dark:bg-white/[0.06] text-slate-400 dark:text-slate-500'
+                                : 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20'
                             }`}
                           >
                             +{r.points_snapshot}
                           </span>
                         </td>
 
-                        <td className="px-4 py-3 text-center whitespace-nowrap">
+                        <td className="px-4 py-3.5 text-center whitespace-nowrap">
                           <span
                             className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
                               r.status === 'active'
-                                ? 'bg-emerald-100 text-emerald-800'
-                                : 'bg-rose-100 text-rose-800'
+                                ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300'
+                                : 'bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300'
                             }`}
                           >
                             {r.status === 'active' ? 'Aktif' : 'Dibatalkan'}
                           </span>
                         </td>
 
-                        <td className="px-4 py-3 text-right whitespace-nowrap space-x-1">
+                        <td className="px-4 py-3.5 text-right whitespace-nowrap space-x-1">
                           {r.status === 'active' && (
                             <button
                               onClick={() => setRecordToCancel(r)}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-colors"
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-colors"
                               title="Batalkan Catatan (Soft Delete)"
                             >
                               <Ban className="w-4 h-4" />
@@ -826,7 +838,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                           {canDelete && (
                             <button
                               onClick={() => setRecordToDelete(r)}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
                               title="Hapus Permanen"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -843,24 +855,24 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
         )}
       </div>
 
-      {/* Cancel Record Modal (Soft Delete with Reason) */}
+      {/* Cancel Record Modal */}
       {recordToCancel &&
         createPortal(
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm overflow-y-auto">
-            <div className="relative w-full max-w-md m-auto h-auto max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-3.5rem)] flex flex-col bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
-              <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center font-bold">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-950/75 backdrop-blur-md overflow-y-auto">
+            <div className="relative w-full max-w-md m-auto h-auto max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-3.5rem)] flex flex-col saas-card overflow-hidden shadow-2xl">
+              <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-white/[0.08] bg-slate-50/80 dark:bg-[#161d31]">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold border border-amber-500/20">
                     <AlertTriangle className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900">Batalkan Catatan Pelanggaran</h3>
-                    <p className="text-xs text-slate-500">Poin santri akan otomatis dikurangi kembali</p>
+                    <h3 className="font-bold text-slate-900 dark:text-white">Batalkan Catatan Pelanggaran</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Poin santri akan otomatis dikurangi kembali</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setRecordToCancel(null)}
-                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                  className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.06] transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -868,33 +880,33 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
               <form onSubmit={handleCancelRecord} className="p-5 space-y-4 overflow-y-auto flex-1">
                 {cancelError && (
-                  <div className="p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                  <div className="p-3 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-800 dark:text-rose-300 rounded-xl text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
                     <span>{cancelError}</span>
                   </div>
                 )}
 
-                <div className="p-3 bg-slate-50 rounded-xl text-xs space-y-1.5 border border-slate-200">
+                <div className="p-3.5 bg-slate-50 dark:bg-[#161d31] rounded-xl text-xs space-y-1.5 border border-slate-200 dark:border-white/[0.08]">
                   <div>
-                    <span className="text-slate-500">Santri:</span>{' '}
-                    <strong className="text-slate-800">{recordToCancel.student_name}</strong>
+                    <span className="text-slate-500 dark:text-slate-400">Santri:</span>{' '}
+                    <strong className="text-slate-800 dark:text-slate-200">{recordToCancel.student_name}</strong>
                   </div>
                   <div>
-                    <span className="text-slate-500">Pelanggaran:</span>{' '}
-                    <span className="font-semibold text-slate-700">
+                    <span className="text-slate-500 dark:text-slate-400">Pelanggaran:</span>{' '}
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">
                       {recordToCancel.violation_name_snapshot} (+{recordToCancel.points_snapshot} Poin)
                     </span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Divisi:</span>{' '}
-                    <span className="font-bold text-slate-700">
+                    <span className="text-slate-500 dark:text-slate-400">Divisi:</span>{' '}
+                    <span className="font-bold text-slate-700 dark:text-slate-300">
                       {recordToCancel.division === 'kesantrian' ? '🏢 Kesantrian' : '🕌 Tahfizh'}
                     </span>
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                     Alasan Pembatalan <span className="text-rose-500">*</span>
                   </label>
                   <textarea
@@ -902,23 +914,23 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                     onChange={(e) => setCancelReason(e.target.value)}
                     placeholder="Contoh: Salah input nama santri, sudah ada surat dispensasi dokter..."
                     rows={3}
-                    className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 focus:border-brand-500"
+                    className="w-full text-xs sm:text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-indigo-500 dark:focus:border-indigo-400 outline-none"
                     required
                   />
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-white/[0.08]">
                   <button
                     type="button"
                     onClick={() => setRecordToCancel(null)}
-                    className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl"
+                    className="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.06] rounded-xl transition-colors"
                   >
                     Tutup
                   </button>
                   <button
                     type="submit"
                     disabled={cancelling}
-                    className="px-4 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-sm transition-all disabled:opacity-50"
+                    className="px-4 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-500 rounded-xl shadow-lg shadow-amber-500/20 transition-all disabled:opacity-50"
                   >
                     {cancelling ? 'Memproses...' : 'Ya, Batalkan Catatan'}
                   </button>
