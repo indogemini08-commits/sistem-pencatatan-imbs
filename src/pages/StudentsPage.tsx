@@ -41,6 +41,7 @@ import {
   exportToExcel,
   StudentExcelRow,
 } from '../utils/excelHelper';
+import { compareClasses, sortClasses } from '../utils/classHelper';
 
 interface StudentsPageProps {
   currentUser: User | null;
@@ -425,7 +426,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
       } else if (sortBy === 'nis') {
         comparison = a.student_number.localeCompare(b.student_number);
       } else if (sortBy === 'class') {
-        comparison = a.class.localeCompare(b.class);
+        comparison = compareClasses(a.class, b.class) || a.name.localeCompare(b.name);
       } else if (sortBy === 'points') {
         comparison = (a.total_points || 0) - (b.total_points || 0);
       }
@@ -434,7 +435,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
   const allFilteredSelected = filteredStudents.length > 0 && filteredStudents.every((s) => selectedIds.has(s.id));
 
-  const uniqueClasses = Array.from(new Set(students.map((s) => s.class))).sort();
+  const uniqueClasses = sortClasses(Array.from(new Set(students.map((s) => s.class))));
 
   return (
     <div className="space-y-6 animate-scale-in">
@@ -541,7 +542,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
               <option value="all">Semua Kelas</option>
               {uniqueClasses.map((c) => (
                 <option key={c} value={c}>
-                  Kelas {c}
+                  {c.toLowerCase().startsWith('kelas') ? c : `Kelas ${c}`}
                 </option>
               ))}
             </select>
@@ -963,7 +964,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                       type="text"
                       value={formClass}
                       onChange={(e) => setFormClass(e.target.value)}
-                      placeholder="Contoh: 7A / 8B / 9C"
+                      placeholder="Contoh: VII, VIII, IX atau 7A, 8B"
                       className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-slate-50/50 dark:bg-[#161d31] text-slate-900 dark:text-slate-100 hover:bg-white transition-colors"
                       required
                     />

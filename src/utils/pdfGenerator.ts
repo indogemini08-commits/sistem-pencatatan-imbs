@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { SchoolSettings, Student, ViolationRecord } from '../types';
+import { compareClasses } from './classHelper';
 
 /**
  * Gambar Emblem Vektor Resmi Pesantren IMBS (Fallback jika logo gambar tidak di-render oleh jsPDF)
@@ -696,7 +697,10 @@ export function buildStudentsListReportPDF(
 
   // 4. Tabel Santri (Akumulasi Poin Per Divisi & Total Poin)
   const sortedStudents = [...students].sort(
-    (a, b) => (Number(b.total_points) || 0) - (Number(a.total_points) || 0)
+    (a, b) =>
+      (Number(b.total_points) || 0) - (Number(a.total_points) || 0) ||
+      compareClasses(a.class, b.class) ||
+      (a.name || '').localeCompare(b.name || '')
   );
 
   const tableRows = sortedStudents.map((s, idx) => {

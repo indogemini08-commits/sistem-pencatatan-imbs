@@ -35,6 +35,7 @@ import { User, DashboardStats, Halaqah, Student } from '../types';
 import { api } from '../services/api';
 import { storageSync } from '../services/storageSync';
 import { StatusBadge } from '../components/Badge';
+import { sortClasses } from '../utils/classHelper';
 
 interface DashboardProps {
   currentUser: User | null;
@@ -214,7 +215,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       return matchSearch && matchClass;
     });
 
-    const uniqueClasses = Array.from(new Set(allStudents.map((s) => s.class))).sort();
+    const uniqueClasses = sortClasses(Array.from(new Set(allStudents.map((s) => s.class))));
 
     return (
       <div className="space-y-6 animate-scale-in">
@@ -346,7 +347,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
               >
                 <option value="all">Semua Kelas</option>
                 {uniqueClasses.map((cls) => (
-                  <option key={cls} value={cls}>Kelas {cls}</option>
+                  <option key={cls} value={cls}>
+                    {cls.toLowerCase().startsWith('kelas') ? cls : `Kelas ${cls}`}
+                  </option>
                 ))}
               </select>
             </div>
