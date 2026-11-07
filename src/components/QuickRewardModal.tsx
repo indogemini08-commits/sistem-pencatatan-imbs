@@ -84,11 +84,19 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
 
   useEffect(() => {
     if (isOpen) {
-      setDivision(initialDivision);
+      const defaultDiv =
+        initialDivision !== 'tahfizh'
+          ? initialDivision
+          : currentUser?.role === 'kepala_kesantrian'
+          ? 'kesantrian'
+          : currentUser?.role === 'badan_akademik' || currentUser?.role === 'guru'
+          ? 'akademik'
+          : 'tahfizh';
+      setDivision(defaultDiv);
       loadInitialData();
       resetForm();
     }
-  }, [isOpen, initialDivision]);
+  }, [isOpen, initialDivision, currentUser]);
 
   const resetForm = () => {
     setSelectedStudentId('');

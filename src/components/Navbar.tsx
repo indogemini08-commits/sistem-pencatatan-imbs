@@ -120,6 +120,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             Kepala Kesantrian
           </span>
         );
+      case 'badan_akademik':
+        return (
+          <span className="bg-purple-100 text-purple-800 border border-purple-300 dark:bg-purple-950/70 dark:text-purple-300 dark:border-purple-700/70 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+            Badan Akademik
+          </span>
+        );
       case 'teacher':
         return (
           <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-700/70 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider">

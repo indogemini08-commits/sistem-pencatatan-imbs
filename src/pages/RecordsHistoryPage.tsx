@@ -86,7 +86,8 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
   const canDelete =
     currentUser?.role === 'admin' ||
     currentUser?.role === 'coordinator' ||
-    currentUser?.role === 'kepala_kesantrian';
+    currentUser?.role === 'kepala_kesantrian' ||
+    currentUser?.role === 'badan_akademik';
 
   useEffect(() => {
     setFilterDivision(initialDivision);

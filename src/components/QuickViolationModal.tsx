@@ -87,7 +87,15 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
       setTime(now.toTimeString().substring(0, 5));
       setSuccessData(null);
       setErrorMsg('');
-      setDivision(initialDivision);
+      const defaultDiv =
+        initialDivision !== 'tahfizh'
+          ? initialDivision
+          : currentUser?.role === 'kepala_kesantrian'
+          ? 'kesantrian'
+          : currentUser?.role === 'badan_akademik' || currentUser?.role === 'guru'
+          ? 'akademik'
+          : 'tahfizh';
+      setDivision(defaultDiv);
       setSupervisorName(currentUser?.name || '');
 
       loadInitialData();
@@ -228,12 +236,12 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
         violationName: violationObj?.name,
         points: violationObj?.default_points || points,
         division: division,
-        locationName: division === 'kesantrian' ? locationName : undefined,
-        supervisorName: division === 'kesantrian' ? (supervisorName || currentUser?.name) : undefined,
+        locationName: division === 'kesantrian' || division === 'akademik' ? locationName : undefined,
+        supervisorName: division === 'kesantrian' || division === 'akademik' ? (supervisorName || currentUser?.name) : undefined,
         date: date,
         time: time,
         notes: notes,
-        createdBy: currentUser?.name || (division === 'tahfizh' ? 'Muhafizh' : 'Bagian Kesantrian'),
+        createdBy: currentUser?.name || (division === 'tahfizh' ? 'Muhafizh' : division === 'kesantrian' ? 'Bagian Kesantrian' : 'Badan Akademik'),
       });
 
       setSuccessData({

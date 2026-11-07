@@ -159,6 +159,15 @@ export function seedNewRolesIfEmpty() {
     );
     console.log('Seeded demo user: Guru (guru@pesantren.id / guru123)');
   }
+
+  const akademikUser = query<{ id: string }>("SELECT id FROM users WHERE role = 'badan_akademik'")[0];
+  if (!akademikUser) {
+    run(
+      `INSERT INTO users (id, name, email, password_hash, role, status, created_at)
+       VALUES ('usr_akademik', 'Ustadz Abdullah Faruq, M.Pd (Badan Akademik)', 'akademik@pesantren.id', 'akademik123', 'badan_akademik', 'active', datetime('now', 'localtime'))`
+    );
+    console.log('Seeded demo user: Badan Akademik (akademik@pesantren.id / akademik123)');
+  }
 }
 
 export const DEFAULT_POSITIVE_ACTIONS = [
@@ -275,6 +284,7 @@ export function seedDatabase() {
     { id: 'usr_muhammad', name: 'Ustadz Muhammad Al-Hafizh', email: 'muhammad@pesantren.id', pass: 'muhammad123', role: 'teacher' },
     { id: 'usr_abdullah', name: 'Ustadz Abdullah Al-Hafizh', email: 'abdullah@pesantren.id', pass: 'abdullah123', role: 'teacher' },
     { id: 'usr_kesantrian', name: 'Ustadz Zulkifli, S.Pd.I (Kepala Kesantrian)', email: 'kesantrian@pesantren.id', pass: 'kesantrian123', role: 'kepala_kesantrian' },
+    { id: 'usr_akademik', name: 'Ustadz Abdullah Faruq, M.Pd (Badan Akademik)', email: 'akademik@pesantren.id', pass: 'akademik123', role: 'badan_akademik' },
     { id: 'usr_guru', name: 'Ustadz Herman, S.Pd (Guru Pengajar)', email: 'guru@pesantren.id', pass: 'guru123', role: 'guru' },
   ];
 

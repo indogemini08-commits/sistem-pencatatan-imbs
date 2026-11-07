@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
-  role TEXT NOT NULL CHECK(role IN ('admin', 'coordinator', 'kepala_kesantrian', 'teacher', 'guru')),
+  role TEXT NOT NULL CHECK(role IN ('admin', 'coordinator', 'kepala_kesantrian', 'badan_akademik', 'teacher', 'guru')),
   status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
   must_change_password INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -452,7 +452,7 @@ function runMigrations(database) {
   }
   try {
     const tableDef = database.exec("SELECT sql FROM sqlite_master WHERE type='table' AND name='users'")[0]?.values[0][0] || "";
-    if (tableDef && !tableDef.includes("kepala_kesantrian")) {
+    if (tableDef && (!tableDef.includes("kepala_kesantrian") || !tableDef.includes("badan_akademik"))) {
       database.run("PRAGMA foreign_keys=OFF;");
       database.run(`
         CREATE TABLE users_new (
@@ -460,7 +460,7 @@ function runMigrations(database) {
           name TEXT NOT NULL,
           email TEXT UNIQUE NOT NULL,
           password_hash TEXT NOT NULL,
-          role TEXT NOT NULL CHECK(role IN ('admin', 'coordinator', 'kepala_kesantrian', 'teacher', 'guru')),
+          role TEXT NOT NULL CHECK(role IN ('admin', 'coordinator', 'kepala_kesantrian', 'badan_akademik', 'teacher', 'guru')),
           status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
           must_change_password INTEGER NOT NULL DEFAULT 0,
           created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -470,7 +470,7 @@ function runMigrations(database) {
       database.run("DROP TABLE users;");
       database.run("ALTER TABLE users_new RENAME TO users;");
       database.run("PRAGMA foreign_keys=ON;");
-      console.log("Migrasi skema role tabel users selesai (kepala_kesantrian & guru aktif).");
+      console.log("Migrasi skema role tabel users selesai (kepala_kesantrian, badan_akademik & guru aktif).");
     }
   } catch (e) {
     console.error("Peringatan migrasi skema tabel users:", e?.message || e);
@@ -1062,6 +1062,14 @@ function seedNewRolesIfEmpty() {
     );
     console.log("Seeded demo user: Guru (guru@pesantren.id / guru123)");
   }
+  const akademikUser = query("SELECT id FROM users WHERE role = 'badan_akademik'")[0];
+  if (!akademikUser) {
+    run(
+      `INSERT INTO users (id, name, email, password_hash, role, status, created_at)
+       VALUES ('usr_akademik', 'Ustadz Abdullah Faruq, M.Pd (Badan Akademik)', 'akademik@pesantren.id', 'akademik123', 'badan_akademik', 'active', datetime('now', 'localtime'))`
+    );
+    console.log("Seeded demo user: Badan Akademik (akademik@pesantren.id / akademik123)");
+  }
 }
 var DEFAULT_POSITIVE_ACTIONS = [
   // Tahfizh Division
@@ -1164,6 +1172,7 @@ function seedDatabase() {
     { id: "usr_muhammad", name: "Ustadz Muhammad Al-Hafizh", email: "muhammad@pesantren.id", pass: "muhammad123", role: "teacher" },
     { id: "usr_abdullah", name: "Ustadz Abdullah Al-Hafizh", email: "abdullah@pesantren.id", pass: "abdullah123", role: "teacher" },
     { id: "usr_kesantrian", name: "Ustadz Zulkifli, S.Pd.I (Kepala Kesantrian)", email: "kesantrian@pesantren.id", pass: "kesantrian123", role: "kepala_kesantrian" },
+    { id: "usr_akademik", name: "Ustadz Abdullah Faruq, M.Pd (Badan Akademik)", email: "akademik@pesantren.id", pass: "akademik123", role: "badan_akademik" },
     { id: "usr_guru", name: "Ustadz Herman, S.Pd (Guru Pengajar)", email: "guru@pesantren.id", pass: "guru123", role: "guru" }
   ];
   for (const u of users) {
@@ -1381,7 +1390,7 @@ router2.put("/:id", async (req, res) => {
        WHERE id = ?`,
       [updatedName, cleanEmail, updatedPass, updatedRole, updatedStatus, updatedMustChange, id]
     );
-    if (updatedRole === "guru") {
+    if (updatedRole !== "teacher") {
       const existingTeacher = get("SELECT id FROM teachers WHERE user_id = ?", [id]);
       if (existingTeacher) {
         run("UPDATE halaqah SET teacher_id = NULL WHERE teacher_id = ?", [existingTeacher.id]);

@@ -111,8 +111,8 @@ router.put('/:id', async (req: Request, res: Response) => {
       [updatedName, cleanEmail, updatedPass, updatedRole, updatedStatus, updatedMustChange, id]
     );
 
-    // If role is guru, ensure no teacher/halaqah record is held
-    if (updatedRole === 'guru') {
+    // If role is not teacher, ensure no teacher/halaqah record is held
+    if (updatedRole !== 'teacher') {
       const existingTeacher = get<any>('SELECT id FROM teachers WHERE user_id = ?', [id]);
       if (existingTeacher) {
         run('UPDATE halaqah SET teacher_id = NULL WHERE teacher_id = ?', [existingTeacher.id]);

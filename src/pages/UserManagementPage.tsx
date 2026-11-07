@@ -314,6 +314,12 @@ export const UserManagementPage: React.FC<UserManagementPageProps> = ({
             Kepala Kesantrian
           </span>
         );
+      case 'badan_akademik':
+        return (
+          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-50 dark:bg-purple-500/10 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-500/20 whitespace-nowrap inline-flex items-center">
+            Badan Akademik
+          </span>
+        );
       case 'teacher':
         return (
           <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/20 whitespace-nowrap inline-flex items-center">
@@ -637,6 +643,7 @@ export const UserManagementPage: React.FC<UserManagementPageProps> = ({
                         <option value="guru">Guru (Input Kedisiplinan / Kelas)</option>
                         <option value="coordinator">Koordinator Tahfizh</option>
                         <option value="kepala_kesantrian">Kepala Kesantrian</option>
+                        <option value="badan_akademik">Badan Akademik</option>
                         <option value="admin">Admin</option>
                       </select>
                     </div>

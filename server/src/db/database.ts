@@ -70,7 +70,7 @@ function runMigrations(database: Database) {
   }
   try {
     const tableDef = database.exec("SELECT sql FROM sqlite_master WHERE type='table' AND name='users'")[0]?.values[0][0] as string || '';
-    if (tableDef && !tableDef.includes('kepala_kesantrian')) {
+    if (tableDef && (!tableDef.includes('kepala_kesantrian') || !tableDef.includes('badan_akademik'))) {
       database.run("PRAGMA foreign_keys=OFF;");
       database.run(`
         CREATE TABLE users_new (
@@ -78,7 +78,7 @@ function runMigrations(database: Database) {
           name TEXT NOT NULL,
           email TEXT UNIQUE NOT NULL,
           password_hash TEXT NOT NULL,
-          role TEXT NOT NULL CHECK(role IN ('admin', 'coordinator', 'kepala_kesantrian', 'teacher', 'guru')),
+          role TEXT NOT NULL CHECK(role IN ('admin', 'coordinator', 'kepala_kesantrian', 'badan_akademik', 'teacher', 'guru')),
           status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active', 'inactive')),
           must_change_password INTEGER NOT NULL DEFAULT 0,
           created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -88,7 +88,7 @@ function runMigrations(database: Database) {
       database.run("DROP TABLE users;");
       database.run("ALTER TABLE users_new RENAME TO users;");
       database.run("PRAGMA foreign_keys=ON;");
-      console.log('Migrasi skema role tabel users selesai (kepala_kesantrian & guru aktif).');
+      console.log('Migrasi skema role tabel users selesai (kepala_kesantrian, badan_akademik & guru aktif).');
     }
   } catch (e: any) {
     console.error('Peringatan migrasi skema tabel users:', e?.message || e);
