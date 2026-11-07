@@ -337,13 +337,13 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
         </div>
       </div>
 
-      {/* Category Segmented Tabs (Anti-Crop Full Width Grid with Balanced Padding) */}
+      {/* Category Segmented Tabs (Anti-Crop Full Width Flex with Smooth Overflow) */}
       <div className="p-2 sm:px-4 sm:py-2.5 border-b border-slate-100 dark:border-white/[0.06] bg-slate-50/50 dark:bg-white/[0.02]">
-        <div className="grid grid-cols-4 gap-1.5 p-1 rounded-2xl bg-slate-200/60 dark:bg-white/[0.06] text-xs">
+        <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-200/60 dark:bg-white/[0.06] overflow-x-auto no-scrollbar text-xs">
           <button
             type="button"
             onClick={() => setActiveTab('all')}
-            className={`py-1.5 px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
+            className={`flex-1 min-w-fit py-1.5 px-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap ${
               activeTab === 'all'
                 ? 'bg-indigo-600 text-white shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
@@ -364,7 +364,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('attention')}
-            className={`py-1.5 px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
+            className={`flex-1 min-w-fit py-1.5 px-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
               activeTab === 'attention'
                 ? 'bg-amber-600 text-white shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400'
@@ -377,7 +377,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('violation')}
-            className={`py-1.5 px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
+            className={`flex-1 min-w-fit py-1.5 px-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
               activeTab === 'violation'
                 ? 'bg-rose-600 text-white shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400'
@@ -390,7 +390,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('reward')}
-            className={`py-1.5 px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
+            className={`flex-1 min-w-fit py-1.5 px-2.5 rounded-xl text-[11px] sm:text-xs font-bold transition-all text-center flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap ${
               activeTab === 'reward'
                 ? 'bg-emerald-600 text-white shadow-xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400'
