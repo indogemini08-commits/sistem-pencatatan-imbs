@@ -3796,6 +3796,10 @@ async function ensureDbInitialized() {
         if (hasData) {
           console.log("Memuat data dari Cloud Snapshot...");
           importDatabaseState(cloudSnapshot);
+          seedTeachersIfEmpty();
+          seedHalaqahIfEmpty();
+          seedStudentsIfEmpty();
+          await persistDb();
         } else {
           console.log("Cloud snapshot belum ada atau kosong, melakukan seeding awal...");
           seedDatabase();

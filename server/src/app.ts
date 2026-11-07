@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { getDb, importDatabaseState, persistDb } from './db/database';
-import { seedDatabase } from './db/seed';
+import { seedDatabase, seedTeachersIfEmpty, seedHalaqahIfEmpty, seedStudentsIfEmpty } from './db/seed';
 import { loadCloudSnapshot, checkAndSyncCloudSnapshot } from './db/cloudStorage';
 
 import authRoutes from './routes/auth';
@@ -72,6 +72,10 @@ export async function ensureDbInitialized(): Promise<void> {
         if (hasData) {
           console.log('Memuat data dari Cloud Snapshot...');
           importDatabaseState(cloudSnapshot);
+          seedTeachersIfEmpty();
+          seedHalaqahIfEmpty();
+          seedStudentsIfEmpty();
+          await persistDb();
         } else {
           console.log('Cloud snapshot belum ada atau kosong, melakukan seeding awal...');
           seedDatabase();
