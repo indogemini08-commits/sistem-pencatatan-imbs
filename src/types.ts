@@ -203,6 +203,11 @@ export interface SchoolSettings {
   logo_url: string;
   kop_surat_text: string;
   current_academic_year: string;
+  signer_1_title?: string;
+  signer_1_name?: string;
+  signer_2_title?: string;
+  signer_2_name?: string;
+  signature_city?: string;
 }
 
 export interface AuditLog {

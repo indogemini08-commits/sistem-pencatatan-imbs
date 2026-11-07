@@ -55,6 +55,11 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
   const [logoUrl, setLogoUrl] = useState<string>('/logo.svg');
   const [kopSuratText, setKopSuratText] = useState<string>('');
   const [academicYear, setAcademicYear] = useState<string>('2025/2026');
+  const [signer1Title, setSigner1Title] = useState<string>('Koordinator Tahfizh / Mudir');
+  const [signer1Name, setSigner1Name] = useState<string>('');
+  const [signer2Title, setSigner2Title] = useState<string>('Petugas / Muhafizh Pengampu');
+  const [signer2Name, setSigner2Name] = useState<string>('');
+  const [signatureCity, setSignatureCity] = useState<string>('Bogor');
 
   // Device Logo Upload state
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -165,6 +170,11 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         setLogoUrl(data.settings.logo_url || '/logo.svg');
         setKopSuratText(data.settings.kop_surat_text || '');
         setAcademicYear(data.settings.current_academic_year || '2025/2026');
+        setSigner1Title(data.settings.signer_1_title || 'Koordinator Tahfizh / Mudir');
+        setSigner1Name(data.settings.signer_1_name || '');
+        setSigner2Title(data.settings.signer_2_title || 'Petugas / Muhafizh Pengampu');
+        setSigner2Name(data.settings.signer_2_name || '');
+        setSignatureCity(data.settings.signature_city || 'Bogor');
       }
       if (data.thresholds) {
         setThresholds(data.thresholds);
@@ -239,6 +249,11 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         logoUrl,
         kopSuratText,
         currentAcademicYear: academicYear,
+        signer1Title,
+        signer1Name,
+        signer2Title,
+        signer2Name,
+        signatureCity,
         actorName: currentUser?.name || 'Admin',
       });
       setSuccessMsg(res.message);
@@ -625,6 +640,144 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   placeholder="2025/2026"
                   className="w-full text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-bold outline-none"
                 />
+              </div>
+            </div>
+          </div>
+
+          {/* KONFIGURASI TANDA TANGAN & PENGESAHAN LAPORAN PDF */}
+          <div className="saas-card p-6 sm:p-7 space-y-6">
+            <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-white/[0.08]">
+              <div className="p-2.5 bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-xl border border-indigo-500/20">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                  Konfigurasi Pengesahan & Tanda Tangan Laporan PDF
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Nama pejabat, jabatan, dan kota pengesahan yang otomatis dicetak pada footer seluruh laporan PDF (Riwayat Pelanggaran & Data Santri).
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+              {/* Kota Tanda Tangan */}
+              <div className="md:col-span-12">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                  Kota Lokasi Pengesahan
+                </label>
+                <input
+                  type="text"
+                  value={signatureCity}
+                  onChange={(e) => setSignatureCity(e.target.value)}
+                  placeholder="Bogor"
+                  className="w-full text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-medium outline-none"
+                />
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Akan tercantum pada format tanggal pengesahan (contoh: &quot;{signatureCity || 'Bogor'}, {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}&quot;).
+                </p>
+              </div>
+
+              {/* Pihak 1 (Kiri - Mengetahui) */}
+              <div className="md:col-span-6 p-4 rounded-2xl bg-slate-50/70 dark:bg-[#141b2d] border border-slate-200 dark:border-white/[0.08] space-y-3.5">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+                    Pihak Mengetahui (Kiri)
+                  </h3>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Jabatan Penandatangan 1
+                  </label>
+                  <input
+                    type="text"
+                    value={signer1Title}
+                    onChange={(e) => setSigner1Title(e.target.value)}
+                    placeholder="Koordinator Tahfizh / Mudir"
+                    className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-semibold outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Nama Lengkap & Gelar Penandatangan 1
+                  </label>
+                  <input
+                    type="text"
+                    value={signer1Name}
+                    onChange={(e) => setSigner1Name(e.target.value)}
+                    placeholder="Ustadz H. Ahmad Abdullah, Lc. (kosongkan jika titik-titik)"
+                    className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-medium outline-none"
+                  />
+                  <p className="text-[10.5px] text-slate-400 mt-1">
+                    Jika diisi, nama akan otomatis dicetak di dalam tanda kurung pada berkas PDF resmi.
+                  </p>
+                </div>
+              </div>
+
+              {/* Pihak 2 (Kanan - Pelapor / Petugas) */}
+              <div className="md:col-span-6 p-4 rounded-2xl bg-slate-50/70 dark:bg-[#141b2d] border border-slate-200 dark:border-white/[0.08] space-y-3.5">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+                    Pihak Pelapor / Petugas (Kanan)
+                  </h3>
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Jabatan Penandatangan 2
+                  </label>
+                  <input
+                    type="text"
+                    value={signer2Title}
+                    onChange={(e) => setSigner2Title(e.target.value)}
+                    placeholder="Petugas / Muhafizh Pengampu"
+                    className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-semibold outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Nama Lengkap & Gelar Penandatangan 2
+                  </label>
+                  <input
+                    type="text"
+                    value={signer2Name}
+                    onChange={(e) => setSigner2Name(e.target.value)}
+                    placeholder="Ustadz Muhammad Yusuf, S.Pd. (kosongkan jika otomatis/titik-titik)"
+                    className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-medium outline-none"
+                  />
+                  <p className="text-[10.5px] text-slate-400 mt-1">
+                    Jika dikosongkan, laporan akan memakai nama Muhafizh halaqah santri atau titik-titik.
+                  </p>
+                </div>
+              </div>
+
+              {/* Live Preview Tanda Tangan */}
+              <div className="md:col-span-12 p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0f1525] border border-slate-200 dark:border-white/[0.1] shadow-inner space-y-3">
+                <span className="text-[10px] font-black uppercase tracking-wider text-indigo-500 dark:text-indigo-400 block">
+                  Pratinjau Format Tanda Tangan Resmi di Kertas PDF:
+                </span>
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 pt-3 text-xs text-slate-700 dark:text-slate-300">
+                  <div className="space-y-1">
+                    <p className="font-normal text-slate-500 dark:text-slate-400">Mengetahui,</p>
+                    <p className="font-bold text-slate-900 dark:text-white">{signer1Title || 'Koordinator Tahfizh / Mudir'}</p>
+                    <div className="h-14" />
+                    <p className="font-bold text-slate-900 dark:text-white">
+                      ( {signer1Name.trim() || '............................................'} )
+                    </p>
+                  </div>
+                  <div className="space-y-1 sm:text-right">
+                    <p className="font-normal text-slate-500 dark:text-slate-400">
+                      {signatureCity || 'Bogor'}, {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </p>
+                    <p className="font-bold text-slate-900 dark:text-white">{signer2Title || 'Petugas / Muhafizh Pengampu'}</p>
+                    <div className="h-14" />
+                    <p className="font-bold text-slate-900 dark:text-white sm:text-right">
+                      ( {signer2Name.trim() || '............................................'} )
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 

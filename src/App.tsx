@@ -228,6 +228,7 @@ export function App() {
             <StudentsPage
               currentUser={currentUser}
               onSelectStudent={handleSelectStudent}
+              settings={settings}
             />
           )}
 

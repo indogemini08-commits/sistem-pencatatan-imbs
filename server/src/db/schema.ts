@@ -120,7 +120,12 @@ CREATE TABLE IF NOT EXISTS school_settings (
   email TEXT,
   logo_url TEXT,
   kop_surat_text TEXT,
-  current_academic_year TEXT NOT NULL
+  current_academic_year TEXT NOT NULL,
+  signer_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir',
+  signer_1_name TEXT DEFAULT '',
+  signer_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu',
+  signer_2_name TEXT DEFAULT '',
+  signature_city TEXT DEFAULT 'Bogor'
 );
 
 CREATE TABLE IF NOT EXISTS audit_logs (

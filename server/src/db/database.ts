@@ -299,6 +299,23 @@ function runMigrations(database: Database) {
       );
     `);
 
+    // School settings signer columns migration
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir';");
+    } catch (e) {}
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_1_name TEXT DEFAULT '';");
+    } catch (e) {}
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu';");
+    } catch (e) {}
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_2_name TEXT DEFAULT '';");
+    } catch (e) {}
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signature_city TEXT DEFAULT 'Bogor';");
+    } catch (e) {}
+
     // Enforce tombstones on migration/reopen: purge any deleted items that might resurrect
     database.run("DELETE FROM students WHERE id IN (SELECT id FROM tombstones);");
     database.run("DELETE FROM halaqah WHERE id IN (SELECT id FROM tombstones);");

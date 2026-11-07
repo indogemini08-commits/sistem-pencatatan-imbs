@@ -650,6 +650,11 @@ export const api = {
       logoUrl?: string;
       kopSuratText?: string;
       currentAcademicYear?: string;
+      signer1Title?: string;
+      signer1Name?: string;
+      signer2Title?: string;
+      signer2Name?: string;
+      signatureCity?: string;
       actorName?: string;
     }) => {
       const res = await fetchJson<{ message: string }>(`${API_BASE}/settings/school`, {

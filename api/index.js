@@ -128,7 +128,12 @@ CREATE TABLE IF NOT EXISTS school_settings (
   email TEXT,
   logo_url TEXT,
   kop_surat_text TEXT,
-  current_academic_year TEXT NOT NULL
+  current_academic_year TEXT NOT NULL,
+  signer_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir',
+  signer_1_name TEXT DEFAULT '',
+  signer_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu',
+  signer_2_name TEXT DEFAULT '',
+  signature_city TEXT DEFAULT 'Bogor'
 );
 
 CREATE TABLE IF NOT EXISTS audit_logs (
@@ -646,6 +651,26 @@ function runMigrations(database) {
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_1_name TEXT DEFAULT '';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_2_name TEXT DEFAULT '';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signature_city TEXT DEFAULT 'Bogor';");
+    } catch (e) {
+    }
     database.run("DELETE FROM students WHERE id IN (SELECT id FROM tombstones);");
     database.run("DELETE FROM halaqah WHERE id IN (SELECT id FROM tombstones);");
     database.run("DELETE FROM teachers WHERE id IN (SELECT id FROM tombstones);");
@@ -2875,12 +2900,31 @@ router8.get("/", async (req, res) => {
         email: "tahfizh@imamsyathibi.sch.id",
         logo_url: "/logo.svg",
         kop_surat_text: "BIDANG PENDIDIKAN DAN KEPENGASUHAN - DIVISI HALAQAH TAHFIZH",
-        current_academic_year: "2025/2026"
+        current_academic_year: "2025/2026",
+        signer_1_title: "Koordinator Tahfizh / Mudir",
+        signer_1_name: "",
+        signer_2_title: "Petugas / Muhafizh Pengampu",
+        signer_2_name: "",
+        signature_city: "Bogor"
       };
       run(
-        `INSERT OR IGNORE INTO school_settings (id, app_name, school_name, address, phone, email, logo_url, kop_surat_text, current_academic_year)
-         VALUES ('settings_default', ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [settings.app_name, settings.school_name, settings.address, settings.phone, settings.email, settings.logo_url, settings.kop_surat_text, settings.current_academic_year]
+        `INSERT OR IGNORE INTO school_settings (id, app_name, school_name, address, phone, email, logo_url, kop_surat_text, current_academic_year, signer_1_title, signer_1_name, signer_2_title, signer_2_name, signature_city)
+         VALUES ('settings_default', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          settings.app_name,
+          settings.school_name,
+          settings.address,
+          settings.phone,
+          settings.email,
+          settings.logo_url,
+          settings.kop_surat_text,
+          settings.current_academic_year,
+          settings.signer_1_title,
+          settings.signer_1_name,
+          settings.signer_2_title,
+          settings.signer_2_name,
+          settings.signature_city
+        ]
       );
       shouldPersist = true;
     }
@@ -2925,6 +2969,11 @@ router8.put("/school", async (req, res) => {
       logoUrl,
       kopSuratText,
       currentAcademicYear,
+      signer1Title,
+      signer1Name,
+      signer2Title,
+      signer2Name,
+      signatureCity,
       actorName = "Admin"
     } = req.body;
     const old = get('SELECT * FROM school_settings WHERE id = "settings_default"');
@@ -2936,10 +2985,29 @@ router8.put("/school", async (req, res) => {
     const updatedLogo = logoUrl !== void 0 ? logoUrl.trim() : old?.logo_url || "/logo.svg";
     const updatedKop = kopSuratText !== void 0 ? kopSuratText.trim() : old?.kop_surat_text || "BIDANG PENDIDIKAN DAN KEPENGASUHAN - DIVISI HALAQAH TAHFIZH";
     const updatedYear = currentAcademicYear ? currentAcademicYear.trim() : old?.current_academic_year || "2025/2026";
+    const updatedSigner1Title = signer1Title !== void 0 ? signer1Title.trim() : old?.signer_1_title || "Koordinator Tahfizh / Mudir";
+    const updatedSigner1Name = signer1Name !== void 0 ? signer1Name.trim() : old?.signer_1_name || "";
+    const updatedSigner2Title = signer2Title !== void 0 ? signer2Title.trim() : old?.signer_2_title || "Petugas / Muhafizh Pengampu";
+    const updatedSigner2Name = signer2Name !== void 0 ? signer2Name.trim() : old?.signer_2_name || "";
+    const updatedCity = signatureCity !== void 0 ? signatureCity.trim() : old?.signature_city || "Bogor";
     run(
-      `INSERT OR REPLACE INTO school_settings (id, app_name, school_name, address, phone, email, logo_url, kop_surat_text, current_academic_year)
-       VALUES ('settings_default', ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [updatedAppName, updatedSchoolName, updatedAddress, updatedPhone, updatedEmail, updatedLogo, updatedKop, updatedYear]
+      `INSERT OR REPLACE INTO school_settings (id, app_name, school_name, address, phone, email, logo_url, kop_surat_text, current_academic_year, signer_1_title, signer_1_name, signer_2_title, signer_2_name, signature_city)
+       VALUES ('settings_default', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        updatedAppName,
+        updatedSchoolName,
+        updatedAddress,
+        updatedPhone,
+        updatedEmail,
+        updatedLogo,
+        updatedKop,
+        updatedYear,
+        updatedSigner1Title,
+        updatedSigner1Name,
+        updatedSigner2Title,
+        updatedSigner2Name,
+        updatedCity
+      ]
     );
     logAudit({
       userName: actorName,
@@ -2947,7 +3015,17 @@ router8.put("/school", async (req, res) => {
       tableName: "school_settings",
       recordId: "settings_default",
       oldData: old,
-      newData: { appName: updatedAppName, schoolName: updatedSchoolName, address: updatedAddress, logoUrl: updatedLogo }
+      newData: {
+        appName: updatedAppName,
+        schoolName: updatedSchoolName,
+        address: updatedAddress,
+        logoUrl: updatedLogo,
+        signer1Title: updatedSigner1Title,
+        signer1Name: updatedSigner1Name,
+        signer2Title: updatedSigner2Title,
+        signer2Name: updatedSigner2Name,
+        signatureCity: updatedCity
+      }
     });
     await persistDb();
     return res.json({ message: "Pengaturan identitas sekolah & aplikasi berhasil disimpan" });

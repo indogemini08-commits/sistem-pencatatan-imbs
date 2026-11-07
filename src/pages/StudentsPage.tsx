@@ -25,12 +25,16 @@ import {
   BookOpen,
   Users,
   CheckSquare,
+  FileText,
+  ExternalLink,
 } from 'lucide-react';
-import type { Student, Halaqah, User } from '../types';
+import type { Student, Halaqah, User, SchoolSettings } from '../types';
 import { api } from '../services/api';
 import { storageSync } from '../services/storageSync';
 import { StatusBadge } from '../components/Badge';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { PDFPreviewModal } from '../components/PDFPreviewModal';
+import { buildStudentsListReportPDF, PDFGenerationResult } from '../utils/pdfGenerator';
 import {
   downloadStudentImportTemplate,
   parseStudentExcelFile,
@@ -41,11 +45,13 @@ import {
 interface StudentsPageProps {
   currentUser: User | null;
   onSelectStudent: (studentId: string) => void;
+  settings?: SchoolSettings | null;
 }
 
 export const StudentsPage: React.FC<StudentsPageProps> = ({
   currentUser,
   onSelectStudent,
+  settings,
 }) => {
   const [students, setStudents] = useState<Student[]>([]);
   const [halaqahs, setHalaqahs] = useState<Halaqah[]>([]);
@@ -345,6 +351,53 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
     exportToExcel(exportData, 'Data_Santri_Halaqah');
   };
 
+  // PDF Export States & Handlers
+  const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
+  const [pdfResult, setPdfResult] = useState<PDFGenerationResult | null>(null);
+
+  const fallbackSettings: SchoolSettings = settings || {
+    id: 'settings_default',
+    app_name: 'Sistem Poin Santri Halaqah',
+    school_name: "Pesantren Tahfizh Al-Qur'an Imam Asy-Syathibi",
+    address: 'Jl. Karang Anyar No. 45, Kompleks Islamic Center, Bogor, Jawa Barat',
+    phone: '0811-9876-5432',
+    email: 'tahfizh@imamsyathibi.sch.id',
+    logo_url: '/logo.svg',
+    kop_surat_text: 'BIDANG PENDIDIKAN DAN KEPENGASUHAN - DIVISI HALAQAH TAHFIZH',
+    current_academic_year: '2025/2026',
+    signer_1_title: 'Koordinator Tahfizh / Mudir',
+    signer_1_name: '',
+    signer_2_title: 'Petugas / Muhafizh Pengampu',
+    signer_2_name: '',
+    signature_city: 'Bogor',
+  };
+
+  const generateStudentsPDF = () => {
+    const halaqahName =
+      selectedHalaqah !== 'all'
+        ? halaqahs.find((h) => h.id === selectedHalaqah)?.name || selectedHalaqah
+        : 'Semua Halaqah';
+    return buildStudentsListReportPDF(filteredStudents, fallbackSettings, {
+      classFilter: selectedClass !== 'all' ? `Kelas ${selectedClass}` : 'Semua Kelas',
+      halaqahFilter: halaqahName,
+      search: search.trim() || undefined,
+    });
+  };
+
+  const handleExportPDF = () => {
+    const result = generateStudentsPDF();
+    setPdfResult(result);
+    setPdfPreviewOpen(true);
+  };
+
+  const handleOpenPDFInNewTab = () => {
+    const result = generateStudentsPDF();
+    setPdfResult(result);
+    if (result.blobUrl) {
+      window.open(result.blobUrl, '_blank');
+    }
+  };
+
   // Filter & Sorting logic
   const filteredStudents = students
     .filter((s) => {
@@ -430,9 +483,28 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
             onClick={handleExportStudents}
             className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 bg-white dark:bg-[#111726] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl border border-slate-300 dark:border-white/[0.1] shadow-sm transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0"
           >
-            <Download className="w-4 h-4 text-indigo-500 shrink-0" />
+            <Download className="w-4 h-4 text-emerald-500 shrink-0" />
             <span>Export Excel</span>
           </button>
+
+          <div className="flex items-center gap-1.5 w-full sm:w-auto">
+            <button
+              onClick={handleExportPDF}
+              className="flex-1 sm:flex-none justify-center min-h-[44px] px-4 sm:px-5 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0"
+              title="Pratinjau Dokumen PDF Resmi (Kop Surat)"
+            >
+              <FileText className="w-4 h-4 shrink-0" />
+              <span>Export PDF</span>
+            </button>
+            <button
+              onClick={handleOpenPDFInNewTab}
+              className="p-2.5 bg-white dark:bg-[#111726] hover:bg-slate-50 dark:hover:bg-slate-800 text-indigo-600 dark:text-indigo-400 rounded-xl border border-slate-300 dark:border-white/[0.1] shadow-sm transition-all flex items-center justify-center min-h-[44px] cursor-pointer active:scale-95 shrink-0"
+              title="Buka PDF Langsung di Tab Terpisah"
+              aria-label="Buka PDF di Tab Terpisah"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1183,6 +1255,19 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
         onConfirm={handleBulkDeleteConfirm}
         onCancel={() => setShowBulkConfirm(false)}
       />
+
+      {/* PDF Preview Modal */}
+      {pdfResult && (
+        <PDFPreviewModal
+          isOpen={pdfPreviewOpen}
+          onClose={() => setPdfPreviewOpen(false)}
+          title="Laporan Data Santri & Akumulasi Poin"
+          subtitle="Pratinjau dokumen resmi A4 sebelum disimpan atau dicetak"
+          fileName={pdfResult.fileName}
+          blobUrl={pdfResult.blobUrl}
+          doc={pdfResult.doc}
+        />
+      )}
     </div>
   );
 };
