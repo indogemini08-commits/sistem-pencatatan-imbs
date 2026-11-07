@@ -334,7 +334,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
     }
   };
 
-  // Export to Excel
+  // Export to Excel (Lengkap dengan akumulasi poin per divisi)
   const handleExportStudents = () => {
     const exportData = filteredStudents.map((s, idx) => ({
       'No': idx + 1,
@@ -342,8 +342,9 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
       'Nama Lengkap': s.name,
       'Kelas': s.class,
       'Jenis Kelamin': s.gender === 'L' ? 'Laki-laki' : 'Perempuan',
-      'Nama Halaqah': s.halaqah_name || 'Tanpa Halaqah',
-      'Muhafizh Pengampu': s.teacher_name || '-',
+      'Poin Tahfizh': s.tahfizh_points || 0,
+      'Poin Kesantrian': s.kesantrian_points || 0,
+      'Poin Akademik': s.akademik_points || 0,
       'Total Poin': s.total_points,
       'Status Poin': s.status_info?.statusName || 'AMAN',
       'Tahun Ajaran': s.academic_year,

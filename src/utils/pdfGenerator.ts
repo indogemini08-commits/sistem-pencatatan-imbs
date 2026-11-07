@@ -398,7 +398,6 @@ export function buildViolationReportPDF(
       halign: 'center',
       valign: 'middle',
       cellPadding: { top: 2.5, bottom: 2.5, left: 1.5, right: 1.5 },
-      overflow: 'ellipsize',
     },
     bodyStyles: {
       fontSize: 7.2,
@@ -407,7 +406,6 @@ export function buildViolationReportPDF(
       valign: 'middle',
       lineColor: [226, 232, 240],
       lineWidth: 0.15,
-      overflow: 'ellipsize',
     },
     alternateRowStyles: {
       fillColor: [248, 250, 252], // Slate 50 row striping
@@ -415,13 +413,13 @@ export function buildViolationReportPDF(
     columnStyles: {
       0: { halign: 'center', cellWidth: 10, fontStyle: 'bold', textColor: [100, 116, 139] },
       1: { halign: 'center', cellWidth: 18 },
-      2: { cellWidth: 30, fontStyle: 'bold' },
+      2: { cellWidth: 32, fontStyle: 'bold' },
       3: { halign: 'center', cellWidth: 9, textColor: [79, 70, 229] },
-      4: { cellWidth: 22 },
+      4: { cellWidth: 23 },
       5: { cellWidth: 36 },
       6: { halign: 'center', fontStyle: 'bold', cellWidth: 14, textColor: [190, 24, 93] },
-      7: { halign: 'center', cellWidth: 15, fontStyle: 'bold' },
-      8: { cellWidth: 28, textColor: [100, 116, 139] },
+      7: { halign: 'center', cellWidth: 16, fontStyle: 'bold' },
+      8: { cellWidth: 24, textColor: [100, 116, 139] },
     },
     didDrawCell: (data) => {
       // Custom Chip Renderer for Status Column
@@ -519,7 +517,11 @@ export function buildStudentsListReportPDF(
   const guidanceCount = students.filter((s) => (Number(s.total_points) || 0) >= 20 && (Number(s.total_points) || 0) < 50).length;
   const warningCount = students.filter((s) => (Number(s.total_points) || 0) >= 50).length;
 
-  // Card 1: Total Santri
+  const totalTahfizh = students.reduce((sum, s) => sum + (Number(s.tahfizh_points) || 0), 0);
+  const totalKesantrian = students.reduce((sum, s) => sum + (Number(s.kesantrian_points) || 0), 0);
+  const totalAkademik = students.reduce((sum, s) => sum + (Number(s.akademik_points) || 0), 0);
+
+  // Card 1: Total Santri & Ringkasan Status
   doc.setFillColor(248, 250, 252);
   doc.setDrawColor(226, 232, 240);
   doc.setLineWidth(0.3);
@@ -533,12 +535,12 @@ export function buildStudentsListReportPDF(
   doc.setFontSize(9.5);
   doc.setTextColor(15, 23, 42);
   doc.text(`${totalStudents} Santri`, cardMargin + 4, cardY + 9.5);
-  doc.setFontSize(6.5);
+  doc.setFontSize(6.2);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(100, 116, 139);
-  doc.text(`${filterInfo?.classFilter || 'Semua Kelas'}`, cardMargin + 4, cardY + 13);
+  doc.text(`Aman: ${safeCount}  •  Binaan: ${guidanceCount + warningCount}`, cardMargin + 4, cardY + 13);
 
-  // Card 2: Status Aman
+  // Card 2: Poin Divisi Tahfizh (Emerald)
   const c2X = cardMargin + cardWidth + gap;
   doc.setFillColor(240, 253, 244);
   doc.setDrawColor(187, 247, 208);
@@ -548,65 +550,69 @@ export function buildStudentsListReportPDF(
   doc.setFontSize(6.2);
   doc.setTextColor(4, 120, 87);
   doc.setFont('helvetica', 'bold');
-  doc.text('STATUS AMAN', c2X + 4, cardY + 4.2);
+  doc.text('POIN TAHFIZH', c2X + 4, cardY + 4.2);
   doc.setFontSize(9.5);
-  doc.text(`${safeCount} Santri`, c2X + 4, cardY + 9.5);
-  doc.setFontSize(6.5);
+  doc.text(`${totalTahfizh} Poin`, c2X + 4, cardY + 9.5);
+  doc.setFontSize(6.2);
   doc.setFont('helvetica', 'normal');
-  doc.text('Akumulasi 0-19 poin', c2X + 4, cardY + 13);
+  doc.text('Akumulasi Halaqah', c2X + 4, cardY + 13);
 
-  // Card 3: Perlu Pembinaan
+  // Card 3: Poin Divisi Kesantrian (Blue)
   const c3X = cardMargin + (cardWidth * 2) + (gap * 2);
-  doc.setFillColor(255, 251, 235);
-  doc.setDrawColor(254, 240, 138);
+  doc.setFillColor(239, 246, 255);
+  doc.setDrawColor(191, 219, 254);
   doc.roundedRect(c3X, cardY, cardWidth, cardHeight, 1.8, 1.8, 'FD');
-  doc.setFillColor(245, 158, 11); // Amber
+  doc.setFillColor(37, 99, 235); // Blue
   doc.roundedRect(c3X, cardY, 1.4, cardHeight, 0.7, 0.7, 'F');
   doc.setFontSize(6.2);
-  doc.setTextColor(180, 83, 9);
+  doc.setTextColor(29, 78, 216);
   doc.setFont('helvetica', 'bold');
-  doc.text('PEMBINAAN', c3X + 4, cardY + 4.2);
+  doc.text('POIN KESANTRIAN', c3X + 4, cardY + 4.2);
   doc.setFontSize(9.5);
-  doc.text(`${guidanceCount} Santri`, c3X + 4, cardY + 9.5);
-  doc.setFontSize(6.5);
+  doc.text(`${totalKesantrian} Poin`, c3X + 4, cardY + 9.5);
+  doc.setFontSize(6.2);
   doc.setFont('helvetica', 'normal');
-  doc.text('Akumulasi 20-49 poin', c3X + 4, cardY + 13);
+  doc.text('Akumulasi Asrama', c3X + 4, cardY + 13);
 
-  // Card 4: Atensi SP
+  // Card 4: Poin Divisi Akademik (Purple)
   const c4X = cardMargin + (cardWidth * 3) + (gap * 3);
-  doc.setFillColor(255, 241, 242);
-  doc.setDrawColor(254, 205, 211);
+  doc.setFillColor(250, 245, 255);
+  doc.setDrawColor(233, 213, 255);
   doc.roundedRect(c4X, cardY, cardWidth, cardHeight, 1.8, 1.8, 'FD');
-  doc.setFillColor(225, 29, 72); // Rose
+  doc.setFillColor(124, 58, 237); // Purple
   doc.roundedRect(c4X, cardY, 1.4, cardHeight, 0.7, 0.7, 'F');
   doc.setFontSize(6.2);
-  doc.setTextColor(190, 24, 93);
+  doc.setTextColor(109, 40, 217);
   doc.setFont('helvetica', 'bold');
-  doc.text('ATENSI SP / SIDANG', c4X + 4, cardY + 4.2);
+  doc.text('POIN AKADEMIK', c4X + 4, cardY + 4.2);
   doc.setFontSize(9.5);
-  doc.text(`${warningCount} Santri`, c4X + 4, cardY + 9.5);
-  doc.setFontSize(6.5);
+  doc.text(`${totalAkademik} Poin`, c4X + 4, cardY + 9.5);
+  doc.setFontSize(6.2);
   doc.setFont('helvetica', 'normal');
-  doc.text('Akumulasi >= 50 poin', c4X + 4, cardY + 13);
+  doc.text('Akumulasi Sekolah', c4X + 4, cardY + 13);
 
   currentY += cardHeight + 5;
 
-  // 4. Tabel Santri
+  // 4. Tabel Santri (Akumulasi Poin Per Divisi & Total Poin)
   const sortedStudents = [...students].sort(
     (a, b) => (Number(b.total_points) || 0) - (Number(a.total_points) || 0)
   );
 
   const tableRows = sortedStudents.map((s, idx) => {
-    const pts = Number(s.total_points) || 0;
-    const status = pts < 20 ? 'AMAN' : pts < 50 ? 'PEMBINAAN' : 'ATENSI SP';
+    const ptsTahfizh = Number(s.tahfizh_points) || 0;
+    const ptsKesantrian = Number(s.kesantrian_points) || 0;
+    const ptsAkademik = Number(s.akademik_points) || 0;
+    const ptsTotal = Number(s.total_points) || 0;
+    const status = ptsTotal < 20 ? 'AMAN' : ptsTotal < 50 ? 'PEMBINAAN' : 'ATENSI SP';
     return [
       (idx + 1).toString(),
       s.student_number || '-',
       s.name,
       s.class || '-',
-      s.halaqah_name || '-',
-      s.teacher_name || '-',
-      `${pts} Poin`,
+      `${ptsTahfizh} Poin`,
+      `${ptsKesantrian} Poin`,
+      `${ptsAkademik} Poin`,
+      `${ptsTotal} Poin`,
       status,
     ];
   });
@@ -617,7 +623,7 @@ export function buildStudentsListReportPDF(
         [
           {
             content: '— Tidak ada data santri yang cocok dengan kriteria filter —',
-            colSpan: 8,
+            colSpan: 9,
             styles: {
               halign: 'center',
               fontStyle: 'italic',
@@ -630,57 +636,70 @@ export function buildStudentsListReportPDF(
 
   autoTable(doc, {
     startY: currentY,
-    head: [['No', 'NIS', 'Nama Santri', 'Kls', 'Halaqah', 'Muhafizh', 'Poin', 'Status']],
+    head: [['No', 'NIS', 'Nama Santri', 'Kls', 'Poin Tahfizh', 'Poin Kesantrian', 'Poin Akademik', 'Total Poin', 'Status']],
     body: bodyData,
     theme: 'plain',
     headStyles: {
       fillColor: [30, 41, 59], // Slate 800
       textColor: [255, 255, 255],
-      fontSize: 8,
+      fontSize: 7.5,
       fontStyle: 'bold',
       halign: 'center',
       valign: 'middle',
-      cellPadding: { top: 2.5, bottom: 2.5, left: 1.5, right: 1.5 },
-      overflow: 'ellipsize',
+      cellPadding: { top: 2.5, bottom: 2.5, left: 1.2, right: 1.2 },
     },
     bodyStyles: {
-      fontSize: 7.5,
-      cellPadding: 2.4,
+      fontSize: 7.2,
+      cellPadding: { top: 2.2, bottom: 2.2, left: 1.2, right: 1.2 },
       textColor: [30, 41, 59],
       valign: 'middle',
       lineColor: [226, 232, 240],
       lineWidth: 0.15,
-      overflow: 'ellipsize',
     },
     alternateRowStyles: {
       fillColor: [248, 250, 252],
     },
     columnStyles: {
-      0: { halign: 'center', cellWidth: 10, fontStyle: 'bold', textColor: [100, 116, 139] },
+      0: { halign: 'center', cellWidth: 9, fontStyle: 'bold', textColor: [100, 116, 139] },
       1: { halign: 'center', cellWidth: 18 },
-      2: { cellWidth: 44, fontStyle: 'bold' },
+      2: { cellWidth: 46, fontStyle: 'bold' },
       3: { halign: 'center', cellWidth: 10, textColor: [79, 70, 229] },
-      4: { cellWidth: 28 },
-      5: { cellWidth: 38 },
-      6: { halign: 'center', fontStyle: 'bold', cellWidth: 14 },
-      7: { halign: 'center', fontStyle: 'bold', cellWidth: 20 },
+      4: { halign: 'center', cellWidth: 22 },
+      5: { halign: 'center', cellWidth: 24 },
+      6: { halign: 'center', cellWidth: 23 },
+      7: { halign: 'center', fontStyle: 'bold', cellWidth: 14 },
+      8: { halign: 'center', fontStyle: 'bold', cellWidth: 16 },
     },
     didDrawCell: (data) => {
       if (data.section === 'body') {
-        // Point styling
+        // Poin Tahfizh (kolom index 4)
+        if (data.column.index === 4 && data.cell.raw !== undefined) {
+          const raw = parseInt(String(data.cell.raw), 10) || 0;
+          if (raw > 0) doc.setTextColor(16, 120, 80); // Emerald
+        }
+        // Poin Kesantrian (kolom index 5)
+        if (data.column.index === 5 && data.cell.raw !== undefined) {
+          const raw = parseInt(String(data.cell.raw), 10) || 0;
+          if (raw > 0) doc.setTextColor(37, 99, 235); // Blue
+        }
+        // Poin Akademik (kolom index 6)
         if (data.column.index === 6 && data.cell.raw !== undefined) {
-          const raw = String(data.cell.raw);
-          const pts = parseInt(raw, 10) || 0;
-          if (pts === 0) {
+          const raw = parseInt(String(data.cell.raw), 10) || 0;
+          if (raw > 0) doc.setTextColor(124, 58, 237); // Purple
+        }
+        // Total Poin (kolom index 7)
+        if (data.column.index === 7 && data.cell.raw !== undefined) {
+          const raw = parseInt(String(data.cell.raw), 10) || 0;
+          if (raw === 0) {
             doc.setTextColor(16, 185, 129); // Emerald
-          } else if (pts < 50) {
+          } else if (raw < 50) {
             doc.setTextColor(217, 119, 6); // Amber
           } else {
             doc.setTextColor(225, 29, 72); // Rose
           }
         }
-        // Status styling
-        if (data.column.index === 7 && data.cell.raw !== undefined) {
+        // Status styling (kolom index 8)
+        if (data.column.index === 8 && data.cell.raw !== undefined) {
           const status = String(data.cell.raw);
           if (status === 'AMAN') {
             doc.setTextColor(4, 120, 87);
@@ -835,7 +854,6 @@ export function buildStudentDetailPDF(
       halign: 'center',
       valign: 'middle',
       cellPadding: { top: 2.5, bottom: 2.5, left: 1.5, right: 1.5 },
-      overflow: 'ellipsize',
     },
     bodyStyles: {
       fontSize: 7.2,
@@ -844,7 +862,6 @@ export function buildStudentDetailPDF(
       valign: 'middle',
       lineColor: [226, 232, 240],
       lineWidth: 0.15,
-      overflow: 'ellipsize',
     },
     alternateRowStyles: {
       fillColor: [248, 250, 252],
