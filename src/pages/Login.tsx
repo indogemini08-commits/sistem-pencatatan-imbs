@@ -410,6 +410,78 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess, settings, onOpenPa
                   </button>
                 </form>
 
+                {/* Quick Account Fill (1-Click Login) */}
+                <div className="mt-5 pt-4 border-t border-slate-200/80 dark:border-white/[0.08] space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                      Pilihan Akun Cepat Masuk:
+                    </span>
+                    <span className="text-[10px] text-indigo-500 font-semibold">1-Klik Isi</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEmail('imbs@aldri');
+                        setPassword('admin112');
+                        setErrorMsg('');
+                      }}
+                      className="p-2.5 text-left rounded-xl bg-slate-50 hover:bg-indigo-50/70 dark:bg-[#161d31] dark:hover:bg-indigo-500/10 border border-slate-200 dark:border-white/[0.08] hover:border-indigo-400/50 transition-all cursor-pointer group"
+                    >
+                      <div className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 text-[11px]">
+                        Admin Utama
+                      </div>
+                      <div className="text-[10px] text-slate-400 truncate">imbs@aldri</div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEmail('koordinator@pesantren.id');
+                        setPassword('koor123');
+                        setErrorMsg('');
+                      }}
+                      className="p-2.5 text-left rounded-xl bg-slate-50 hover:bg-indigo-50/70 dark:bg-[#161d31] dark:hover:bg-indigo-500/10 border border-slate-200 dark:border-white/[0.08] hover:border-indigo-400/50 transition-all cursor-pointer group"
+                    >
+                      <div className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 text-[11px]">
+                        Koordinator
+                      </div>
+                      <div className="text-[10px] text-slate-400 truncate">koor123</div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEmail('kesantrian@pesantren.id');
+                        setPassword('kesantrian123');
+                        setErrorMsg('');
+                      }}
+                      className="p-2.5 text-left rounded-xl bg-slate-50 hover:bg-indigo-50/70 dark:bg-[#161d31] dark:hover:bg-indigo-500/10 border border-slate-200 dark:border-white/[0.08] hover:border-indigo-400/50 transition-all cursor-pointer group"
+                    >
+                      <div className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 text-[11px]">
+                        Kepala Kesantrian
+                      </div>
+                      <div className="text-[10px] text-slate-400 truncate">kesantrian123</div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEmail('ahmad@pesantren.id');
+                        setPassword('ahmad123');
+                        setErrorMsg('');
+                      }}
+                      className="p-2.5 text-left rounded-xl bg-slate-50 hover:bg-indigo-50/70 dark:bg-[#161d31] dark:hover:bg-indigo-500/10 border border-slate-200 dark:border-white/[0.08] hover:border-indigo-400/50 transition-all cursor-pointer group"
+                    >
+                      <div className="font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 text-[11px]">
+                        Ustadz Muhafizh
+                      </div>
+                      <div className="text-[10px] text-slate-400 truncate">ahmad123</div>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Footer status within card */}
                 <div className="mt-5 pt-3 border-t border-slate-100 dark:border-white/[0.08] flex items-center justify-between text-[11px] text-slate-400 dark:text-slate-500">
                   <div className="flex items-center gap-1.5">
