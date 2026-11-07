@@ -9,7 +9,8 @@ import {
   Eye,
   ZoomIn,
   ZoomOut,
-  RotateCcw,
+  Maximize2,
+  Minimize2,
 } from 'lucide-react';
 import jsPDF from 'jspdf';
 
@@ -35,6 +36,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
   onDownloaded,
 }) => {
   const [zoom, setZoom] = useState<number>(100);
+  const [viewMode, setViewMode] = useState<'fit' | 'width'>('fit');
 
   // ESC key listener to close
   useEffect(() => {
@@ -83,13 +85,21 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
   const handleZoomIn = () => setZoom((prev) => Math.min(prev + 20, 200));
   const handleZoomOut = () => setZoom((prev) => Math.max(prev - 20, 60));
-  const handleZoomReset = () => setZoom(100);
+  const handleZoomReset = () => {
+    setZoom(100);
+    setViewMode('fit');
+  };
+
+  // Build optimal iframe URL:
+  // 'Fit' scales the entire A4 portrait page into view without scrolling
+  // 'FitH' scales to full width
+  const iframeSrc = `${blobUrl}#toolbar=0&navpanes=0&scrollbar=${viewMode === 'fit' ? '0' : '1'}&view=${viewMode === 'fit' ? 'Fit' : 'FitH'}${zoom !== 100 ? `&zoom=${zoom}` : ''}`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/75 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-5xl h-[94vh] flex flex-col rounded-3xl bg-white dark:bg-[#0e1424] backdrop-blur-2xl border border-slate-200/90 dark:border-white/[0.12] shadow-2xl overflow-hidden animate-scale-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+      <div className="relative w-full max-w-5xl h-[92vh] max-h-[880px] flex flex-col rounded-3xl bg-white dark:bg-[#0e1424] backdrop-blur-2xl border border-slate-200/90 dark:border-white/[0.12] shadow-2xl overflow-hidden animate-scale-in">
         {/* Header Bar */}
-        <div className="p-3.5 sm:px-6 sm:py-4 border-b border-slate-200/80 dark:border-white/[0.08] flex items-center justify-between gap-3 bg-slate-50/90 dark:bg-[#12192c] shrink-0">
+        <div className="p-3 sm:px-6 sm:py-3.5 border-b border-slate-200/80 dark:border-white/[0.08] flex items-center justify-between gap-3 bg-slate-50/90 dark:bg-[#12192c] shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/25 shrink-0">
               <Eye className="w-5 h-5 text-white" />
@@ -101,7 +111,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
                 </h3>
                 <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-50 dark:bg-white/[0.08] text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/60">
                   <FileText className="w-3 h-3" />
-                  Pratinjau Resmi
+                  Pratinjau Resmi (A4)
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate mt-0.5">
@@ -112,8 +122,41 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
           {/* Quick Header Actions */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* View Mode Toggle: Fit Page vs Fit Width */}
+            <div className="hidden sm:flex items-center bg-slate-200/60 dark:bg-white/[0.08] p-0.5 rounded-xl border border-slate-300/60 dark:border-white/[0.08] text-xs">
+              <button
+                type="button"
+                onClick={() => {
+                  setViewMode('fit');
+                  setZoom(100);
+                }}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                  viewMode === 'fit'
+                    ? 'bg-white dark:bg-[#1e2742] text-indigo-600 dark:text-indigo-400 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+                title="Tampilkan Seluruh Halaman A4"
+              >
+                <Minimize2 className="w-3 h-3" />
+                <span>Halaman Penuh</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('width')}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
+                  viewMode === 'width'
+                    ? 'bg-white dark:bg-[#1e2742] text-indigo-600 dark:text-indigo-400 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+                title="Perbesar Sesuai Lebar"
+              >
+                <Maximize2 className="w-3 h-3" />
+                <span>Lebar Penuh</span>
+              </button>
+            </div>
+
             {/* Zoom Controls */}
-            <div className="hidden md:flex items-center bg-slate-200/60 dark:bg-white/[0.08] p-0.5 rounded-xl border border-slate-300/60 dark:border-white/[0.08] text-xs mr-1">
+            <div className="hidden md:flex items-center bg-slate-200/60 dark:bg-white/[0.08] p-0.5 rounded-xl border border-slate-300/60 dark:border-white/[0.08] text-xs">
               <button
                 type="button"
                 onClick={handleZoomOut}
@@ -174,7 +217,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
         </div>
 
         {/* File Name Pill Sub-bar */}
-        <div className="px-4 py-2 border-b border-slate-200/70 dark:border-white/[0.06] bg-slate-100/60 dark:bg-white/[0.02] flex items-center justify-between gap-3 text-xs shrink-0">
+        <div className="px-4 py-1.5 border-b border-slate-200/70 dark:border-white/[0.06] bg-slate-100/60 dark:bg-white/[0.02] flex items-center justify-between gap-3 text-xs shrink-0">
           <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-mono text-[11px] truncate">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="font-semibold text-slate-500 dark:text-slate-400">Nama File:</span>
@@ -183,16 +226,26 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
           <div className="flex items-center gap-1.5 text-[11px] text-slate-500 dark:text-slate-400 shrink-0 font-medium">
             <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
-            <span>Kop Surat Resmi & TTD Aktif</span>
+            <span>Kop Surat Resmi & TTD Lembaga</span>
           </div>
         </div>
 
-        {/* PDF Frame Viewer Body (Clean Document Reader Backdrop) */}
-        <div className="flex-1 w-full p-2 sm:p-5 bg-slate-200/80 dark:bg-[#070b14] overflow-auto flex items-center justify-center relative">
-          <div className="w-full h-full max-w-4xl bg-white dark:bg-[#111726] rounded-2xl shadow-xl border border-slate-300/80 dark:border-white/[0.1] overflow-hidden flex flex-col">
+        {/* PDF Frame Viewer Body (Clean Document Reader Backdrop with Real A4 Sheet Framing) */}
+        <div className="flex-1 min-h-0 w-full p-2 sm:p-4 bg-slate-200/80 dark:bg-[#070b14] overflow-auto flex items-center justify-center relative">
+          <div
+            className="bg-white rounded-xl shadow-2xl border border-slate-300/80 dark:border-white/[0.1] overflow-hidden flex flex-col transition-all duration-200"
+            style={{
+              height: viewMode === 'fit' ? '100%' : 'auto',
+              minHeight: viewMode === 'fit' ? '100%' : '650px',
+              aspectRatio: '210 / 297',
+              maxHeight: '100%',
+              maxWidth: viewMode === 'fit' ? '100%' : '800px',
+              width: viewMode === 'width' ? '100%' : 'auto',
+            }}
+          >
             <iframe
-              key={`pdf-frame-${zoom}`}
-              src={`${blobUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH&zoom=${zoom}`}
+              key={`pdf-frame-${viewMode}-${zoom}`}
+              src={iframeSrc}
               title={title}
               className="w-full h-full bg-white border-0"
             />
@@ -200,7 +253,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="p-3.5 sm:px-6 sm:py-3.5 border-t border-slate-200/80 dark:border-white/[0.08] flex items-center justify-between gap-3 bg-slate-50/90 dark:bg-[#12192c] shrink-0">
+        <div className="p-3 sm:px-6 sm:py-3 border-t border-slate-200/80 dark:border-white/[0.08] flex items-center justify-between gap-3 bg-slate-50/90 dark:bg-[#12192c] shrink-0">
           <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">
             💡 Pastikan data dan tanda tangan sudah sesuai sebelum mengunduh berkas.
           </span>
@@ -209,7 +262,7 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-white/[0.08] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200/70 dark:hover:bg-white/[0.08] transition-colors cursor-pointer"
             >
               Tutup
             </button>
