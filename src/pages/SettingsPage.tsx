@@ -897,7 +897,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
               <div className="md:col-span-12 p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0f1525] border border-slate-200 dark:border-white/[0.1] shadow-inner space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-black uppercase tracking-wider text-indigo-500 dark:text-indigo-400 block">
-                    Pratinjau Format Tanda Tangan Resmi PDF: Divisi {signerDivisionTab === 'tahfizh' ? 'Tahfizh' : signerDivisionTab === 'kesantrian' ? 'Kesantrian' : 'Akademik'}
+                    Pratinjau Format Tanda Tangan Resmi PDF: Laporan Per Divisi ({signerDivisionTab === 'tahfizh' ? 'Tahfizh' : signerDivisionTab === 'kesantrian' ? 'Kesantrian' : 'Akademik'})
                   </span>
                   <span className="text-[10px] text-slate-400 font-semibold">
                     Ukuran A4 Standar
@@ -946,6 +946,67 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                           : signerAkademik2Name
                         ).trim() || '............................................'
                       } )
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Live Preview Tanda Tangan Terpadu 3 Divisi (Menu Data Santri & Poin) */}
+              <div className="md:col-span-12 p-4 sm:p-5 rounded-2xl bg-indigo-50/50 dark:bg-[#121829] border border-indigo-200 dark:border-indigo-500/20 shadow-inner space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
+                    Pratinjau Tanda Tangan Terpadu 3 Divisi (Khusus Export PDF "Data Santri & Poin")
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-semibold">
+                    3 Kolom: Tahfizh (Kiri) • Kesantrian (Tengah) • Akademik (Kanan)
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs text-slate-700 dark:text-slate-300">
+                  {/* Kolom 1: Tahfizh (Kiri) */}
+                  <div className="space-y-1 text-center p-3 rounded-xl bg-white/70 dark:bg-[#161d31] border border-slate-200/60 dark:border-white/[0.05]">
+                    <span className="inline-block text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 mb-1">
+                      Divisi Tahfizh (Kiri)
+                    </span>
+                    <p className="font-normal text-slate-500 dark:text-slate-400">Mengetahui,</p>
+                    <p className="font-bold text-slate-900 dark:text-white text-xs">
+                      {signerTahfizh1Title || 'Koordinator Tahfizh / Mudir'}
+                    </p>
+                    <div className="h-10" />
+                    <p className="font-bold text-slate-900 dark:text-white text-xs">
+                      ( {signerTahfizh1Name.trim() || '............................................'} )
+                    </p>
+                  </div>
+
+                  {/* Kolom 2: Kesantrian (Tengah) */}
+                  <div className="space-y-1 text-center p-3 rounded-xl bg-white/70 dark:bg-[#161d31] border border-slate-200/60 dark:border-white/[0.05]">
+                    <span className="inline-block text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 mb-1">
+                      Divisi Kesantrian (Tengah)
+                    </span>
+                    <p className="font-normal text-slate-500 dark:text-slate-400">Mengetahui,</p>
+                    <p className="font-bold text-slate-900 dark:text-white text-xs">
+                      {signerKesantrian1Title || 'Kepala Kesantrian / Mudir'}
+                    </p>
+                    <div className="h-10" />
+                    <p className="font-bold text-slate-900 dark:text-white text-xs">
+                      ( {signerKesantrian1Name.trim() || '............................................'} )
+                    </p>
+                  </div>
+
+                  {/* Kolom 3: Akademik (Kanan) */}
+                  <div className="space-y-1 text-center p-3 rounded-xl bg-white/70 dark:bg-[#161d31] border border-slate-200/60 dark:border-white/[0.05]">
+                    <span className="inline-block text-[9px] font-extrabold uppercase px-2 py-0.5 rounded bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 mb-1">
+                      Divisi Akademik (Kanan)
+                    </span>
+                    <p className="font-normal text-slate-500 dark:text-slate-400">
+                      {signatureCity || 'Bogor'}, {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </p>
+                    <p className="font-bold text-slate-900 dark:text-white text-xs">
+                      {signerAkademik1Title || 'Kepala Sekolah / Kurikulum'}
+                    </p>
+                    <div className="h-10" />
+                    <p className="font-bold text-slate-900 dark:text-white text-xs">
+                      ( {signerAkademik1Name.trim() || '............................................'} )
                     </p>
                   </div>
                 </div>

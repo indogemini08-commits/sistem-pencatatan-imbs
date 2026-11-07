@@ -230,6 +230,107 @@ function drawOfficialSignatures(
   return sigY;
 }
 
+/**
+ * Gambar Bagian Pengesahan & Tanda Tangan 3 Divisi Terpadu (Tahfizh, Kesantrian, Akademik)
+ * Khusus untuk Laporan Data Santri & Poin yang mencakup akumulasi seluruh divisi.
+ * Mengambil Pihak Mengetahui (Kiri) dari menu Pengaturan Lembaga & Sistem:
+ * - Kiri: Pihak Mengetahui Divisi Tahfizh
+ * - Tengah: Pihak Mengetahui Divisi Kesantrian
+ * - Kanan: Pihak Mengetahui Divisi Akademik
+ */
+function drawThreeDivisionsSignatures(
+  doc: jsPDF,
+  settings: SchoolSettings,
+  startY: number
+) {
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  let sigY = startY + 8;
+  if (sigY + 36 > pageHeight - 15) {
+    doc.addPage();
+    sigY = 22;
+  }
+
+  const printDate = new Date().toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+  const city = settings.signature_city?.trim() || 'Bogor';
+  const locDate = `${city}, ${printDate}`;
+
+  // 3 Kolom simetris di atas kertas A4 (lebar 210mm)
+  // Margin 14mm kiri & kanan -> sisa 182mm dibagi 3 bagian (~60.6mm per kolom)
+  const col1X = 45;   // Pusat Divisi Tahfizh (Kiri)
+  const col2X = 105;  // Pusat Divisi Kesantrian (Tengah)
+  const col3X = 165;  // Pusat Divisi Akademik (Kanan)
+
+  // Tanggal & Lokasi dicetak di atas kolom kanan (Divisi Akademik)
+  doc.setFontSize(8);
+  doc.setTextColor(71, 85, 105);
+  doc.setFont('helvetica', 'normal');
+  doc.text(locDate, col3X, sigY, { align: 'center' });
+
+  sigY += 5;
+
+  // Baris "Mengetahui," untuk ketiga divisi
+  doc.text('Mengetahui,', col1X, sigY, { align: 'center' });
+  doc.text('Mengetahui,', col2X, sigY, { align: 'center' });
+  doc.text('Mengetahui,', col3X, sigY, { align: 'center' });
+
+  sigY += 4.5;
+
+  // Jabatan Pihak Mengetahui (Kiri) masing-masing divisi dari Pengaturan Sistem
+  const title1 = settings.signer_tahfizh_1_title?.trim() || settings.signer_1_title?.trim() || 'Koordinator Tahfizh / Mudir';
+  const title2 = settings.signer_kesantrian_1_title?.trim() || 'Kepala Kesantrian / Mudir';
+  const title3 = settings.signer_akademik_1_title?.trim() || 'Kepala Sekolah / Kurikulum';
+
+  const drawCenteredTitle = (text: string, x: number, y: number) => {
+    let sz = 8;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(sz);
+    while (doc.getTextWidth(text) > 56 && sz > 6) {
+      sz -= 0.5;
+      doc.setFontSize(sz);
+    }
+    doc.setTextColor(15, 23, 42);
+    doc.text(text, x, y, { align: 'center' });
+  };
+
+  drawCenteredTitle(title1, col1X, sigY);
+  drawCenteredTitle(title2, col2X, sigY);
+  drawCenteredTitle(title3, col3X, sigY);
+
+  sigY += 21;
+
+  // Nama Pejabat Pihak Mengetahui masing-masing divisi
+  const name1 = settings.signer_tahfizh_1_name?.trim() || settings.signer_1_name?.trim() || '';
+  const name2 = settings.signer_kesantrian_1_name?.trim() || '';
+  const name3 = settings.signer_akademik_1_name?.trim() || '';
+
+  const display1 = name1 ? `( ${name1} )` : '( ............................................ )';
+  const display2 = name2 ? `( ${name2} )` : '( ............................................ )';
+  const display3 = name3 ? `( ${name3} )` : '( ............................................ )';
+
+  const drawCenteredName = (text: string, x: number, y: number) => {
+    let sz = 8;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(sz);
+    while (doc.getTextWidth(text) > 56 && sz > 6) {
+      sz -= 0.5;
+      doc.setFontSize(sz);
+    }
+    doc.setTextColor(15, 23, 42);
+    doc.text(text, x, y, { align: 'center' });
+  };
+
+  drawCenteredName(display1, col1X, sigY);
+  drawCenteredName(display2, col2X, sigY);
+  drawCenteredName(display3, col3X, sigY);
+
+  return sigY;
+}
+
 export interface PDFGenerationResult {
   doc: jsPDF;
   fileName: string;
@@ -714,9 +815,9 @@ export function buildStudentsListReportPDF(
     margin: { left: 14, right: 14 },
   });
 
-  // 5. Pengesahan
+  // 5. Pengesahan 3 Divisi Terpadu (Tahfizh Kiri, Kesantrian Tengah, Akademik Kanan)
   const finalY = (doc as any).lastAutoTable.finalY;
-  drawOfficialSignatures(doc, settings, finalY, 'tahfizh');
+  drawThreeDivisionsSignatures(doc, settings, finalY);
 
   const fileName = `Laporan_Data_Santri_${new Date().toISOString().split('T')[0]}.pdf`;
   const blobUrl = doc.output('bloburl');

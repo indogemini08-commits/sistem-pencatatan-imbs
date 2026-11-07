@@ -366,11 +366,17 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
     logo_url: '/logo.svg',
     kop_surat_text: 'BIDANG PENDIDIKAN DAN KEPENGASUHAN - DIVISI HALAQAH TAHFIZH',
     current_academic_year: '2025/2026',
+    signature_city: 'Bogor',
+    signer_tahfizh_1_title: 'Koordinator Tahfizh / Mudir',
+    signer_tahfizh_1_name: '',
+    signer_kesantrian_1_title: 'Kepala Kesantrian / Mudir',
+    signer_kesantrian_1_name: '',
+    signer_akademik_1_title: 'Kepala Sekolah / Kurikulum',
+    signer_akademik_1_name: '',
     signer_1_title: 'Koordinator Tahfizh / Mudir',
     signer_1_name: '',
     signer_2_title: 'Petugas / Muhafizh Pengampu',
     signer_2_name: '',
-    signature_city: 'Bogor',
   };
 
   const generateStudentsPDF = () => {
