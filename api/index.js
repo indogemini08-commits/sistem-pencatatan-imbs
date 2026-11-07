@@ -3381,7 +3381,7 @@ router12.get("/state", (req, res) => {
 router12.post("/state", async (req, res) => {
   try {
     const { clientState, delta } = req.body || {};
-    if (clientState && clientState.students) {
+    if (clientState && (Array.isArray(clientState.students) || Array.isArray(clientState.users) || Array.isArray(clientState.violations))) {
       importDatabaseState(clientState);
       await persistDb();
       return res.json({

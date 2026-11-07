@@ -36,7 +36,7 @@ router.post('/state', async (req: Request, res: Response) => {
     const { clientState, delta } = req.body || {};
 
     // 1. If a full snapshot is provided
-    if (clientState && clientState.students) {
+    if (clientState && (Array.isArray(clientState.students) || Array.isArray(clientState.users) || Array.isArray(clientState.violations))) {
       importDatabaseState(clientState);
       await persistDb();
       return res.json({

@@ -4,6 +4,8 @@
 
 import { Student, ViolationRecord, PositiveRecord, User, Halaqah, Teacher } from '../types';
 
+const PERSISTENT_SNAPSHOT_KEY = 'imbs_v3_persistent_snapshot';
+
 const LEGACY_KEYS = [
   'imbs_deleted_student_ids',
   'imbs_created_students',
@@ -43,10 +45,37 @@ export function cleanupLegacyLocalStorageOverrides() {
 // Immediately purge legacy client overrides on script evaluation
 cleanupLegacyLocalStorageOverrides();
 
+let saveSnapshotTimeout: any = null;
+
+function scheduleSnapshotBackup() {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  if (saveSnapshotTimeout) clearTimeout(saveSnapshotTimeout);
+  saveSnapshotTimeout = setTimeout(async () => {
+    try {
+      const apiBase = (import.meta as any).env?.VITE_API_URL || '/api';
+      const res = await fetch(`${apiBase}/sync/state`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json.state) {
+          window.localStorage.setItem(
+            PERSISTENT_SNAPSHOT_KEY,
+            JSON.stringify({
+              state: json.state,
+              updatedAt: Date.now(),
+              cloudConnected: !!json.cloud?.isConnected,
+            })
+          );
+        }
+      }
+    } catch {}
+  }, 400);
+}
+
 export const storageSync = {
   notifyDataChange(detail?: { action: string; resource: string; id?: string }) {
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('app:data-changed', { detail }));
+      scheduleSnapshotBackup();
     }
   },
 
@@ -98,19 +127,19 @@ export const storageSync = {
     return new Set<string>();
   },
   addDeletedPosRecordId(id: string) {
-    this.notifyDataChange({ action: 'delete', resource: 'pos_record', id });
+    this.notifyDataChange({ action: 'delete', resource: 'positive_record', id });
   },
   getCancelledPosRecords(): Record<string, string> {
     return {};
   },
   addCancelledPosRecord(id: string, _reason: string) {
-    this.notifyDataChange({ action: 'cancel', resource: 'pos_record', id });
+    this.notifyDataChange({ action: 'cancel', resource: 'positive_record', id });
   },
   getCreatedPosRecords(): PositiveRecord[] {
     return [];
   },
   saveCreatedPosRecord(record: PositiveRecord) {
-    this.notifyDataChange({ action: 'create', resource: 'pos_record', id: record.id });
+    this.notifyDataChange({ action: 'create', resource: 'positive_record', id: record.id });
   },
 
   // === USERS ===
@@ -123,8 +152,8 @@ export const storageSync = {
   getCreatedUsers(): User[] {
     return [];
   },
-  saveCreatedUser(user: User) {
-    this.notifyDataChange({ action: 'create', resource: 'user', id: user.id });
+  saveCreatedUser(u: User) {
+    this.notifyDataChange({ action: 'create', resource: 'user', id: u.id });
   },
   getUpdatedUsers(): Record<string, Partial<User>> {
     return {};
@@ -133,7 +162,7 @@ export const storageSync = {
     this.notifyDataChange({ action: 'update', resource: 'user', id });
   },
 
-  // === HALAQAHS ===
+  // === HALAQAH ===
   getDeletedHalaqahIds(): Set<string> {
     return new Set<string>();
   },
@@ -189,6 +218,9 @@ export const storageSync = {
 
   // === RESET & SYNC HELPERS ===
   resetToDemo() {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.removeItem(PERSISTENT_SNAPSHOT_KEY);
+    }
     cleanupLegacyLocalStorageOverrides();
     this.notifyDataChange({ action: 'reset', resource: 'all' });
   },
@@ -197,11 +229,75 @@ export const storageSync = {
     const apiBase = (import.meta as any).env?.VITE_API_URL || '/api';
     try {
       const res = await fetch(`${apiBase}/sync/state`);
-      if (res.ok) {
-        const json = await res.json();
+      if (!res.ok) return { success: false };
+      const json = await res.json();
+      const serverState = json.state;
+      const isCloudConnected = !!json.cloud?.isConnected;
+
+      // If cloud is connected, server state is always the authoritative source of truth
+      if (isCloudConnected) {
+        if (typeof window !== 'undefined' && window.localStorage && serverState) {
+          window.localStorage.setItem(
+            PERSISTENT_SNAPSHOT_KEY,
+            JSON.stringify({ state: serverState, updatedAt: Date.now(), cloudConnected: true })
+          );
+        }
         this.notifyDataChange({ action: 'sync_completed', resource: 'all' });
-        return { success: true, cloud: json.cloud, state: json.state };
+        return { success: true, cloud: json.cloud, state: serverState };
       }
+
+      // If in serverless ephemeral mode (Vercel without Postgres/Blob)
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const rawLocal = window.localStorage.getItem(PERSISTENT_SNAPSHOT_KEY);
+        if (rawLocal) {
+          try {
+            const localData = JSON.parse(rawLocal);
+            const localState = localData.state;
+
+            // Check if server is a cold-started container that has fewer students/records/halaqahs or missing tombstones than local
+            const serverStudentCount = Array.isArray(serverState?.students) ? serverState.students.length : 0;
+            const localStudentCount = Array.isArray(localState?.students) ? localState.students.length : 0;
+            const serverHalaqahCount = Array.isArray(serverState?.halaqah) ? serverState.halaqah.length : 0;
+            const localHalaqahCount = Array.isArray(localState?.halaqah) ? localState.halaqah.length : 0;
+            const serverRecordCount = Array.isArray(serverState?.violation_records) ? serverState.violation_records.length : 0;
+            const localRecordCount = Array.isArray(localState?.violation_records) ? localState.violation_records.length : 0;
+            const localTombstoneCount = Array.isArray(localState?.tombstones) ? localState.tombstones.length : 0;
+
+            const isServerCold =
+              (serverStudentCount === 0 && localStudentCount > 0) ||
+              (serverHalaqahCount === 0 && localHalaqahCount > 0) ||
+              (serverRecordCount === 0 && localRecordCount > 0) ||
+              localTombstoneCount > (serverState?.tombstones?.length || 0);
+
+            if (isServerCold && localState) {
+              console.log('[StorageSync] Serverless container is cold, automatically re-hydrating latest snapshot...');
+              const pushRes = await fetch(`${apiBase}/sync/state`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ clientState: localState }),
+              });
+              if (pushRes.ok) {
+                const pushJson = await pushRes.json();
+                this.notifyDataChange({ action: 'rehydrate_completed', resource: 'all' });
+                return { success: true, cloud: json.cloud, state: pushJson.state || localState };
+              }
+            }
+          } catch (e) {
+            console.warn('[StorageSync] Error checking local snapshot:', e);
+          }
+        }
+
+        // Save server state to local snapshot
+        if (serverState) {
+          window.localStorage.setItem(
+            PERSISTENT_SNAPSHOT_KEY,
+            JSON.stringify({ state: serverState, updatedAt: Date.now(), cloudConnected: false })
+          );
+        }
+      }
+
+      this.notifyDataChange({ action: 'sync_completed', resource: 'all' });
+      return { success: true, cloud: json.cloud, state: serverState };
     } catch (err) {
       console.warn('[StorageSync] Server sync notice:', err);
     }
@@ -216,18 +312,18 @@ if (typeof window !== 'undefined') {
   // Sync when user refocuses the browser or switches tabs
   window.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
-      storageSync.notifyDataChange({ action: 'visibility_focus', resource: 'all' });
+      storageSync.syncWithServer();
     }
   });
 
   window.addEventListener('focus', () => {
-    storageSync.notifyDataChange({ action: 'window_focus', resource: 'all' });
+    storageSync.syncWithServer();
   });
 
   // Background light sync every 25s when tab is active
   setInterval(() => {
     if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
-      storageSync.notifyDataChange({ action: 'interval_sync', resource: 'all' });
+      storageSync.syncWithServer();
     }
   }, 25000);
 }
