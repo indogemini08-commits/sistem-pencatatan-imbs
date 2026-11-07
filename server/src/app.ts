@@ -23,6 +23,17 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
+// Lightweight request logging for monitoring API operations
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    if (req.url.startsWith('/api') || res.statusCode >= 400) {
+      console.log(`[HTTP] ${req.method} ${req.url} -> ${res.statusCode} (${Date.now() - start}ms)`);
+    }
+  });
+  next();
+});
+
 // Ensure database is initialized and seeded before processing any API request
 let initPromise: Promise<void> | null = null;
 export async function ensureDbInitialized(): Promise<void> {

@@ -649,6 +649,14 @@ function runMigrations(database) {
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    database.run("DELETE FROM students WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM halaqah WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM teachers WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM violation_records WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM positive_records WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM positive_actions WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM violations WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM users WHERE id IN (SELECT id FROM tombstones) AND id != 'usr_admin_imbs';");
   } catch (e) {
     console.error("Peringatan pembuatan/migrasi tabel positive & violations:", e?.message || e);
   }
@@ -3069,6 +3077,8 @@ router10.delete("/:id", async (req, res) => {
     run("DELETE FROM positive_actions WHERE id = ?", [id]);
     addTombstone(id, "positive_action");
     await persistDb();
+    addTombstone(id, "positive_action");
+    await persistDb();
     logAudit({
       userName: actorName,
       action: "DELETE_POSITIVE_ACTION",
@@ -3674,6 +3684,15 @@ var app = express();
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on("finish", () => {
+    if (req.url.startsWith("/api") || res.statusCode >= 400) {
+      console.log(`[HTTP] ${req.method} ${req.url} -> ${res.statusCode} (${Date.now() - start}ms)`);
+    }
+  });
+  next();
+});
 var initPromise = null;
 async function ensureDbInitialized() {
   if (!initPromise) {

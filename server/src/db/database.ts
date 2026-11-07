@@ -298,6 +298,16 @@ function runMigrations(database: Database) {
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    // Enforce tombstones on migration/reopen: purge any deleted items that might resurrect
+    database.run("DELETE FROM students WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM halaqah WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM teachers WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM violation_records WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM positive_records WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM positive_actions WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM violations WHERE id IN (SELECT id FROM tombstones);");
+    database.run("DELETE FROM users WHERE id IN (SELECT id FROM tombstones) AND id != 'usr_admin_imbs';");
   } catch (e: any) {
     console.error('Peringatan pembuatan/migrasi tabel positive & violations:', e?.message || e);
   }

@@ -157,6 +157,8 @@ router.delete('/:id', async (req: Request, res: Response) => {
     run('DELETE FROM positive_actions WHERE id = ?', [id]);
     addTombstone(id, 'positive_action');
     await persistDb();
+    addTombstone(id, 'positive_action');
+    await persistDb();
 
     logAudit({
       userName: actorName,
