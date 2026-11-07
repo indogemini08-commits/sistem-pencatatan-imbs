@@ -327,7 +327,7 @@ router.post('/', async (req: Request, res: Response) => {
 // PUT cancel / soft delete record
 router.put('/:id/cancel', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { cancellationReason, actorName = 'Admin' } = req.body;
 
     const record = get<any>('SELECT * FROM violation_records WHERE id = ?', [id]);
@@ -363,7 +363,7 @@ router.put('/:id/cancel', async (req: Request, res: Response) => {
 // DELETE hard delete record (Admin only)
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { actorName = 'Admin' } = req.body || {};
 
     const record = get<any>('SELECT * FROM violation_records WHERE id = ?', [id]);

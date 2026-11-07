@@ -87,7 +87,7 @@ router.post('/', async (req: Request, res: Response) => {
 // PUT update master violation (EDIT POINTS, NAME, CATEGORY, STATUS, DIVISION)
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { code, name, category, defaultPoints, description, division, status, actorName = 'Admin' } = req.body;
 
     const old = get<any>('SELECT * FROM violations WHERE id = ?', [id]);
@@ -176,7 +176,7 @@ router.post('/bulk-delete', async (req: Request, res: Response) => {
 // DELETE master violation
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { actorName = 'Admin' } = req.body || {};
 
     addTombstone(id, 'violation');

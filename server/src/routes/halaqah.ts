@@ -53,7 +53,7 @@ router.post('/', async (req: Request, res: Response) => {
 // PUT update halaqah (FLEXIBLE NAME EDITING)
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { name, teacherId, schedule, location, academicYear, status, actorName = 'Admin' } = req.body;
 
     const oldHalaqah = get<any>('SELECT * FROM halaqah WHERE id = ?', [id]);
@@ -92,7 +92,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 // DELETE halaqah
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { actorName = 'Admin' } = req.body || {};
 
     const halaqah = get<any>('SELECT * FROM halaqah WHERE id = ?', [id]);

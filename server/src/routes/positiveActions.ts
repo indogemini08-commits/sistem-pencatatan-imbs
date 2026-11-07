@@ -87,7 +87,7 @@ router.post('/', async (req: Request, res: Response) => {
 // PUT update positive action
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { code, name, division, category, description, defaultPointsDeduction, status, actorName = 'Admin' } = req.body;
 
     const oldAction = get<any>('SELECT * FROM positive_actions WHERE id = ?', [id]);
@@ -136,7 +136,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 // DELETE positive action (soft delete if in records, otherwise hard delete)
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { actorName = 'Admin' } = req.body || {};
 
     const oldAction = get<any>('SELECT * FROM positive_actions WHERE id = ?', [id]);

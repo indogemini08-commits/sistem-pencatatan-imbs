@@ -1190,7 +1190,7 @@ router2.post("/", async (req, res) => {
 });
 router2.put("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { name, email, password, role, status, phone, must_change_password, actorName = "Admin" } = req.body;
     const oldUser = get("SELECT * FROM users WHERE id = ?", [id]);
     if (!oldUser) return res.status(404).json({ error: "Pengguna tidak ditemukan" });
@@ -1253,7 +1253,7 @@ router2.put("/:id", async (req, res) => {
 });
 router2.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { actorName = "Admin" } = req.body || {};
     const user = get("SELECT * FROM users WHERE id = ?", [id]);
     if (!user) {
@@ -1339,7 +1339,7 @@ router3.post("/", async (req, res) => {
 });
 router3.put("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { name, phone, userId, status, actorName = "Admin" } = req.body;
     const oldTeacher = get("SELECT * FROM teachers WHERE id = ?", [id]);
     if (!oldTeacher) return res.status(404).json({ error: "Muhafizh tidak ditemukan" });
@@ -1372,7 +1372,7 @@ router3.put("/:id", async (req, res) => {
 });
 router3.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { actorName = "Admin" } = req.body || {};
     const teacher = get("SELECT * FROM teachers WHERE id = ?", [id]);
     if (!teacher) {
@@ -1444,7 +1444,7 @@ router4.post("/", async (req, res) => {
 });
 router4.put("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { name, teacherId, schedule, location, academicYear, status, actorName = "Admin" } = req.body;
     const oldHalaqah = get("SELECT * FROM halaqah WHERE id = ?", [id]);
     if (!oldHalaqah) return res.status(404).json({ error: "Halaqah tidak ditemukan" });
@@ -1476,7 +1476,7 @@ router4.put("/:id", async (req, res) => {
 });
 router4.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { actorName = "Admin" } = req.body || {};
     const halaqah = get("SELECT * FROM halaqah WHERE id = ?", [id]);
     if (!halaqah) {
@@ -1867,7 +1867,7 @@ router5.post("/", async (req, res) => {
 });
 router5.put("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const {
       studentNumber,
       name,
@@ -2159,7 +2159,7 @@ router6.post("/", async (req, res) => {
 });
 router6.put("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { code, name, category, defaultPoints, description, division, status, actorName = "Admin" } = req.body;
     const old = get("SELECT * FROM violations WHERE id = ?", [id]);
     if (!old) return res.status(404).json({ error: "Data pelanggaran tidak ditemukan" });
@@ -2234,7 +2234,7 @@ router6.post("/bulk-delete", async (req, res) => {
 });
 router6.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { actorName = "Admin" } = req.body || {};
     addTombstone(id, "violation");
     const violation = get("SELECT * FROM violations WHERE id = ?", [id]);
@@ -2539,7 +2539,7 @@ router7.post("/", async (req, res) => {
 });
 router7.put("/:id/cancel", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { cancellationReason, actorName = "Admin" } = req.body;
     const record = get("SELECT * FROM violation_records WHERE id = ?", [id]);
     if (!record) return res.status(404).json({ error: "Catatan pelanggaran tidak ditemukan" });
@@ -2568,7 +2568,7 @@ router7.put("/:id/cancel", async (req, res) => {
 });
 router7.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { actorName = "Admin" } = req.body || {};
     const record = get("SELECT * FROM violation_records WHERE id = ?", [id]);
     if (!record) {
@@ -3012,7 +3012,7 @@ router10.post("/", async (req, res) => {
 });
 router10.put("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { code, name, division, category, description, defaultPointsDeduction, status, actorName = "Admin" } = req.body;
     const oldAction = get("SELECT * FROM positive_actions WHERE id = ?", [id]);
     if (!oldAction) return res.status(404).json({ error: "Aturan kegiatan baik tidak ditemukan" });
@@ -3052,7 +3052,7 @@ router10.put("/:id", async (req, res) => {
 });
 router10.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { actorName = "Admin" } = req.body || {};
     const oldAction = get("SELECT * FROM positive_actions WHERE id = ?", [id]);
     if (!oldAction) {
@@ -3250,7 +3250,7 @@ router11.post("/", async (req, res) => {
 });
 router11.put("/:id/cancel", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { reason, actorName = "Admin" } = req.body;
     if (!reason || reason.trim().length === 0) {
       return res.status(400).json({ error: "Alasan pembatalan catatan kebaikan wajib diisi" });
@@ -3285,7 +3285,7 @@ router11.put("/:id/cancel", async (req, res) => {
 });
 router11.delete("/:id", async (req, res) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { actorName = "Admin" } = req.body || {};
     const record = get("SELECT * FROM positive_records WHERE id = ?", [id]);
     if (!record) {

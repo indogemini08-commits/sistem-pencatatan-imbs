@@ -116,7 +116,7 @@ router.get('/', (req: Request, res: Response) => {
 // GET portal detail by NIS for Parent/Guardian Portal
 router.get('/portal/:nis', (req: Request, res: Response) => {
   try {
-    const rawNis = req.params.nis ? req.params.nis.trim() : '';
+    const rawNis = req.params.nis ? (req.params.nis as string).trim() : '';
     if (!rawNis) {
       return res.status(400).json({ error: 'Nomor Induk Santri (NIS) wajib diisi' });
     }
@@ -358,7 +358,7 @@ router.post('/', async (req: Request, res: Response) => {
 // PUT update student
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const {
       studentNumber,
       name,

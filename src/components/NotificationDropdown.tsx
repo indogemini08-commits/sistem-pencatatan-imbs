@@ -5,14 +5,10 @@ import {
   AlertTriangle,
   Award,
   ShieldAlert,
-  BookOpen,
-  Building2,
-  GraduationCap,
   ChevronRight,
   X,
   ExternalLink,
   Sparkles,
-  Clock,
 } from 'lucide-react';
 import { User, ViolationDivision } from '../types';
 import { api } from '../services/api';

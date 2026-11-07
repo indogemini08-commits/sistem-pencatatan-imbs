@@ -196,7 +196,7 @@ router.post('/', async (req: Request, res: Response) => {
 // PUT cancel (soft delete) positive record
 router.put('/:id/cancel', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { reason, actorName = 'Admin' } = req.body;
 
     if (!reason || reason.trim().length === 0) {
@@ -238,7 +238,7 @@ router.put('/:id/cancel', async (req: Request, res: Response) => {
 // DELETE hard delete positive record (Admin only)
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { actorName = 'Admin' } = req.body || {};
 
     const record = get<any>('SELECT * FROM positive_records WHERE id = ?', [id]);

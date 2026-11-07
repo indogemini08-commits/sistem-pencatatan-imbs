@@ -84,7 +84,7 @@ router.post('/', async (req: Request, res: Response) => {
 // PUT update user
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { name, email, password, role, status, phone, must_change_password, actorName = 'Admin' } = req.body;
 
     const oldUser = get<any>('SELECT * FROM users WHERE id = ?', [id]);
@@ -161,7 +161,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 // DELETE user
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { actorName = 'Admin' } = req.body || {};
 
     const user = get<any>('SELECT * FROM users WHERE id = ?', [id]);

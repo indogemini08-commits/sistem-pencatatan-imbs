@@ -65,7 +65,7 @@ router.post('/', async (req: Request, res: Response) => {
 // PUT edit teacher
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { name, phone, userId, status, actorName = 'Admin' } = req.body;
 
     const oldTeacher = get<any>('SELECT * FROM teachers WHERE id = ?', [id]);
@@ -107,7 +107,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 // DELETE teacher
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { actorName = 'Admin' } = req.body || {};
 
     const teacher = get<any>('SELECT * FROM teachers WHERE id = ?', [id]);
