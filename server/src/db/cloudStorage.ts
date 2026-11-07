@@ -121,36 +121,33 @@ export async function loadCloudSnapshot(): Promise<any | null> {
 }
 
 let localSnapshotTimestamp: string | null = null;
-let lastCheckTime = 0;
 
 export async function checkAndSyncCloudSnapshot(importCallback: (data: any) => void): Promise<void> {
   const providerInfo = getActiveCloudProvider();
   if (providerInfo.provider !== 'postgres') return;
 
-  const now = Date.now();
-  if (now - lastCheckTime < 1000) return;
-  lastCheckTime = now;
-
   try {
     const dbUrl = (process.env.POSTGRES_URL || process.env.DATABASE_URL)!;
     const sql = neon(dbUrl);
-    const rows = await sql`SELECT data, updated_at FROM imbs_snapshots WHERE id = 'master_snapshot' LIMIT 1;`;
+    // Lightweight check: only query updated_at timestamp to minimize transfer
+    const rows = await sql`SELECT updated_at FROM imbs_snapshots WHERE id = 'master_snapshot' LIMIT 1;`;
     if (rows && rows.length > 0 && rows[0].updated_at) {
       const remoteTime = new Date(rows[0].updated_at).toISOString();
-      if (localSnapshotTimestamp && remoteTime !== localSnapshotTimestamp) {
-        console.log(`[CloudStorage] Remote snapshot is newer (${remoteTime} vs ${localSnapshotTimestamp}), syncing container...`);
-        let snapshotData = rows[0].data;
-        if (typeof snapshotData === 'string') {
-          try {
-            snapshotData = JSON.parse(snapshotData);
-          } catch {}
+      if (!localSnapshotTimestamp || remoteTime !== localSnapshotTimestamp) {
+        console.log(`[CloudStorage] Remote snapshot is newer (${remoteTime} vs ${localSnapshotTimestamp || 'none'}), syncing container...`);
+        const fullRows = await sql`SELECT data FROM imbs_snapshots WHERE id = 'master_snapshot' LIMIT 1;`;
+        if (fullRows && fullRows.length > 0 && fullRows[0].data) {
+          let snapshotData = fullRows[0].data;
+          if (typeof snapshotData === 'string') {
+            try {
+              snapshotData = JSON.parse(snapshotData);
+            } catch {}
+          }
+          if (snapshotData && (snapshotData.version || snapshotData.timestamp || Array.isArray(snapshotData.users))) {
+            importCallback(snapshotData);
+            localSnapshotTimestamp = remoteTime;
+          }
         }
-        if (snapshotData && (snapshotData.version || snapshotData.timestamp || Array.isArray(snapshotData.users))) {
-          importCallback(snapshotData);
-          localSnapshotTimestamp = remoteTime;
-        }
-      } else if (!localSnapshotTimestamp) {
-        localSnapshotTimestamp = remoteTime;
       }
     }
   } catch (err: any) {

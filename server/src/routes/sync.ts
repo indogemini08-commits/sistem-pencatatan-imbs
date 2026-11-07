@@ -33,16 +33,28 @@ router.get('/state', (req: Request, res: Response) => {
 // POST /api/sync/state - Merges client delta or full state into database
 router.post('/state', async (req: Request, res: Response) => {
   try {
+    const cloud = getActiveCloudProvider();
     const { clientState, delta } = req.body || {};
 
-    // 1. If a full snapshot is provided
+    // In production with cloud database active (PostgreSQL / Neon), prevent stale client snapshots from overwriting server authority
+    if (cloud.isConnected && clientState) {
+      console.warn('[Sync] Ignored unverified clientState overwrite while cloud database is active.');
+      return res.json({
+        success: true,
+        message: 'Cloud persistence aktif: Server PostgreSQL/Neon adalah otoritas tunggal database',
+        cloud,
+        state: exportDatabaseState(),
+      });
+    }
+
+    // 1. If a full snapshot is provided (only allowed when cloud is not connected, e.g. local migration)
     if (clientState && (Array.isArray(clientState.students) || Array.isArray(clientState.users) || Array.isArray(clientState.violations))) {
       importDatabaseState(clientState);
       await persistDb();
       return res.json({
         success: true,
         message: 'State database berhasil diperbarui secara penuh',
-        cloud: getActiveCloudProvider(),
+        cloud,
         state: exportDatabaseState(),
       });
     }

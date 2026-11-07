@@ -19,9 +19,23 @@ import syncRoutes from './routes/sync';
 
 const app = express();
 
+// Disable ETag globally to prevent stale 304 Not Modified responses
+app.set('etag', false);
+
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Anti-caching headers for real-time CRUD accuracy across all browsers and devices
+app.use((req, res, next) => {
+  if (req.url.startsWith('/api')) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+  }
+  next();
+});
 
 // Lightweight request logging for monitoring API operations
 app.use((req, res, next) => {

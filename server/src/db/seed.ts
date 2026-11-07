@@ -1,8 +1,82 @@
 import { query, run, logAudit, getTombstones, persistDb } from './database';
 
+export const DEFAULT_TEACHERS = [
+  { id: 'tch_ahmad', name: 'Ustadz Ahmad Al-Hafizh', phone: '0812-3456-7890', status: 'active', userId: 'usr_ahmad' },
+  { id: 'tch_muhammad', name: 'Ustadz Muhammad Al-Hafizh', phone: '0813-4567-8901', status: 'active', userId: 'usr_muhammad' },
+  { id: 'tch_abdullah', name: 'Ustadz Abdullah Al-Hafizh', phone: '0814-5678-9012', status: 'active', userId: 'usr_abdullah' },
+];
+
+export const DEFAULT_HALAQAHS = [
+  { id: 'hlq_doha', name: 'Halaqah Doha', teacherId: 'tch_ahmad', schedule: "Ba'da Subuh & Ba'da Maghrib", location: 'Masjid Lantai 1', academicYear: '2025/2026' },
+  { id: 'hlq_makkah', name: 'Halaqah Makkah', teacherId: 'tch_muhammad', schedule: "Ba'da Subuh & Ba'da Ashar", location: 'Masjid Lantai 2', academicYear: '2025/2026' },
+  { id: 'hlq_madinah', name: 'Halaqah Madinah', teacherId: 'tch_abdullah', schedule: "Ba'da Maghrib & Ba'da Isya", location: 'Gedung Tahfizh B', academicYear: '2025/2026' },
+];
+
+export const DEFAULT_STUDENTS = [
+  { id: 'std_001', nis: '2025001', name: 'Muhammad Abdullah', class: '8A', gender: 'L', halaqahId: 'hlq_doha' },
+  { id: 'std_002', nis: '2025002', name: 'Ahmad Farhan Kamil', class: '8A', gender: 'L', halaqahId: 'hlq_doha' },
+  { id: 'std_003', nis: '2025003', name: 'Ibrahim Malik Ar-Rasyid', class: '7B', gender: 'L', halaqahId: 'hlq_doha' },
+  { id: 'std_004', nis: '2025004', name: 'Zaid bin Tsabit Robbani', class: '9B', gender: 'L', halaqahId: 'hlq_doha' },
+  { id: 'std_005', nis: '2025005', name: 'Hasan Al-Banna Pratama', class: '8B', gender: 'L', halaqahId: 'hlq_makkah' },
+  { id: 'std_006', nis: '2025006', name: 'Umar Dani Ramadhan', class: '7A', gender: 'L', halaqahId: 'hlq_makkah' },
+  { id: 'std_007', nis: '2025007', name: 'Salman Al-Farisi Munir', class: '7C', gender: 'L', halaqahId: 'hlq_makkah' },
+  { id: 'std_008', nis: '2025008', name: 'Ali Zainal Abidin', class: '9A', gender: 'L', halaqahId: 'hlq_madinah' },
+  { id: 'std_009', nis: '2025009', name: 'Bilal Habasyi Asy-Syahid', class: '8C', gender: 'L', halaqahId: 'hlq_madinah' },
+  { id: 'std_010', nis: '2025010', name: 'Usamah bin Zaid Akbar', class: '8A', gender: 'L', halaqahId: 'hlq_madinah' },
+];
+
+export function seedTeachersIfEmpty() {
+  const teacherCount = query<{ count: number }>('SELECT COUNT(*) as count FROM teachers')[0]?.count || 0;
+  if (teacherCount > 0) return;
+
+  const tombstones = getTombstones();
+  for (const t of DEFAULT_TEACHERS) {
+    if (tombstones.has(t.id)) continue;
+    run(
+      `INSERT INTO teachers (id, user_id, name, phone, status, created_at)
+       VALUES (?, ?, ?, ?, ?, datetime('now', 'localtime'))`,
+      [t.id, t.userId || null, t.name, t.phone, t.status]
+    );
+  }
+}
+
+export function seedHalaqahIfEmpty() {
+  const halaqahCount = query<{ count: number }>('SELECT COUNT(*) as count FROM halaqah')[0]?.count || 0;
+  if (halaqahCount > 0) return;
+
+  const tombstones = getTombstones();
+  for (const h of DEFAULT_HALAQAHS) {
+    if (tombstones.has(h.id)) continue;
+    run(
+      `INSERT INTO halaqah (id, name, teacher_id, schedule, location, academic_year, status, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, 'active', datetime('now', 'localtime'))`,
+      [h.id, h.name, h.teacherId, h.schedule, h.location, h.academicYear]
+    );
+  }
+}
+
 export function seedStudentsIfEmpty() {
-  // Pure production database: no dummy students are auto-seeded.
-  return;
+  const studentCount = query<{ count: number }>('SELECT COUNT(*) as count FROM students')[0]?.count || 0;
+  if (studentCount > 0) return;
+
+  const tombstones = getTombstones();
+  const halaqahs = query<{ id: string; teacher_id: string }>('SELECT id, teacher_id FROM halaqah');
+
+  for (const s of DEFAULT_STUDENTS) {
+    if (tombstones.has(s.id)) continue;
+    run(
+      `INSERT INTO students (id, student_number, name, class, gender, halaqah_id, academic_year, status, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, '2025/2026', 'active', datetime('now', 'localtime'))`,
+      [s.id, s.nis, s.name, s.class, s.gender, s.halaqahId]
+    );
+
+    const hInfo = halaqahs.find(h => h.id === s.halaqahId);
+    run(
+      `INSERT INTO student_halaqah_history (id, student_id, halaqah_id, teacher_id, academic_year, class, start_date)
+       VALUES (?, ?, ?, ?, '2025/2026', ?, date('now', 'localtime'))`,
+      ['hist_' + s.id, s.id, s.halaqahId, hInfo?.teacher_id || null, s.class]
+    );
+  }
 }
 
 export const DEFAULT_KESANTRIAN_VIOLATIONS = [
@@ -145,11 +219,14 @@ export function seedDatabase() {
   const userCount = query<{ count: number }>('SELECT COUNT(*) as count FROM users')[0]?.count || 0;
   if (userCount > 0) {
     seedDefaultAdminIfEmpty();
+    seedTeachersIfEmpty();
+    seedHalaqahIfEmpty();
+    seedStudentsIfEmpty();
     seedKesantrianViolationsIfEmpty();
     seedAkademikViolationsIfEmpty();
     seedNewRolesIfEmpty();
     seedPositiveActionsIfEmpty();
-    console.log('Database sudah memiliki data, melewati seeder awal.');
+    console.log('Database master dan entitas siap digunakan.');
     return;
   }
 
@@ -233,6 +310,9 @@ export function seedDatabase() {
     );
   }
 
+  seedTeachersIfEmpty();
+  seedHalaqahIfEmpty();
+  seedStudentsIfEmpty();
   seedKesantrianViolationsIfEmpty();
   seedAkademikViolationsIfEmpty();
   seedPositiveActionsIfEmpty();

@@ -21,10 +21,13 @@ const API_BASE = (import.meta as any).env?.VITE_API_URL || '/api';
 async function fetchJson<T>(url: string, options: RequestInit = {}): Promise<T> {
   const headers = {
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0',
     ...(options.headers || {}),
   };
 
-  const res = await fetch(url, { ...options, headers });
+  const res = await fetch(url, { ...options, headers, cache: 'no-store' });
   const text = await res.text();
   let data: any = null;
 

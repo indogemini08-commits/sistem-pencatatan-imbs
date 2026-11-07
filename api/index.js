@@ -291,34 +291,31 @@ async function loadCloudSnapshot() {
   return null;
 }
 var localSnapshotTimestamp = null;
-var lastCheckTime = 0;
 async function checkAndSyncCloudSnapshot(importCallback) {
   const providerInfo = getActiveCloudProvider();
   if (providerInfo.provider !== "postgres") return;
-  const now = Date.now();
-  if (now - lastCheckTime < 1e3) return;
-  lastCheckTime = now;
   try {
     const dbUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL;
     const sql = neon(dbUrl);
-    const rows = await sql`SELECT data, updated_at FROM imbs_snapshots WHERE id = 'master_snapshot' LIMIT 1;`;
+    const rows = await sql`SELECT updated_at FROM imbs_snapshots WHERE id = 'master_snapshot' LIMIT 1;`;
     if (rows && rows.length > 0 && rows[0].updated_at) {
       const remoteTime = new Date(rows[0].updated_at).toISOString();
-      if (localSnapshotTimestamp && remoteTime !== localSnapshotTimestamp) {
-        console.log(`[CloudStorage] Remote snapshot is newer (${remoteTime} vs ${localSnapshotTimestamp}), syncing container...`);
-        let snapshotData = rows[0].data;
-        if (typeof snapshotData === "string") {
-          try {
-            snapshotData = JSON.parse(snapshotData);
-          } catch {
+      if (!localSnapshotTimestamp || remoteTime !== localSnapshotTimestamp) {
+        console.log(`[CloudStorage] Remote snapshot is newer (${remoteTime} vs ${localSnapshotTimestamp || "none"}), syncing container...`);
+        const fullRows = await sql`SELECT data FROM imbs_snapshots WHERE id = 'master_snapshot' LIMIT 1;`;
+        if (fullRows && fullRows.length > 0 && fullRows[0].data) {
+          let snapshotData = fullRows[0].data;
+          if (typeof snapshotData === "string") {
+            try {
+              snapshotData = JSON.parse(snapshotData);
+            } catch {
+            }
+          }
+          if (snapshotData && (snapshotData.version || snapshotData.timestamp || Array.isArray(snapshotData.users))) {
+            importCallback(snapshotData);
+            localSnapshotTimestamp = remoteTime;
           }
         }
-        if (snapshotData && (snapshotData.version || snapshotData.timestamp || Array.isArray(snapshotData.users))) {
-          importCallback(snapshotData);
-          localSnapshotTimestamp = remoteTime;
-        }
-      } else if (!localSnapshotTimestamp) {
-        localSnapshotTimestamp = remoteTime;
       }
     }
   } catch (err) {
@@ -832,6 +829,74 @@ function logAudit(options) {
 }
 
 // server/src/db/seed.ts
+var DEFAULT_TEACHERS = [
+  { id: "tch_ahmad", name: "Ustadz Ahmad Al-Hafizh", phone: "0812-3456-7890", status: "active", userId: "usr_ahmad" },
+  { id: "tch_muhammad", name: "Ustadz Muhammad Al-Hafizh", phone: "0813-4567-8901", status: "active", userId: "usr_muhammad" },
+  { id: "tch_abdullah", name: "Ustadz Abdullah Al-Hafizh", phone: "0814-5678-9012", status: "active", userId: "usr_abdullah" }
+];
+var DEFAULT_HALAQAHS = [
+  { id: "hlq_doha", name: "Halaqah Doha", teacherId: "tch_ahmad", schedule: "Ba'da Subuh & Ba'da Maghrib", location: "Masjid Lantai 1", academicYear: "2025/2026" },
+  { id: "hlq_makkah", name: "Halaqah Makkah", teacherId: "tch_muhammad", schedule: "Ba'da Subuh & Ba'da Ashar", location: "Masjid Lantai 2", academicYear: "2025/2026" },
+  { id: "hlq_madinah", name: "Halaqah Madinah", teacherId: "tch_abdullah", schedule: "Ba'da Maghrib & Ba'da Isya", location: "Gedung Tahfizh B", academicYear: "2025/2026" }
+];
+var DEFAULT_STUDENTS = [
+  { id: "std_001", nis: "2025001", name: "Muhammad Abdullah", class: "8A", gender: "L", halaqahId: "hlq_doha" },
+  { id: "std_002", nis: "2025002", name: "Ahmad Farhan Kamil", class: "8A", gender: "L", halaqahId: "hlq_doha" },
+  { id: "std_003", nis: "2025003", name: "Ibrahim Malik Ar-Rasyid", class: "7B", gender: "L", halaqahId: "hlq_doha" },
+  { id: "std_004", nis: "2025004", name: "Zaid bin Tsabit Robbani", class: "9B", gender: "L", halaqahId: "hlq_doha" },
+  { id: "std_005", nis: "2025005", name: "Hasan Al-Banna Pratama", class: "8B", gender: "L", halaqahId: "hlq_makkah" },
+  { id: "std_006", nis: "2025006", name: "Umar Dani Ramadhan", class: "7A", gender: "L", halaqahId: "hlq_makkah" },
+  { id: "std_007", nis: "2025007", name: "Salman Al-Farisi Munir", class: "7C", gender: "L", halaqahId: "hlq_makkah" },
+  { id: "std_008", nis: "2025008", name: "Ali Zainal Abidin", class: "9A", gender: "L", halaqahId: "hlq_madinah" },
+  { id: "std_009", nis: "2025009", name: "Bilal Habasyi Asy-Syahid", class: "8C", gender: "L", halaqahId: "hlq_madinah" },
+  { id: "std_010", nis: "2025010", name: "Usamah bin Zaid Akbar", class: "8A", gender: "L", halaqahId: "hlq_madinah" }
+];
+function seedTeachersIfEmpty() {
+  const teacherCount = query("SELECT COUNT(*) as count FROM teachers")[0]?.count || 0;
+  if (teacherCount > 0) return;
+  const tombstones = getTombstones();
+  for (const t of DEFAULT_TEACHERS) {
+    if (tombstones.has(t.id)) continue;
+    run(
+      `INSERT INTO teachers (id, user_id, name, phone, status, created_at)
+       VALUES (?, ?, ?, ?, ?, datetime('now', 'localtime'))`,
+      [t.id, t.userId || null, t.name, t.phone, t.status]
+    );
+  }
+}
+function seedHalaqahIfEmpty() {
+  const halaqahCount = query("SELECT COUNT(*) as count FROM halaqah")[0]?.count || 0;
+  if (halaqahCount > 0) return;
+  const tombstones = getTombstones();
+  for (const h of DEFAULT_HALAQAHS) {
+    if (tombstones.has(h.id)) continue;
+    run(
+      `INSERT INTO halaqah (id, name, teacher_id, schedule, location, academic_year, status, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, 'active', datetime('now', 'localtime'))`,
+      [h.id, h.name, h.teacherId, h.schedule, h.location, h.academicYear]
+    );
+  }
+}
+function seedStudentsIfEmpty() {
+  const studentCount = query("SELECT COUNT(*) as count FROM students")[0]?.count || 0;
+  if (studentCount > 0) return;
+  const tombstones = getTombstones();
+  const halaqahs = query("SELECT id, teacher_id FROM halaqah");
+  for (const s of DEFAULT_STUDENTS) {
+    if (tombstones.has(s.id)) continue;
+    run(
+      `INSERT INTO students (id, student_number, name, class, gender, halaqah_id, academic_year, status, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, '2025/2026', 'active', datetime('now', 'localtime'))`,
+      [s.id, s.nis, s.name, s.class, s.gender, s.halaqahId]
+    );
+    const hInfo = halaqahs.find((h) => h.id === s.halaqahId);
+    run(
+      `INSERT INTO student_halaqah_history (id, student_id, halaqah_id, teacher_id, academic_year, class, start_date)
+       VALUES (?, ?, ?, ?, '2025/2026', ?, date('now', 'localtime'))`,
+      ["hist_" + s.id, s.id, s.halaqahId, hInfo?.teacher_id || null, s.class]
+    );
+  }
+}
 var DEFAULT_KESANTRIAN_VIOLATIONS = [
   { id: "v_ks_001", code: "KS001", name: "Terlambat / Masbuq Shalat Berjamaah", cat: "Kedisiplinan", points: 5, desc: "Masbuq shalat fardhu berjamaah di masjid pesantren tanpa udzur syar'i" },
   { id: "v_ks_002", code: "KS002", name: "Masbuq Shalat Subuh / Kesiangan", cat: "Kedisiplinan", points: 8, desc: "Bangun terlambat sehingga masbuq pada shalat Subuh berjamaah" },
@@ -959,11 +1024,14 @@ function seedDatabase() {
   const userCount = query("SELECT COUNT(*) as count FROM users")[0]?.count || 0;
   if (userCount > 0) {
     seedDefaultAdminIfEmpty();
+    seedTeachersIfEmpty();
+    seedHalaqahIfEmpty();
+    seedStudentsIfEmpty();
     seedKesantrianViolationsIfEmpty();
     seedAkademikViolationsIfEmpty();
     seedNewRolesIfEmpty();
     seedPositiveActionsIfEmpty();
-    console.log("Database sudah memiliki data, melewati seeder awal.");
+    console.log("Database master dan entitas siap digunakan.");
     return;
   }
   console.log("Mengisi data awal database (seeding)...");
@@ -1034,6 +1102,9 @@ function seedDatabase() {
       [v.id, v.code, v.name, v.cat, v.desc, v.points]
     );
   }
+  seedTeachersIfEmpty();
+  seedHalaqahIfEmpty();
+  seedStudentsIfEmpty();
   seedKesantrianViolationsIfEmpty();
   seedAkademikViolationsIfEmpty();
   seedPositiveActionsIfEmpty();
@@ -3380,14 +3451,24 @@ router12.get("/state", (req, res) => {
 });
 router12.post("/state", async (req, res) => {
   try {
+    const cloud = getActiveCloudProvider();
     const { clientState, delta } = req.body || {};
+    if (cloud.isConnected && clientState) {
+      console.warn("[Sync] Ignored unverified clientState overwrite while cloud database is active.");
+      return res.json({
+        success: true,
+        message: "Cloud persistence aktif: Server PostgreSQL/Neon adalah otoritas tunggal database",
+        cloud,
+        state: exportDatabaseState()
+      });
+    }
     if (clientState && (Array.isArray(clientState.students) || Array.isArray(clientState.users) || Array.isArray(clientState.violations))) {
       importDatabaseState(clientState);
       await persistDb();
       return res.json({
         success: true,
         message: "State database berhasil diperbarui secara penuh",
-        cloud: getActiveCloudProvider(),
+        cloud,
         state: exportDatabaseState()
       });
     }
@@ -3681,9 +3762,19 @@ var sync_default = router12;
 
 // server/src/app.ts
 var app = express();
+app.set("etag", false);
 app.use(cors());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use((req, res, next) => {
+  if (req.url.startsWith("/api")) {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    res.setHeader("Surrogate-Control", "no-store");
+  }
+  next();
+});
 app.use((req, res, next) => {
   const start = Date.now();
   res.on("finish", () => {
