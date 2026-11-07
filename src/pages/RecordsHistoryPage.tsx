@@ -397,10 +397,10 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
           <button
             onClick={handleExportPDF}
-            className="px-5 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 w-full sm:w-auto whitespace-nowrap shrink-0"
+            className="px-6 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2.5 min-h-[44px] sm:min-h-0 w-full sm:w-auto whitespace-nowrap shrink-0"
           >
             <FileText className="w-4 h-4 shrink-0" />
-            <span>Export PDF (Kop Surat)</span>
+            <span className="pr-0.5">Export PDF (Kop Surat)</span>
           </button>
 
           <button

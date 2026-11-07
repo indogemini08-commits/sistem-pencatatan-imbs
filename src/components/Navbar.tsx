@@ -242,13 +242,13 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setIsNotificationOpen(!isNotificationOpen)}
             title="Notifikasi Aktivitas"
             aria-label="Notifikasi Aktivitas"
-            className={`relative p-2 rounded-xl transition-all cursor-pointer ${
+            className={`relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl transition-all cursor-pointer ${
               isNotificationOpen
                 ? 'bg-indigo-50 dark:bg-white/[0.12] text-indigo-600 dark:text-indigo-400 border border-indigo-300 dark:border-indigo-500/40 shadow-xs'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] border border-slate-200/80 dark:border-white/[0.08]'
+                : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/[0.06] border border-slate-200/90 dark:border-white/[0.08]'
             }`}
           >
-            <Bell className="w-4 h-4" />
+            <Bell className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
             {unreadCount > 0 && (
               <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-white text-[10px] font-black flex items-center justify-center ring-2 ring-white dark:ring-[#0b101d] shadow-sm animate-pulse">
                 {unreadCount > 9 ? '9+' : unreadCount}

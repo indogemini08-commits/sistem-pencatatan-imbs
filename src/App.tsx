@@ -192,8 +192,8 @@ export function App() {
         userName={currentUser.name}
       />
 
-      {/* Main Content Shell (Smoothly offset by lg:pl-64 on desktop) */}
-      <div className="flex-1 flex flex-col min-w-0 lg:pl-64 relative z-10">
+      {/* Main Content Shell (Smoothly offset by lg:pl-72 on desktop) */}
+      <div className="flex-1 flex flex-col min-w-0 lg:pl-72 relative z-10">
         {/* Top Navbar */}
         <Navbar
           currentUser={currentUser}

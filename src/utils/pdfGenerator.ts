@@ -3,14 +3,60 @@ import autoTable from 'jspdf-autotable';
 import { SchoolSettings, Student, ViolationRecord } from '../types';
 
 /**
+ * Gambar Emblem Vektor Resmi Pesantren IMBS (Fallback jika logo SVG tidak bisa di-render oleh jsPDF)
+ */
+function drawOfficialEmblem(doc: jsPDF, cx: number, cy: number, r: number = 10) {
+  // Outer circular shield with deep navy
+  doc.setFillColor(15, 36, 63);
+  doc.circle(cx, cy, r, 'F');
+
+  // Gold outer decorative ring
+  doc.setDrawColor(217, 119, 6);
+  doc.setLineWidth(0.7);
+  doc.circle(cx, cy, r - 0.7, 'D');
+
+  // Inner subtle gold ring
+  doc.setDrawColor(245, 158, 11);
+  doc.setLineWidth(0.3);
+  doc.circle(cx, cy, r - 1.8, 'D');
+
+  // Islamic Crescent & Star Motif (Gold)
+  doc.setFillColor(245, 158, 11);
+  doc.circle(cx, cy - 2.8, 2.2, 'F');
+  doc.setFillColor(15, 36, 63);
+  doc.circle(cx + 0.8, cy - 3.4, 1.9, 'F');
+
+  // Little star inside crescent
+  doc.setFillColor(255, 255, 255);
+  doc.circle(cx + 1.2, cy - 2.2, 0.45, 'F');
+
+  // Open Quran Book geometric lines (White)
+  doc.setDrawColor(255, 255, 255);
+  doc.setLineWidth(0.5);
+  doc.line(cx - 4.5, cy + 2.2, cx, cy + 3.8);
+  doc.line(cx, cy + 3.8, cx + 4.5, cy + 2.2);
+  doc.line(cx - 4.5, cy + 0.6, cx, cy + 2);
+  doc.line(cx, cy + 2, cx + 4.5, cy + 0.6);
+  doc.line(cx, cy + 2, cx, cy + 3.8);
+
+  // Institution Monogram
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(5);
+  doc.setTextColor(245, 158, 11);
+  doc.text('IMBS', cx, cy + 6.6, { align: 'center' });
+}
+
+/**
  * Gambar Kop Surat Resmi Lembaga / Sekolah
  */
 function drawOfficialHeader(doc: jsPDF, settings: SchoolSettings): number {
   const pageWidth = doc.internal.pageSize.getWidth();
   let startY = 15;
 
-  // Render Official Logo if present (supports Base64 from device upload or URL)
-  if (settings.logo_url && settings.logo_url.trim() !== '') {
+  let logoDrawn = false;
+
+  // Render Official Logo if Base64 from device upload
+  if (settings.logo_url && settings.logo_url.startsWith('data:image/')) {
     try {
       let format = 'PNG';
       if (settings.logo_url.includes('image/jpeg') || settings.logo_url.includes('image/jpg')) {
@@ -18,18 +64,23 @@ function drawOfficialHeader(doc: jsPDF, settings: SchoolSettings): number {
       } else if (settings.logo_url.includes('image/webp')) {
         format = 'WEBP';
       }
-      // Draw 20x20 mm logo on the top-left margin
-      doc.addImage(settings.logo_url, format, 14, 13, 20, 20);
+      doc.addImage(settings.logo_url, format, 14, 11, 22, 22);
+      logoDrawn = true;
     } catch (err) {
       console.warn('PDF Header Logo render warning:', err);
     }
+  }
+
+  // If no base64 logo drawn, render official vector emblem directly
+  if (!logoDrawn) {
+    drawOfficialEmblem(doc, 25, 22, 10);
   }
 
   // Nama Sekolah Utama (Bold Navy)
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
   doc.setTextColor(15, 36, 63); // #0f243f Deep Navy
-  doc.text((settings.school_name || 'PESANTREN TAHFIZH AL-QUR\'AN').toUpperCase(), pageWidth / 2, startY, { align: 'center' });
+  doc.text((settings.school_name || 'PESANTREN TAHFIZH AL-QUR\'AN IMAM ASY-SYATHIBI').toUpperCase(), pageWidth / 2, startY, { align: 'center' });
 
   // Sub-header Divisi / Kop Surat Text
   startY += 6;
@@ -43,17 +94,17 @@ function drawOfficialHeader(doc: jsPDF, settings: SchoolSettings): number {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
   doc.setTextColor(80, 90, 105);
-  const addressText = `${settings.address || ''}`;
-  const contactText = `Telp: ${settings.phone || '-'} | Email: ${settings.email || '-'}`;
+  const addressText = `${settings.address || 'Jl. Karang Anyar No. 45, Kompleks Islamic Center, Bogor, Jawa Barat'}`;
+  const contactText = `Telp: ${settings.phone || '0811-9876-5432'} | Email: ${settings.email || 'tahfizh@imamsyathibi.sch.id'}`;
   doc.text(addressText, pageWidth / 2, startY, { align: 'center' });
 
   startY += 4.5;
   doc.text(contactText, pageWidth / 2, startY, { align: 'center' });
 
-  // Double horizontal divider line (Kop Surat Style)
+  // Double horizontal divider line (Kop Surat Style: Thick 1.4pt + Thin 0.4pt)
   startY += 5;
   doc.setDrawColor(15, 36, 63);
-  doc.setLineWidth(1.2);
+  doc.setLineWidth(1.4);
   doc.line(14, startY, pageWidth - 14, startY);
 
   doc.setLineWidth(0.4);
@@ -105,33 +156,40 @@ export function buildViolationReportPDF(
   });
   doc.text(`Tahun Ajaran: ${settings.current_academic_year || '2025/2026'} | Dicetak pada: ${printDate}`, pageWidth / 2, currentY, { align: 'center' });
 
-  // 3. Metadata Filter
+  // 3. Metadata Filter & Summary
   currentY += 5;
   doc.setFillColor(248, 250, 252);
-  doc.setDrawColor(226, 232, 240);
-  doc.roundedRect(14, currentY, pageWidth - 28, 12, 1.5, 1.5, 'FD');
+  doc.setDrawColor(203, 213, 225);
+  doc.setLineWidth(0.4);
+  doc.roundedRect(14, currentY, pageWidth - 28, 15, 2, 2, 'FD');
 
-  doc.setFontSize(8.5);
-  doc.setTextColor(51, 65, 85);
+  doc.setFontSize(8);
+  doc.setTextColor(71, 85, 105);
   doc.setFont('helvetica', 'bold');
-  doc.text('Filter Laporan:', 18, currentY + 5);
+  doc.text('PARAMETER FILTER', 18, currentY + 5.5);
   doc.setFont('helvetica', 'normal');
   const halaqahText = filterInfo?.halaqah ? `Halaqah: ${filterInfo.halaqah}` : 'Halaqah: Semua';
   const periodText = filterInfo?.period ? `Periode: ${filterInfo.period}` : 'Periode: Semua Riwayat';
   const categoryText = filterInfo?.category ? `Kategori: ${filterInfo.category}` : 'Kategori: Semua';
-  doc.text(`${halaqahText}   |   ${periodText}   |   ${categoryText}`, 42, currentY + 5);
+  doc.text(`:   ${halaqahText}   •   ${periodText}   •   ${categoryText}`, 54, currentY + 5.5);
 
-  const totalPoints = records
+  const sortedRecords = [...records].sort(
+    (a, b) => (Number(b.points_snapshot) || 0) - (Number(a.points_snapshot) || 0)
+  );
+
+  const totalPoints = sortedRecords
     .filter((r) => r.status === 'active')
     .reduce((sum, r) => sum + Number(r.points_snapshot || 0), 0);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(15, 36, 63);
-  doc.text(`Total Kejadian: ${records.length}  |  Akumulasi Poin: ${totalPoints} Poin`, 18, currentY + 9.5);
+  doc.text('RINGKASAN REKAP', 18, currentY + 11);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`:   Total Kejadian: ${sortedRecords.length} Catatan   •   Akumulasi Poin: ${totalPoints} Poin Terakumulasi`, 54, currentY + 11);
 
-  currentY += 16;
+  currentY += 20;
 
   // 4. Tabel Pelanggaran
-  const tableRows = records.map((r, idx) => [
+  const tableRows = sortedRecords.map((r, idx) => [
     (idx + 1).toString(),
     r.date || '-',
     r.student_name || '-',
@@ -143,10 +201,27 @@ export function buildViolationReportPDF(
     r.notes || '-',
   ]);
 
+  const bodyData: any[] = tableRows.length > 0
+    ? tableRows
+    : [
+        [
+          {
+            content: 'Tidak ada catatan pelanggaran yang tercatat pada kriteria filter ini.',
+            colSpan: 9,
+            styles: {
+              halign: 'center',
+              fontStyle: 'italic',
+              textColor: [100, 116, 139],
+              minCellHeight: 18,
+            },
+          },
+        ],
+      ];
+
   autoTable(doc, {
     startY: currentY,
     head: [['No', 'Tanggal', 'Nama Santri', 'Kls', 'Halaqah', 'Jenis Pelanggaran', 'Poin', 'Status', 'Keterangan']],
-    body: tableRows,
+    body: bodyData,
     theme: 'grid',
     headStyles: {
       fillColor: [15, 36, 63],
@@ -182,11 +257,11 @@ export function buildViolationReportPDF(
   const finalY = (doc as any).lastAutoTable.finalY + 12;
   const pageHeight = doc.internal.pageSize.getHeight();
 
-  // If near bottom, add page
-  let sigY = finalY;
-  if (sigY + 35 > pageHeight) {
+  // If table is short, place signatures balanced in the lower half of page
+  let sigY = Math.max(finalY, 140);
+  if (sigY + 45 > pageHeight) {
     doc.addPage();
-    sigY = 20;
+    sigY = 25;
   }
 
   doc.setFontSize(8.5);
@@ -200,9 +275,9 @@ export function buildViolationReportPDF(
   doc.text('Mengetahui,', 25, sigY);
   doc.text('Koordinator Tahfizh / Mudir', 25, sigY + 4);
 
-  doc.text('Muhafizh Halaqah', pageWidth - 65, sigY + 4);
+  doc.text('Petugas / Muhafizh Pengampu', pageWidth - 65, sigY + 4);
 
-  sigY += 22;
+  sigY += 24;
   doc.setFont('helvetica', 'bold');
   doc.text('( ............................................ )', 25, sigY);
   doc.text(`( ${filterInfo?.muhafizh || '............................................'} )`, pageWidth - 65, sigY);
@@ -311,7 +386,11 @@ export function buildStudentDetailPDF(
   currentY += 34;
 
   // 4. Tabel Riwayat Pelanggaran
-  const tableRows = records.map((r, idx) => [
+  const sortedRecords = [...records].sort(
+    (a, b) => (Number(b.points_snapshot) || 0) - (Number(a.points_snapshot) || 0)
+  );
+
+  const tableRows = sortedRecords.map((r, idx) => [
     (idx + 1).toString(),
     r.date || '-',
     r.time || '-',
@@ -323,10 +402,27 @@ export function buildStudentDetailPDF(
     r.notes || '-',
   ]);
 
+  const bodyData: any[] = tableRows.length > 0
+    ? tableRows
+    : [
+        [
+          {
+            content: 'Alhamdulillah, tidak ada catatan pelanggaran disiplin yang tercatat untuk santri ini.',
+            colSpan: 9,
+            styles: {
+              halign: 'center',
+              fontStyle: 'italic',
+              textColor: [16, 120, 80],
+              minCellHeight: 18,
+            },
+          },
+        ],
+      ];
+
   autoTable(doc, {
     startY: currentY,
     head: [['No', 'Tanggal', 'Waktu', 'Jenis Pelanggaran', 'Poin', 'Halaqah', 'Muhafizh', 'Status', 'Catatan']],
-    body: tableRows,
+    body: bodyData,
     theme: 'grid',
     headStyles: {
       fillColor: [15, 36, 63],
@@ -362,10 +458,10 @@ export function buildStudentDetailPDF(
   const finalY = (doc as any).lastAutoTable.finalY + 12;
   const pageHeight = doc.internal.pageSize.getHeight();
 
-  let sigY = finalY;
-  if (sigY + 40 > pageHeight) {
+  let sigY = Math.max(finalY, 150);
+  if (sigY + 45 > pageHeight) {
     doc.addPage();
-    sigY = 20;
+    sigY = 25;
   }
 
   doc.setFontSize(8.5);

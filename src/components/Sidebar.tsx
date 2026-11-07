@@ -279,14 +279,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Full-Height Modern SaaS Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white/80 dark:bg-[#0b101d]/85 backdrop-blur-2xl border-r border-slate-200/90 dark:border-white/[0.1] text-slate-900 dark:text-slate-100 transition-all duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-72 bg-white/80 dark:bg-[#0b101d]/85 backdrop-blur-2xl border-r border-slate-200/90 dark:border-white/[0.1] text-slate-900 dark:text-slate-100 transition-all duration-300 ease-in-out lg:translate-x-0 ${
           isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'
         } flex flex-col justify-between overflow-y-auto`}
       >
         <div className="flex flex-col flex-1">
           {/* Top Brand Header */}
           <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200/90 dark:border-white/[0.08] shrink-0 bg-white/70 dark:bg-[#0e1424]/85 backdrop-blur-xl">
-            <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
               {/* Logo Container with Quick Upload Trigger for Admin */}
               <div
                 className={`relative group ${isAdmin ? 'cursor-pointer' : ''}`}
@@ -325,7 +325,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
               {/* Title & Subtitle */}
               <div
-                className="truncate cursor-pointer"
+                className="min-w-0 flex-1 cursor-pointer"
                 onClick={() => {
                   onSelectTab('dashboard');
                   onClose();
@@ -336,7 +336,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {settings?.app_name || 'Sistem Poin IMBS'}
                   </h1>
                 </div>
-                <p className="text-[11px] text-slate-600 dark:text-slate-300 truncate max-w-[140px] font-bold">
+                <p className="text-[11px] text-slate-600 dark:text-slate-300 truncate font-bold">
                   {settings?.school_name || "Pesantren Tahfizh"}
                 </p>
               </div>
