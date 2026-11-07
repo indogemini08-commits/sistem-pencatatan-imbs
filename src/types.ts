@@ -203,11 +203,25 @@ export interface SchoolSettings {
   logo_url: string;
   kop_surat_text: string;
   current_academic_year: string;
+  signature_city?: string;
+  // Per-division Signatures
+  signer_tahfizh_1_title?: string;
+  signer_tahfizh_1_name?: string;
+  signer_tahfizh_2_title?: string;
+  signer_tahfizh_2_name?: string;
+  signer_kesantrian_1_title?: string;
+  signer_kesantrian_1_name?: string;
+  signer_kesantrian_2_title?: string;
+  signer_kesantrian_2_name?: string;
+  signer_akademik_1_title?: string;
+  signer_akademik_1_name?: string;
+  signer_akademik_2_title?: string;
+  signer_akademik_2_name?: string;
+  // Fallbacks
   signer_1_title?: string;
   signer_1_name?: string;
   signer_2_title?: string;
   signer_2_name?: string;
-  signature_city?: string;
 }
 
 export interface AuditLog {

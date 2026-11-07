@@ -212,8 +212,8 @@ export function App() {
           onSettingsUpdated={loadSettings}
         />
 
-        {/* Page Content Container */}
-        <main className="flex-1 w-full max-w-7xl mx-auto px-3.5 py-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 pb-24 lg:pb-12">
+        {/* Page Content Container - Expanded Frame for Widescreen Ergonomics */}
+        <main className="flex-1 w-full max-w-[1720px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6 pb-24 lg:pb-12">
           {currentTab === 'dashboard' && (
             <Dashboard
               currentUser={currentUser}

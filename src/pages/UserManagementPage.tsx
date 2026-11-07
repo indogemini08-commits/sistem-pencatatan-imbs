@@ -298,31 +298,31 @@ export const UserManagementPage: React.FC<UserManagementPageProps> = ({
     switch (role) {
       case 'admin':
         return (
-          <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/20">
+          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-500/20 whitespace-nowrap inline-flex items-center">
             Admin
           </span>
         );
       case 'coordinator':
         return (
-          <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-blue-50 dark:bg-blue-500/10 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-500/20">
+          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 dark:bg-blue-500/10 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-500/20 whitespace-nowrap inline-flex items-center">
             Koordinator Tahfizh
           </span>
         );
       case 'kepala_kesantrian':
         return (
-          <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/20">
+          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-indigo-50 dark:bg-indigo-500/10 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/20 whitespace-nowrap inline-flex items-center">
             Kepala Kesantrian
           </span>
         );
       case 'teacher':
         return (
-          <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/20">
+          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/20 whitespace-nowrap inline-flex items-center">
             Muhafizh Halaqah
           </span>
         );
       case 'guru':
         return (
-          <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-teal-50 dark:bg-teal-500/10 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-500/20">
+          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-teal-50 dark:bg-teal-500/10 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-500/20 whitespace-nowrap inline-flex items-center">
             Guru Pengajar
           </span>
         );
@@ -381,39 +381,39 @@ export const UserManagementPage: React.FC<UserManagementPageProps> = ({
           <table className="w-full text-left text-xs sm:text-sm">
             <thead className="bg-slate-100/90 dark:bg-white/[0.06] text-slate-800 dark:text-slate-200 uppercase text-[11px] font-black tracking-wider border-b-2 border-slate-200/90 dark:border-white/[0.1]">
               <tr>
-                <th className="px-4 py-3.5 text-center w-12">#</th>
-                <th className="px-4 py-3.5">Nama Pengguna</th>
-                <th className="px-4 py-3.5">Email / Login ID</th>
-                <th className="px-4 py-3.5">Role / Hak Akses</th>
-                <th className="px-4 py-3.5">Kata Sandi</th>
-                <th className="px-4 py-3.5 text-center">Status</th>
-                <th className="px-4 py-3.5">Tanggal Terdaftar</th>
-                <th className="px-4 py-3.5 text-center w-28">Aksi</th>
+                <th className="px-4 py-3.5 text-center w-12 whitespace-nowrap">#</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">Nama Pengguna</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">Email / Login ID</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">Role / Hak Akses</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">Kata Sandi</th>
+                <th className="px-4 py-3.5 text-center whitespace-nowrap">Status</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">Tanggal Terdaftar</th>
+                <th className="px-4 py-3.5 text-center w-28 whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-white/[0.06]">
               {users.map((u, idx) => (
                 <tr key={u.id} className="hover:bg-slate-50/70 dark:hover:bg-white/[0.03] transition-colors">
-                  <td className="px-4 py-3.5 text-center font-bold text-slate-400 dark:text-slate-500">
+                  <td className="px-4 py-3.5 text-center font-bold text-slate-400 dark:text-slate-500 whitespace-nowrap">
                     {idx + 1}
                   </td>
-                  <td className="px-4 py-3.5">
-                    <p className="font-bold text-slate-900 dark:text-white">{u.name}</p>
+                  <td className="px-4 py-3.5 whitespace-nowrap">
+                    <p className="font-bold text-slate-900 dark:text-white whitespace-nowrap">{u.name}</p>
                     {u.id === currentUser?.id && (
-                      <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-200 dark:border-indigo-500/20 inline-block mt-0.5">
+                      <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-200 dark:border-indigo-500/20 inline-block mt-0.5 whitespace-nowrap">
                         (Akun Anda)
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3.5 font-medium text-slate-600 dark:text-slate-300">
+                  <td className="px-4 py-3.5 font-medium text-slate-600 dark:text-slate-300 whitespace-nowrap">
                     {u.email}
                   </td>
-                  <td className="px-4 py-3.5">
+                  <td className="px-4 py-3.5 whitespace-nowrap">
                     {getRoleBadge(u.role)}
                   </td>
-                  <td className="px-4 py-3.5">
+                  <td className="px-4 py-3.5 whitespace-nowrap">
                     <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-1 bg-slate-50 dark:bg-[#161d31] border border-slate-200 dark:border-white/[0.08] px-2.5 py-1 rounded-xl w-fit">
+                      <div className="flex items-center gap-1 bg-slate-50 dark:bg-[#161d31] border border-slate-200 dark:border-white/[0.08] px-2.5 py-1 rounded-xl w-fit whitespace-nowrap">
                         <span className="font-mono text-xs text-slate-800 dark:text-slate-200 select-all font-semibold tracking-wider">
                           {visiblePasswords[u.id] ? (u.password || '••••••••') : '••••••••'}
                         </span>
@@ -435,27 +435,27 @@ export const UserManagementPage: React.FC<UserManagementPageProps> = ({
                         </button>
                       </div>
                       {Boolean(u.must_change_password || u.mustChangePassword) && (
-                        <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 px-2 py-0.5 rounded-full w-fit" title="Pengguna ini wajib mengganti kata sandi saat login pertama kali">
+                        <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 px-2 py-0.5 rounded-full w-fit whitespace-nowrap" title="Pengguna ini wajib mengganti kata sandi saat login pertama kali">
                           Wajib Ganti Sandi
                         </span>
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3.5 text-center">
+                  <td className="px-4 py-3.5 text-center whitespace-nowrap">
                     {u.status === 'active' ? (
-                      <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/20">
+                      <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-500/20 whitespace-nowrap">
                         Aktif
                       </span>
                     ) : (
-                      <span className="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-white/[0.06] px-2.5 py-0.5 rounded-full">
+                      <span className="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-white/[0.06] px-2.5 py-0.5 rounded-full whitespace-nowrap">
                         Nonaktif
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3.5 text-slate-500 dark:text-slate-400 text-xs">
+                  <td className="px-4 py-3.5 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">
                     {u.created_at ? u.created_at.substring(0, 10) : '-'}
                   </td>
-                  <td className="px-4 py-3.5 text-center">
+                  <td className="px-4 py-3.5 text-center whitespace-nowrap">
                     <div className="flex items-center justify-center gap-1.5">
                       <button
                         onClick={() => handleOpenResetPassword(u)}

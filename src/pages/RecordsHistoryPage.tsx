@@ -345,6 +345,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
     const result = buildViolationReportPDF(filteredRecords, settings, {
       period: startDate && endDate ? `${startDate} s/d ${endDate}` : (startDate ? `Sejak ${startDate}` : undefined),
       halaqah: divisionLabel,
+      division: filterDivision,
     });
 
     setPreviewPdfDoc(result.doc);
@@ -371,6 +372,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
     const result = buildViolationReportPDF(filteredRecords, settings, {
       period: startDate && endDate ? `${startDate} s/d ${endDate}` : (startDate ? `Sejak ${startDate}` : undefined),
       halaqah: divisionLabel,
+      division: filterDivision,
     });
 
     window.open(result.blobUrl, '_blank');

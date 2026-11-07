@@ -121,11 +121,23 @@ CREATE TABLE IF NOT EXISTS school_settings (
   logo_url TEXT,
   kop_surat_text TEXT,
   current_academic_year TEXT NOT NULL,
+  signature_city TEXT DEFAULT 'Bogor',
+  signer_tahfizh_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir',
+  signer_tahfizh_1_name TEXT DEFAULT '',
+  signer_tahfizh_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu',
+  signer_tahfizh_2_name TEXT DEFAULT '',
+  signer_kesantrian_1_title TEXT DEFAULT 'Kepala Kesantrian / Mudir',
+  signer_kesantrian_1_name TEXT DEFAULT '',
+  signer_kesantrian_2_title TEXT DEFAULT 'Wali Asrama / Musyrif Kesantrian',
+  signer_kesantrian_2_name TEXT DEFAULT '',
+  signer_akademik_1_title TEXT DEFAULT 'Kepala Sekolah / Kurikulum',
+  signer_akademik_1_name TEXT DEFAULT '',
+  signer_akademik_2_title TEXT DEFAULT 'Wali Kelas / Guru Pengajar',
+  signer_akademik_2_name TEXT DEFAULT '',
   signer_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir',
   signer_1_name TEXT DEFAULT '',
   signer_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu',
-  signer_2_name TEXT DEFAULT '',
-  signature_city TEXT DEFAULT 'Bogor'
+  signer_2_name TEXT DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS audit_logs (

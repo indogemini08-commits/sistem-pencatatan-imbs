@@ -146,12 +146,13 @@ function drawOfficialHeader(doc: jsPDF, settings: SchoolSettings): number {
 }
 
 /**
- * Gambar Bagian Pengesahan & Tanda Tangan Resmi (Konfigurasi Dinamis dari Menu Pengaturan)
+ * Gambar Bagian Pengesahan & Tanda Tangan Resmi (Konfigurasi Dinamis 3 Divisi dari Menu Pengaturan)
  */
 function drawOfficialSignatures(
   doc: jsPDF,
   settings: SchoolSettings,
   startY: number,
+  division?: string,
   overrideSigner2Name?: string | null
 ) {
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -179,15 +180,38 @@ function drawOfficialSignatures(
   doc.text(locDate, pageWidth - 70, sigY);
 
   sigY += 5;
+
+  let signer1Title = '';
+  let signer1Name = '';
+  let signer2Title = '';
+  let signer2Name = '';
+
+  const divLower = (division || '').toLowerCase();
+  if (divLower === 'kesantrian') {
+    signer1Title = settings.signer_kesantrian_1_title?.trim() || 'Kepala Kesantrian / Mudir';
+    signer1Name = settings.signer_kesantrian_1_name?.trim() || settings.signer_1_name?.trim() || '';
+    signer2Title = settings.signer_kesantrian_2_title?.trim() || 'Wali Asrama / Musyrif Kesantrian';
+    signer2Name = overrideSigner2Name?.trim() || settings.signer_kesantrian_2_name?.trim() || settings.signer_2_name?.trim() || '';
+  } else if (divLower === 'akademik') {
+    signer1Title = settings.signer_akademik_1_title?.trim() || 'Kepala Sekolah / Kurikulum';
+    signer1Name = settings.signer_akademik_1_name?.trim() || settings.signer_1_name?.trim() || '';
+    signer2Title = settings.signer_akademik_2_title?.trim() || 'Wali Kelas / Guru Pengajar';
+    signer2Name = overrideSigner2Name?.trim() || settings.signer_akademik_2_name?.trim() || settings.signer_2_name?.trim() || '';
+  } else {
+    // Default: Tahfizh (Halaqah)
+    signer1Title = settings.signer_tahfizh_1_title?.trim() || settings.signer_1_title?.trim() || 'Koordinator Tahfizh / Mudir';
+    signer1Name = settings.signer_tahfizh_1_name?.trim() || settings.signer_1_name?.trim() || '';
+    signer2Title = settings.signer_tahfizh_2_title?.trim() || settings.signer_2_title?.trim() || 'Petugas / Muhafizh Pengampu';
+    signer2Name = overrideSigner2Name?.trim() || settings.signer_tahfizh_2_name?.trim() || settings.signer_2_name?.trim() || '';
+  }
+
   // Sisi Kiri - Pihak 1 (Mengetahui / Pimpinan)
-  const signer1Title = settings.signer_1_title?.trim() || 'Koordinator Tahfizh / Mudir';
   doc.text('Mengetahui,', 22, sigY);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(15, 23, 42);
   doc.text(signer1Title, 22, sigY + 4.5);
 
   // Sisi Kanan - Pihak 2 (Pelapor / Petugas)
-  const signer2Title = settings.signer_2_title?.trim() || 'Petugas / Muhafizh Pengampu';
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(71, 85, 105);
   doc.text('Petugas Pengesah,', pageWidth - 70, sigY);
@@ -197,11 +221,9 @@ function drawOfficialSignatures(
 
   sigY += 21;
   // Nama Pejabat Penandatangan
-  const signer1Name = settings.signer_1_name?.trim();
   const signer1Display = signer1Name ? `( ${signer1Name} )` : '( ............................................ )';
   doc.text(signer1Display, 22, sigY);
 
-  const signer2Name = settings.signer_2_name?.trim() || overrideSigner2Name?.trim();
   const signer2Display = signer2Name ? `( ${signer2Name} )` : '( ............................................ )';
   doc.text(signer2Display, pageWidth - 70, sigY);
 
@@ -226,6 +248,7 @@ export function buildViolationReportPDF(
     muhafizh?: string;
     category?: string;
     printedBy?: string;
+    division?: string;
   }
 ): PDFGenerationResult {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -374,7 +397,8 @@ export function buildViolationReportPDF(
       fontStyle: 'bold',
       halign: 'center',
       valign: 'middle',
-      cellPadding: 2.8,
+      cellPadding: { top: 2.5, bottom: 2.5, left: 1.5, right: 1.5 },
+      overflow: 'ellipsize',
     },
     bodyStyles: {
       fontSize: 7.2,
@@ -383,20 +407,21 @@ export function buildViolationReportPDF(
       valign: 'middle',
       lineColor: [226, 232, 240],
       lineWidth: 0.15,
+      overflow: 'ellipsize',
     },
     alternateRowStyles: {
       fillColor: [248, 250, 252], // Slate 50 row striping
     },
     columnStyles: {
-      0: { halign: 'center', cellWidth: 8, fontStyle: 'bold', textColor: [100, 116, 139] },
+      0: { halign: 'center', cellWidth: 10, fontStyle: 'bold', textColor: [100, 116, 139] },
       1: { halign: 'center', cellWidth: 18 },
-      2: { cellWidth: 32, fontStyle: 'bold' },
+      2: { cellWidth: 30, fontStyle: 'bold' },
       3: { halign: 'center', cellWidth: 9, textColor: [79, 70, 229] },
-      4: { cellWidth: 23 },
+      4: { cellWidth: 22 },
       5: { cellWidth: 36 },
-      6: { halign: 'center', fontStyle: 'bold', cellWidth: 15, textColor: [190, 24, 93] },
-      7: { halign: 'center', cellWidth: 16, fontStyle: 'bold' },
-      8: { cellWidth: 'auto', textColor: [100, 116, 139] },
+      6: { halign: 'center', fontStyle: 'bold', cellWidth: 14, textColor: [190, 24, 93] },
+      7: { halign: 'center', cellWidth: 15, fontStyle: 'bold' },
+      8: { cellWidth: 28, textColor: [100, 116, 139] },
     },
     didDrawCell: (data) => {
       // Custom Chip Renderer for Status Column
@@ -412,9 +437,9 @@ export function buildViolationReportPDF(
     margin: { left: 14, right: 14 },
   });
 
-  // 5. Bagian Pengesahan & Tanda Tangan Konfigurasi Lembaga
+  // 5. Bagian Pengesahan & Tanda Tangan Konfigurasi Lembaga Sesuai Divisi
   const finalY = (doc as any).lastAutoTable.finalY;
-  drawOfficialSignatures(doc, settings, finalY, filterInfo?.muhafizh);
+  drawOfficialSignatures(doc, settings, finalY, filterInfo?.division, filterInfo?.muhafizh);
 
   const fileName = `Laporan_Pelanggaran_${new Date().toISOString().split('T')[0]}.pdf`;
   const blobUrl = doc.output('bloburl');
@@ -605,7 +630,7 @@ export function buildStudentsListReportPDF(
 
   autoTable(doc, {
     startY: currentY,
-    head: [['No', 'NIS', 'Nama Lengkap Santri', 'Kls', 'Halaqah Al-Qur\'an', 'Muhafizh Pengampu', 'Poin', 'Status Kedisiplinan']],
+    head: [['No', 'NIS', 'Nama Santri', 'Kls', 'Halaqah', 'Muhafizh', 'Poin', 'Status']],
     body: bodyData,
     theme: 'plain',
     headStyles: {
@@ -615,7 +640,8 @@ export function buildStudentsListReportPDF(
       fontStyle: 'bold',
       halign: 'center',
       valign: 'middle',
-      cellPadding: 2.8,
+      cellPadding: { top: 2.5, bottom: 2.5, left: 1.5, right: 1.5 },
+      overflow: 'ellipsize',
     },
     bodyStyles: {
       fontSize: 7.5,
@@ -624,19 +650,20 @@ export function buildStudentsListReportPDF(
       valign: 'middle',
       lineColor: [226, 232, 240],
       lineWidth: 0.15,
+      overflow: 'ellipsize',
     },
     alternateRowStyles: {
       fillColor: [248, 250, 252],
     },
     columnStyles: {
-      0: { halign: 'center', cellWidth: 9, fontStyle: 'bold', textColor: [100, 116, 139] },
-      1: { halign: 'center', cellWidth: 20 },
-      2: { cellWidth: 42, fontStyle: 'bold' },
+      0: { halign: 'center', cellWidth: 10, fontStyle: 'bold', textColor: [100, 116, 139] },
+      1: { halign: 'center', cellWidth: 18 },
+      2: { cellWidth: 44, fontStyle: 'bold' },
       3: { halign: 'center', cellWidth: 10, textColor: [79, 70, 229] },
-      4: { cellWidth: 30 },
-      5: { cellWidth: 32 },
-      6: { halign: 'center', fontStyle: 'bold', cellWidth: 16 },
-      7: { halign: 'center', fontStyle: 'bold', cellWidth: 23 },
+      4: { cellWidth: 28 },
+      5: { cellWidth: 38 },
+      6: { halign: 'center', fontStyle: 'bold', cellWidth: 14 },
+      7: { halign: 'center', fontStyle: 'bold', cellWidth: 20 },
     },
     didDrawCell: (data) => {
       if (data.section === 'body') {
@@ -670,7 +697,7 @@ export function buildStudentsListReportPDF(
 
   // 5. Pengesahan
   const finalY = (doc as any).lastAutoTable.finalY;
-  drawOfficialSignatures(doc, settings, finalY);
+  drawOfficialSignatures(doc, settings, finalY, 'tahfizh');
 
   const fileName = `Laporan_Data_Santri_${new Date().toISOString().split('T')[0]}.pdf`;
   const blobUrl = doc.output('bloburl');
@@ -807,7 +834,8 @@ export function buildStudentDetailPDF(
       fontStyle: 'bold',
       halign: 'center',
       valign: 'middle',
-      cellPadding: 2.8,
+      cellPadding: { top: 2.5, bottom: 2.5, left: 1.5, right: 1.5 },
+      overflow: 'ellipsize',
     },
     bodyStyles: {
       fontSize: 7.2,
@@ -816,27 +844,28 @@ export function buildStudentDetailPDF(
       valign: 'middle',
       lineColor: [226, 232, 240],
       lineWidth: 0.15,
+      overflow: 'ellipsize',
     },
     alternateRowStyles: {
       fillColor: [248, 250, 252],
     },
     columnStyles: {
-      0: { halign: 'center', cellWidth: 8, fontStyle: 'bold', textColor: [100, 116, 139] },
+      0: { halign: 'center', cellWidth: 10, fontStyle: 'bold', textColor: [100, 116, 139] },
       1: { halign: 'center', cellWidth: 18 },
-      2: { halign: 'center', cellWidth: 12 },
+      2: { halign: 'center', cellWidth: 14 },
       3: { cellWidth: 40 },
       4: { halign: 'center', fontStyle: 'bold', cellWidth: 14, textColor: [190, 24, 93] },
       5: { cellWidth: 22 },
       6: { cellWidth: 26 },
       7: { halign: 'center', cellWidth: 15, fontStyle: 'bold' },
-      8: { cellWidth: 'auto', textColor: [100, 116, 139] },
+      8: { cellWidth: 23, textColor: [100, 116, 139] },
     },
     margin: { left: 14, right: 14 },
   });
 
   // 5. Signature Section
   const finalY = (doc as any).lastAutoTable.finalY;
-  drawOfficialSignatures(doc, settings, finalY, student.teacher_name);
+  drawOfficialSignatures(doc, settings, finalY, 'tahfizh', student.teacher_name);
 
   const cleanName = student.name.replace(/\s+/g, '_');
   const fileName = `Rekap_Poin_${cleanName}_${student.student_number}.pdf`;

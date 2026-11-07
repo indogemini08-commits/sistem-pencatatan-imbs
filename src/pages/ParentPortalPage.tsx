@@ -6,16 +6,9 @@ import {
   Award,
   ShieldCheck,
   AlertTriangle,
-  FileText,
-  PhoneCall,
-  UserCheck,
   RotateCcw,
   Sparkles,
   ArrowRight,
-  ChevronRight,
-  Clock,
-  HeartHandshake,
-  CheckCircle2,
   Download,
   ExternalLink,
   MessageCircle,
@@ -23,6 +16,8 @@ import {
   Info,
   LogOut,
   Calendar,
+  CheckCircle2,
+  HeartHandshake,
 } from 'lucide-react';
 import { api } from '../services/api';
 import { SchoolSettings, Student, ViolationRecord, PositiveRecord, PointThreshold } from '../types';
@@ -139,12 +134,12 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
     const effectiveSettings: SchoolSettings = portalData.settings || settings || {
       id: 'default',
       app_name: 'Sistem Poin Santri Halaqah',
-      school_name: "Pesantren Tahfizh Al-Qur'an",
-      address: 'Kompleks Pesantren Tahfizh',
-      phone: '-',
-      email: '-',
+      school_name: "Pesantren Tahfizh Al-Qur'an Imam Asy-Syathibi",
+      address: 'Jl. Karang Anyar No. 45, Kompleks Islamic Center, Bogor, Jawa Barat',
+      phone: '0811-9876-5432',
+      email: 'tahfizh@imamsyathibi.sch.id',
       logo_url: '/logo.svg',
-      kop_surat_text: "DIVISI KESISWAAN & HALAQAH TAHFIZH AL-QUR'AN",
+      kop_surat_text: "DIVISI HALAQAH TAHFIZH AL-QUR'AN",
       current_academic_year: '2025/2026',
     };
     const result = buildStudentDetailPDF(portalData.student, portalData.records, effectiveSettings);
@@ -155,64 +150,63 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
   };
 
   const school = portalData?.settings || settings;
+  const isInsideApp = isStaffPreview;
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
-      {/* 1. TOP NAVBAR / BRAND HEADER */}
-      <header className="sticky top-0 z-30 bg-[#0d1222]/90 backdrop-blur-md border-b border-white/[0.08] px-4 sm:px-6 lg:px-8 py-3.5">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
-            {school?.logo_url ? (
-              <img
-                src={school.logo_url}
-                alt="Logo Pesantren"
-                className="w-10 h-10 object-contain rounded-xl bg-white/10 p-1 border border-white/20 shrink-0"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-indigo-700 flex items-center justify-center text-white font-black text-sm shrink-0 shadow-lg shadow-indigo-500/25">
-                IM
+    <div className={isInsideApp ? "space-y-6 animate-scale-in" : "min-h-screen bg-slate-50 dark:bg-[#0b0f19] text-slate-900 dark:text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white"}>
+      {/* 1. TOP NAVBAR / BRAND HEADER (Only shown on standalone public link) */}
+      {!isInsideApp && (
+        <header className="sticky top-0 z-30 bg-white/90 dark:bg-[#0d1222]/90 backdrop-blur-md border-b border-slate-200 dark:border-white/[0.08] px-4 sm:px-6 lg:px-8 py-3.5">
+          <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 min-w-0">
+              {school?.logo_url ? (
+                <img
+                  src={school.logo_url}
+                  alt="Logo Pesantren"
+                  className="w-10 h-10 object-contain rounded-xl bg-slate-50 dark:bg-white/10 p-1 border border-slate-200 dark:border-white/20 shrink-0"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-indigo-700 flex items-center justify-center text-white font-black text-sm shrink-0 shadow-lg shadow-indigo-500/25">
+                  IM
+                </div>
+              )}
+              <div className="min-w-0">
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5 truncate">
+                  <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                  Portal Orang Tua & Wali Santri
+                </span>
+                <h1 className="text-sm sm:text-base font-black text-slate-900 dark:text-white truncate tracking-tight">
+                  {school?.school_name || "Pesantren Tahfizh Al-Qur'an Imam Asy-Syathibi"}
+                </h1>
               </div>
-            )}
-            <div className="min-w-0">
-              <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5 truncate">
-                <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                Portal Orang Tua & Wali Santri
-              </span>
-              <h1 className="text-sm sm:text-base font-black text-white truncate tracking-tight">
-                {school?.school_name || "Pesantren Tahfizh Al-Qur'an Imam Asy-Syathibi"}
-              </h1>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              {onBackToLogin && (
+                <button
+                  type="button"
+                  onClick={onBackToLogin}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-white bg-slate-100 dark:bg-[#161d31] hover:bg-slate-200 dark:hover:bg-[#1e2742] border border-slate-200 dark:border-white/[0.1] rounded-xl transition-all cursor-pointer shadow-soft"
+                >
+                  <LogOut className="w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400" />
+                  <span className="hidden sm:inline">Masuk Sebagai Guru/Asatidz</span>
+                  <span className="sm:hidden">Login Guru</span>
+                </button>
+              )}
             </div>
           </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            {onBackToLogin && (
-              <button
-                type="button"
-                onClick={onBackToLogin}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-bold text-slate-300 hover:text-white bg-[#161d31] hover:bg-[#1e2742] border border-white/[0.1] rounded-xl transition-all cursor-pointer shadow-soft"
-              >
-                <LogOut className="w-3.5 h-3.5 text-indigo-400" />
-                <span className="hidden sm:inline">
-                  {isStaffPreview ? 'Kembali ke Dashboard Asatidz' : 'Masuk Sebagai Guru/Asatidz'}
-                </span>
-                <span className="sm:hidden">
-                  {isStaffPreview ? 'Dashboard' : 'Login Guru'}
-                </span>
-              </button>
-            )}
-          </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* 2. HERO / SEARCH CONTAINER */}
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
-        {/* Banner Sapaan */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#111726] via-[#161d31] to-[#1e1e38] border border-white/[0.08] shadow-2xl p-6 sm:p-8">
-          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className={isInsideApp ? "space-y-6" : "flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8"}>
+        {/* Banner Sapaan Modern & Selaras dengan Aplikasi */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-900 text-white border border-indigo-500/20 shadow-xl p-6 sm:p-8">
+          <div className="absolute top-0 right-0 -mt-8 -mr-8 w-64 h-64 bg-indigo-500/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 -mb-8 -ml-8 w-64 h-64 bg-purple-500/15 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold">
               <HeartHandshake className="w-3.5 h-3.5" />
               <span>Sinergi Pesantren & Orang Tua Santri</span>
             </div>
@@ -221,7 +215,7 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
               Pantau Kedisiplinan & Capaian Ananda Secara Real-Time
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
               Cukup masukkan <strong>Nomor Induk Santri (NIS)</strong> ananda untuk melihat akumulasi poin pelanggaran, catatan amal kebaikan, status pembinaan, dan perkembangan halaqah di pondok.
             </p>
 
@@ -229,19 +223,19 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
             <form onSubmit={handleSearchSubmit} className="pt-2 max-w-xl">
               <div className="flex flex-col sm:flex-row items-stretch gap-2.5">
                 <div className="relative flex-1">
-                  <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <Search className="w-5 h-5 text-slate-300 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="text"
                     value={searchNis}
                     onChange={(e) => setSearchNis(e.target.value)}
                     placeholder="Masukkan NIS Santri (cth: 2025001)..."
-                    className="w-full pl-11 pr-4 py-3 sm:py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white placeholder-slate-400 text-sm sm:text-base font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-[#111726] transition-all"
+                    className="w-full pl-11 pr-4 py-3 sm:py-3.5 rounded-2xl bg-white/15 border border-white/25 text-white placeholder-slate-300 text-sm sm:text-base font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white/20 transition-all shadow-inner"
                   />
                   {searchNis && (
                     <button
                       type="button"
                       onClick={() => setSearchNis('')}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-300 hover:text-white p-1"
                     >
                       ×
                     </button>
@@ -282,12 +276,12 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
 
         {/* 3. HASIL PENCARIAN SANTRI */}
         {portalData && (
-          <div className="space-y-6 sm:space-y-8 animate-scale-in">
+          <div className="space-y-6 animate-scale-in">
             {/* Header Hasil & Tombol Reset */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 glass-panel p-4">
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-300">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
-                <span>Menampilkan Data Santri: <strong className="text-white font-black">{portalData.student.name}</strong> (NIS: {portalData.student.student_number})</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/90 dark:bg-[#111726]/90 border border-slate-200/90 dark:border-white/[0.08] rounded-2xl p-4 shadow-soft">
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]" />
+                <span>Menampilkan Data Santri: <strong className="text-slate-900 dark:text-white font-black">{portalData.student.name}</strong> (NIS: {portalData.student.student_number})</span>
               </div>
               <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
                 <button
@@ -301,7 +295,7 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                 <button
                   type="button"
                   onClick={handleResetSearch}
-                  className="px-4 py-2 text-xs font-bold text-slate-300 hover:text-white bg-white/10 hover:bg-white/15 border border-white/15 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
+                  className="px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 border border-slate-200 dark:border-white/15 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shrink-0"
                 >
                   <RotateCcw className="w-3.5 h-3.5 shrink-0" />
                   <span>Cari Santri Lain</span>
@@ -310,32 +304,32 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
             </div>
 
             {/* Profile & Status Card */}
-            <div className="glass-panel p-6 sm:p-8 space-y-6 shadow-2xl">
+            <div className="bg-white/90 dark:bg-[#111726]/90 border border-slate-200/90 dark:border-white/[0.08] rounded-3xl p-6 sm:p-8 space-y-6 shadow-soft">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 {/* Left: Avatar & Bio */}
                 <div className="flex items-start sm:items-center gap-4">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-indigo-700 text-white font-black text-2xl flex items-center justify-center shrink-0 shadow-lg shadow-indigo-500/25 ring-4 ring-white/10">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-indigo-700 text-white font-black text-2xl flex items-center justify-center shrink-0 shadow-lg shadow-indigo-500/25 ring-4 ring-indigo-500/10">
                     {portalData.student.name.charAt(0)}
                   </div>
                   <div className="space-y-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="px-2.5 py-0.5 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-xs font-bold font-mono">
+                      <span className="px-2.5 py-0.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-400/30 text-xs font-bold font-mono">
                         NIS: {portalData.student.student_number}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-400/30 text-xs font-bold">
+                      <span className="px-2.5 py-0.5 rounded-lg bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-400/30 text-xs font-bold">
                         Kelas {portalData.student.class}
                       </span>
-                      <span className="text-xs text-slate-400">
+                      <span className="text-xs text-slate-500 dark:text-slate-400">
                         {portalData.student.gender === 'L' ? 'Laki-laki' : 'Perempuan'} • TA {portalData.student.academic_year || '2025/2026'}
                       </span>
                     </div>
-                    <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight truncate">
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight truncate">
                       {portalData.student.name}
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-400 flex items-center gap-2 flex-wrap">
-                      <span>🕌 Halaqah: <strong className="text-white">{portalData.student.halaqah_name || 'Reguler'}</strong></span>
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2 flex-wrap">
+                      <span>🕌 Halaqah: <strong className="text-slate-900 dark:text-white">{portalData.student.halaqah_name || 'Reguler'}</strong></span>
                       <span>•</span>
-                      <span>Pembimbing: <strong className="text-white">{portalData.student.teacher_name || 'Ustadz Pengampu'}</strong></span>
+                      <span>Pembimbing: <strong className="text-slate-900 dark:text-white">{portalData.student.teacher_name || 'Ustadz Pengampu'}</strong></span>
                     </p>
                   </div>
                 </div>
@@ -356,25 +350,25 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
 
                   const colorClasses =
                     badgeColor === 'emerald'
-                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50'
+                      ? 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-400/50'
                       : badgeColor === 'amber'
-                      ? 'bg-amber-500/20 text-amber-300 border-amber-400/50'
+                      ? 'bg-amber-50 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-400/50'
                       : badgeColor === 'orange'
-                      ? 'bg-orange-500/20 text-orange-300 border-orange-400/50'
-                      : 'bg-rose-500/20 text-rose-300 border-rose-400/50';
+                      ? 'bg-orange-50 dark:bg-orange-500/20 text-orange-800 dark:text-orange-300 border-orange-200 dark:border-orange-400/50'
+                      : 'bg-rose-50 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-400/50';
 
                   const dotColor =
                     badgeColor === 'emerald'
-                      ? 'bg-emerald-400'
+                      ? 'bg-emerald-500'
                       : badgeColor === 'amber'
-                      ? 'bg-amber-400'
+                      ? 'bg-amber-500'
                       : badgeColor === 'orange'
-                      ? 'bg-orange-400'
-                      : 'bg-rose-400';
+                      ? 'bg-orange-500'
+                      : 'bg-rose-500';
 
                   return (
-                    <div className="bg-[#161d31] p-4 rounded-2xl border border-white/[0.08] flex flex-col items-start md:items-end justify-center gap-1.5 shrink-0 min-w-[220px]">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                    <div className="bg-slate-50 dark:bg-[#161d31] p-4 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] flex flex-col items-start md:items-end justify-center gap-1.5 shrink-0 min-w-[220px]">
+                      <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                         Status Kedisiplinan:
                       </span>
                       <span
@@ -383,7 +377,7 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                         <span className={`w-2.5 h-2.5 rounded-full ${dotColor} ${isAman ? 'animate-pulse' : 'animate-ping'}`} />
                         <span>{statusName}</span>
                       </span>
-                      <p className="text-[11px] text-slate-400 max-w-xs text-left md:text-right">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 max-w-xs text-left md:text-right">
                         {desc}
                       </p>
                     </div>
@@ -393,16 +387,16 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
 
               {/* Direct Contact Teacher / School */}
               {portalData.student.teacher_phone && (
-                <div className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-                  <div className="flex items-center gap-2.5 text-indigo-200">
-                    <MessageCircle className="w-4 h-4 text-indigo-400 shrink-0" />
+                <div className="p-3.5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2.5 text-indigo-900 dark:text-indigo-200">
+                    <MessageCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
                     <span>Perlu koordinasi mengenai ananda? Hubungi Muhafizh/Wali Asrama secara langsung.</span>
                   </div>
                   <a
                     href={`https://wa.me/${portalData.student.teacher_phone.replace(/[^0-9]/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors shrink-0"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors shrink-0 shadow-sm"
                   >
                     <span>Hubungi Ustadz via WhatsApp</span>
                     <ExternalLink className="w-3 h-3" />
@@ -421,35 +415,35 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                 return (
                   <div className={`p-4 sm:p-5 rounded-2xl border shadow-soft transition-all ${
                     isAman
-                      ? 'bg-[#111726] border-emerald-500/30'
+                      ? 'bg-white dark:bg-[#111726] border-emerald-300 dark:border-emerald-500/30'
                       : netPts < 50
-                      ? 'bg-[#111726] border-amber-500/30'
-                      : 'bg-[#111726] border-rose-500/30'
+                      ? 'bg-white dark:bg-[#111726] border-amber-300 dark:border-amber-500/30'
+                      : 'bg-white dark:bg-[#111726] border-rose-300 dark:border-rose-500/30'
                   }`}>
                     <div className="flex items-center gap-1.5 text-xs font-bold uppercase mb-1">
                       {isAman ? (
                         <>
-                          <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                          <span className="text-emerald-300">Total Poin Netto</span>
+                          <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                          <span className="text-emerald-700 dark:text-emerald-300">Total Poin Netto</span>
                         </>
                       ) : (
                         <>
-                          <AlertTriangle className={`w-4 h-4 ${netPts < 50 ? 'text-amber-400' : 'text-rose-400'}`} />
-                          <span className="text-slate-300">Total Poin Netto</span>
+                          <AlertTriangle className={`w-4 h-4 ${netPts < 50 ? 'text-amber-500' : 'text-rose-500'}`} />
+                          <span className="text-slate-600 dark:text-slate-300">Total Poin Netto</span>
                         </>
                       )}
                     </div>
                     <p className={`text-2xl sm:text-3xl font-black font-mono ${
                       isAman
-                        ? 'text-emerald-400'
+                        ? 'text-emerald-600 dark:text-emerald-400'
                         : netPts < 50
-                        ? 'text-amber-400'
-                        : 'text-rose-400'
+                        ? 'text-amber-600 dark:text-amber-400'
+                        : 'text-rose-600 dark:text-rose-400'
                     }`}>
                       {netPts}
                     </p>
                     <span className={`text-[11px] mt-1 block font-medium ${
-                      isAman ? 'text-emerald-300/80' : 'text-slate-400'
+                      isAman ? 'text-emerald-600 dark:text-emerald-300/80' : 'text-slate-500 dark:text-slate-400'
                     }`}>
                       {isAman ? 'Kondisi aman & bersih dari sanksi' : 'Akumulasi terpadu setelah apresiasi'}
                     </span>
@@ -458,79 +452,79 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
               })()}
 
               {/* Pelanggaran Tahfizh */}
-              <div className="bg-[#111726] p-4 sm:p-5 rounded-2xl border border-white/[0.08] shadow-soft">
-                <div className="flex items-center gap-1.5 text-slate-400 text-xs font-bold uppercase mb-1">
-                  <BookOpen className="w-4 h-4 text-emerald-400" />
+              <div className="bg-white dark:bg-[#111726] p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] shadow-soft">
+                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-1">
+                  <BookOpen className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
                   <span>Divisi Tahfizh</span>
                 </div>
-                <p className="text-2xl sm:text-3xl font-black text-emerald-400 font-mono">
+                <p className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
                   {portalData.student.tahfizh_points || 0}
                 </p>
-                <span className="text-[11px] text-slate-400 mt-1 block">
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
                   Kedisiplinan halaqah Al-Qur'an
                 </span>
               </div>
 
               {/* Pelanggaran Kesantrian */}
-              <div className="bg-[#111726] p-4 sm:p-5 rounded-2xl border border-white/[0.08] shadow-soft">
-                <div className="flex items-center gap-1.5 text-slate-400 text-xs font-bold uppercase mb-1">
-                  <Building2 className="w-4 h-4 text-blue-400" />
+              <div className="bg-white dark:bg-[#111726] p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] shadow-soft">
+                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-1">
+                  <Building2 className="w-4 h-4 text-blue-500 dark:text-blue-400" />
                   <span>Divisi Kesantrian</span>
                 </div>
-                <p className="text-2xl sm:text-3xl font-black text-blue-400 font-mono">
+                <p className="text-2xl sm:text-3xl font-black text-blue-600 dark:text-blue-400 font-mono">
                   {portalData.student.kesantrian_points || 0}
                 </p>
-                <span className="text-[11px] text-slate-400 mt-1 block">
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
                   Kedisiplinan asrama & ibadah
                 </span>
               </div>
 
               {/* Pelanggaran Akademik */}
-              <div className="bg-[#111726] p-4 sm:p-5 rounded-2xl border border-white/[0.08] shadow-soft">
-                <div className="flex items-center gap-1.5 text-slate-400 text-xs font-bold uppercase mb-1">
-                  <GraduationCap className="w-4 h-4 text-purple-400" />
+              <div className="bg-white dark:bg-[#111726] p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] shadow-soft">
+                <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase mb-1">
+                  <GraduationCap className="w-4 h-4 text-purple-500 dark:text-purple-400" />
                   <span>Divisi Akademik</span>
                 </div>
-                <p className="text-2xl sm:text-3xl font-black text-purple-400 font-mono">
+                <p className="text-2xl sm:text-3xl font-black text-purple-600 dark:text-purple-400 font-mono">
                   {portalData.student.akademik_points || 0}
                 </p>
-                <span className="text-[11px] text-slate-400 mt-1 block">
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 block">
                   Kedisiplinan KBM & sekolah
                 </span>
               </div>
 
               {/* Poin Kebaikan / Pemulihan */}
-              <div className="bg-[#111726] p-4 sm:p-5 rounded-2xl border border-emerald-500/20 shadow-soft">
-                <div className="flex items-center gap-1.5 text-emerald-300 text-xs font-bold uppercase mb-1">
-                  <Award className="w-4 h-4 text-emerald-400" />
+              <div className="bg-white dark:bg-[#111726] p-4 sm:p-5 rounded-2xl border border-emerald-200 dark:border-emerald-500/20 shadow-soft">
+                <div className="flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase mb-1">
+                  <Award className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
                   <span>Poin Dipulihkan</span>
                 </div>
-                <p className="text-2xl sm:text-3xl font-black text-emerald-300 font-mono">
+                <p className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-300 font-mono">
                   -{portalData.student.total_deductions || 0}
                 </p>
-                <span className="text-[11px] text-emerald-400 mt-1 block">
+                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-1 block">
                   Dari {portalData.positive_records.length} amal kebaikan
                 </span>
               </div>
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex items-center gap-2 border-b border-white/[0.08] pb-2 overflow-x-auto">
+            <div className="flex items-center gap-2 border-b border-slate-200 dark:border-white/[0.08] pb-2 overflow-x-auto">
               <button
                 type="button"
                 onClick={() => setActiveTab('pelanggaran')}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer ${
                   activeTab === 'pelanggaran'
                     ? portalData.records.length > 0
-                      ? 'bg-rose-500/20 text-rose-300 border border-rose-400/30 shadow-soft'
-                      : 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 shadow-soft'
-                    : 'text-slate-400 hover:text-slate-200'
+                      ? 'bg-rose-50 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-400/30 shadow-soft'
+                      : 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-400/30 shadow-soft'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
                 {portalData.records.length > 0 ? (
-                  <AlertTriangle className="w-4 h-4 text-rose-400" />
+                  <AlertTriangle className="w-4 h-4 text-rose-500 dark:text-rose-400" />
                 ) : (
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <ShieldCheck className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
                 )}
                 <span>Catatan Pelanggaran ({portalData.records.length})</span>
               </button>
@@ -540,8 +534,8 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                 onClick={() => setActiveTab('kebaikan')}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer ${
                   activeTab === 'kebaikan'
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 shadow-soft'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-400/30 shadow-soft'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
                 <Award className="w-4 h-4" />
@@ -553,8 +547,8 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                 onClick={() => setActiveTab('panduan')}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shrink-0 cursor-pointer ${
                   activeTab === 'panduan'
-                    ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 shadow-soft'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-400/30 shadow-soft'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
                 }`}
               >
                 <Info className="w-4 h-4" />
@@ -566,12 +560,12 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
             {activeTab === 'pelanggaran' && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#161d31] border border-white/[0.08] text-xs font-bold">
+                  <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-[#161d31] border border-slate-200 dark:border-white/[0.08] text-xs font-bold">
                     <button
                       type="button"
                       onClick={() => setFilterDivision('all')}
                       className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                        filterDivision === 'all' ? 'bg-[#1e2742] text-white shadow-soft' : 'text-slate-400 hover:text-white'
+                        filterDivision === 'all' ? 'bg-white dark:bg-[#1e2742] text-slate-900 dark:text-white shadow-soft font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
                       Semua Divisi
@@ -580,7 +574,7 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                       type="button"
                       onClick={() => setFilterDivision('tahfizh')}
                       className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                        filterDivision === 'tahfizh' ? 'bg-emerald-600 text-white shadow-soft' : 'text-slate-400 hover:text-white'
+                        filterDivision === 'tahfizh' ? 'bg-emerald-600 text-white shadow-soft font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
                       Tahfizh
@@ -589,7 +583,7 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                       type="button"
                       onClick={() => setFilterDivision('kesantrian')}
                       className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                        filterDivision === 'kesantrian' ? 'bg-blue-600 text-white shadow-soft' : 'text-slate-400 hover:text-white'
+                        filterDivision === 'kesantrian' ? 'bg-blue-600 text-white shadow-soft font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
                       Kesantrian (Asrama)
@@ -598,27 +592,27 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                       type="button"
                       onClick={() => setFilterDivision('akademik')}
                       className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                        filterDivision === 'akademik' ? 'bg-purple-600 text-white shadow-soft' : 'text-slate-400 hover:text-white'
+                        filterDivision === 'akademik' ? 'bg-purple-600 text-white shadow-soft font-black' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
                       Akademik (Sekolah)
                     </button>
                   </div>
 
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                     Menampilkan <strong>{filteredViolations.length}</strong> catatan
                   </span>
                 </div>
 
                 {filteredViolations.length === 0 ? (
-                  <div className="bg-[#111726] rounded-2xl border border-white/[0.08] p-8 text-center space-y-3">
-                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+                  <div className="bg-white dark:bg-[#111726] rounded-2xl border border-slate-200/90 dark:border-white/[0.08] p-8 text-center space-y-3 shadow-soft">
+                    <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
                       <CheckCircle2 className="w-6 h-6" />
                     </div>
-                    <h4 className="text-base font-bold text-white">
+                    <h4 className="text-base font-bold text-slate-900 dark:text-white">
                       Alhamdulillah, Tidak Ada Pelanggaran Aktif
                     </h4>
-                    <p className="text-xs text-slate-400 max-w-md mx-auto">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
                       Ananda menunjukkan sikap yang baik dan tidak memiliki riwayat pelanggaran pada divisi ini.
                     </p>
                   </div>
@@ -634,31 +628,31 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                           key={r.id || idx}
                           className={`p-4 rounded-2xl border transition-all ${
                             isCancelled
-                              ? 'bg-[#111726]/40 border-white/[0.04] opacity-60'
-                              : 'bg-[#111726] border-white/[0.08] hover:border-white/[0.15]'
+                              ? 'bg-slate-50/60 dark:bg-[#111726]/40 border-slate-200/50 dark:border-white/[0.04] opacity-60'
+                              : 'bg-white dark:bg-[#111726] border-slate-200/90 dark:border-white/[0.08] hover:border-indigo-300 dark:hover:border-white/[0.15] shadow-xs'
                           }`}
                         >
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-white/[0.06]">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100 dark:border-white/[0.06]">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span
                                 className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold border ${
                                   isAkademik
-                                    ? 'bg-purple-500/20 text-purple-300 border-purple-400/30'
+                                    ? 'bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-400/30'
                                     : isKesantrian
-                                    ? 'bg-blue-500/20 text-blue-300 border-blue-400/30'
-                                    : 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
+                                    ? 'bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-400/30'
+                                    : 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-400/30'
                                 }`}
                               >
                                 {isAkademik ? '📚 Divisi Akademik' : isKesantrian ? '🏢 Divisi Kesantrian' : '🕌 Divisi Tahfizh'}
                               </span>
 
-                              <span className="text-xs text-slate-400 flex items-center gap-1">
+                              <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium">
                                 <Calendar className="w-3.5 h-3.5" />
                                 {r.date} {r.time ? `• ${r.time} WIB` : ''}
                               </span>
 
                               {isCancelled && (
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white/[0.08] text-slate-300">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-white/[0.08] text-slate-600 dark:text-slate-300">
                                   Dibatalkan (Poin Gugur)
                                 </span>
                               )}
@@ -668,8 +662,8 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                               <span
                                 className={`font-mono text-xs font-black px-2.5 py-1 rounded-lg border ${
                                   isCancelled
-                                    ? 'bg-white/[0.06] text-slate-400 border-white/[0.08] line-through'
-                                    : 'bg-rose-500/20 text-rose-300 border-rose-400/40'
+                                    ? 'bg-slate-100 dark:bg-white/[0.06] text-slate-400 border-slate-200 dark:border-white/[0.08] line-through'
+                                    : 'bg-rose-50 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-400/40'
                                 }`}
                               >
                                 +{r.points_snapshot} Poin
@@ -678,18 +672,18 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                           </div>
 
                           <div className="pt-2.5 space-y-1.5">
-                            <h5 className="font-bold text-white text-sm">
+                            <h5 className="font-bold text-slate-900 dark:text-white text-sm">
                               {r.violation_name_snapshot}
                             </h5>
 
                             {r.notes && (
-                              <p className="text-xs text-slate-300 italic bg-[#161d31] p-2.5 rounded-xl border border-white/[0.06]">
+                              <p className="text-xs text-slate-700 dark:text-slate-300 italic bg-slate-50 dark:bg-[#161d31] p-2.5 rounded-xl border border-slate-200/60 dark:border-white/[0.06]">
                                 "{r.notes}"
                               </p>
                             )}
 
-                            <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
-                              <span>Dicatat oleh: <strong className="text-slate-300">{r.teacher_name_snapshot || r.created_by || 'Petugas'}</strong></span>
+                            <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1">
+                              <span>Dicatat oleh: <strong className="text-slate-700 dark:text-slate-300">{r.teacher_name_snapshot || r.created_by || 'Petugas'}</strong></span>
                               <span>Lokasi: {r.halaqah_name_snapshot || 'Pesantren'}</span>
                             </div>
                           </div>
@@ -705,14 +699,14 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
             {activeTab === 'kebaikan' && (
               <div className="space-y-4">
                 {filteredPositiveRecords.length === 0 ? (
-                  <div className="bg-[#111726] rounded-2xl border border-white/[0.08] p-8 text-center space-y-3">
-                    <div className="w-12 h-12 rounded-full bg-white/[0.04] text-slate-400 flex items-center justify-center mx-auto">
+                  <div className="bg-white dark:bg-[#111726] rounded-2xl border border-slate-200/90 dark:border-white/[0.08] p-8 text-center space-y-3 shadow-soft">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/[0.04] text-slate-400 flex items-center justify-center mx-auto">
                       <Award className="w-6 h-6" />
                     </div>
-                    <h4 className="text-base font-bold text-white">
+                    <h4 className="text-base font-bold text-slate-900 dark:text-white">
                       Belum Ada Catatan Kebaikan Terdata
                     </h4>
-                    <p className="text-xs text-slate-400 max-w-md mx-auto">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
                       Kegiatan amal shalih, prestasi, dan apresiasi pemulihan poin ananda akan tercatat di halaman ini.
                     </p>
                   </div>
@@ -721,40 +715,40 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                     {filteredPositiveRecords.map((p, idx) => (
                       <div
                         key={p.id || idx}
-                        className="p-4 rounded-2xl bg-[#111726] border border-emerald-500/30 space-y-2 hover:border-emerald-400/50 transition-all"
+                        className="p-4 rounded-2xl bg-white dark:bg-[#111726] border border-emerald-200 dark:border-emerald-500/30 space-y-2 hover:border-emerald-400/50 transition-all shadow-xs"
                       >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-white/[0.06]">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-100 dark:border-white/[0.06]">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className={`px-2.5 py-0.5 rounded-md text-[11px] font-bold border ${
                               p.division === 'akademik'
-                                ? 'bg-purple-500/20 text-purple-300 border-purple-400/30'
+                                ? 'bg-purple-50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-400/30'
                                 : p.division === 'kesantrian'
-                                ? 'bg-blue-500/20 text-blue-300 border-blue-400/30'
-                                : 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
+                                ? 'bg-blue-50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-400/30'
+                                : 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-400/30'
                             }`}>
                               {p.division === 'akademik' ? '📚 Akademik' : p.division === 'kesantrian' ? '🏢 Kesantrian' : '🕌 Tahfizh'}
                             </span>
-                            <span className="text-xs text-slate-400">
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
                               {p.date} {p.time ? `• ${p.time} WIB` : ''}
                             </span>
                           </div>
 
-                          <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-400/40">
+                          <span className="font-mono text-xs font-black px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-400/40">
                             -{p.points_deducted} Poin (Dipulihkan)
                           </span>
                         </div>
 
                         <div>
-                          <h5 className="font-bold text-emerald-200 text-sm">
+                          <h5 className="font-bold text-emerald-800 dark:text-emerald-200 text-sm">
                             {p.action_name_snapshot}
                           </h5>
                           {p.notes && (
-                            <p className="text-xs text-slate-300 italic mt-1 bg-[#161d31] p-2.5 rounded-xl border border-white/[0.06]">
+                            <p className="text-xs text-slate-700 dark:text-slate-300 italic mt-1 bg-slate-50 dark:bg-[#161d31] p-2.5 rounded-xl border border-slate-200/60 dark:border-white/[0.06]">
                               "{p.notes}"
                             </p>
                           )}
-                          <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2">
-                            <span>Pembimbing: <strong className="text-slate-300">{p.teacher_name_snapshot || 'Ustadz Pembina'}</strong></span>
+                          <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-2">
+                            <span>Pembimbing: <strong className="text-slate-700 dark:text-slate-300">{p.teacher_name_snapshot || 'Ustadz Pembina'}</strong></span>
                             <span>{p.halaqah_name_snapshot || 'Halaqah'}</span>
                           </div>
                         </div>
@@ -768,9 +762,9 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
             {/* TAB CONTENT 3: PANDUAN THRESHOLD */}
             {activeTab === 'panduan' && (
               <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-[#111726] border border-white/[0.08] text-xs sm:text-sm text-slate-300 leading-relaxed space-y-2">
-                  <h4 className="font-bold text-white text-base flex items-center gap-2">
-                    <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                <div className="p-4 rounded-2xl bg-white dark:bg-[#111726] border border-slate-200/90 dark:border-white/[0.08] text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed space-y-2 shadow-soft">
+                  <h4 className="font-bold text-slate-900 dark:text-white text-base flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     <span>Sistem Penilaian & Tahapan Pembinaan Pesantren</span>
                   </h4>
                   <p>
@@ -782,20 +776,20 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
                   {(portalData.thresholds || []).map((t, idx) => (
                     <div
                       key={t.id || idx}
-                      className="p-4 rounded-2xl border border-white/[0.08] bg-[#111726] space-y-2"
+                      className="p-4 rounded-2xl border border-slate-200/90 dark:border-white/[0.08] bg-white dark:bg-[#111726] space-y-2 shadow-xs"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-[#161d31] text-indigo-400 border border-white/[0.08]">
+                        <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-slate-100 dark:bg-[#161d31] text-indigo-700 dark:text-indigo-400 border border-slate-200 dark:border-white/[0.08]">
                           {t.minimum_points} - {t.maximum_points} Pts
                         </span>
-                        <span className="text-xs font-black uppercase text-indigo-300">
+                        <span className="text-xs font-black uppercase text-indigo-600 dark:text-indigo-300">
                           Level {t.sort_order || idx + 1}
                         </span>
                       </div>
-                      <h5 className="font-black text-white text-sm">
+                      <h5 className="font-black text-slate-900 dark:text-white text-sm">
                         {t.status_name}
                       </h5>
-                      <p className="text-xs text-slate-400 leading-relaxed">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                         {t.description}
                       </p>
                     </div>
@@ -808,52 +802,54 @@ export const ParentPortalPage: React.FC<ParentPortalPageProps> = ({
 
         {/* 4. EDUKASI / TRANSPARANSI SAAT BELUM CARI SANTRI */}
         {!portalData && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-            <div className="p-5 rounded-2xl bg-[#111726] border border-white/[0.08] space-y-2 shadow-soft">
-              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center font-bold">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+            <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#111726]/90 border border-slate-200/90 dark:border-white/[0.08] space-y-2 shadow-soft">
+              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 flex items-center justify-center font-bold">
                 <BookOpen className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-white text-sm">Transparansi Halaqah</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h4 className="font-bold text-slate-900 dark:text-white text-sm">Transparansi Halaqah</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Mengetahui kedisiplinan setoran dan adab saat halaqah tahfizh bersama muhafizh secara terbuka.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#111726] border border-white/[0.08] space-y-2 shadow-soft">
-              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center font-bold">
+            <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#111726]/90 border border-slate-200/90 dark:border-white/[0.08] space-y-2 shadow-soft">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 flex items-center justify-center font-bold">
                 <Building2 className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-white text-sm">Monitoring Asrama</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h4 className="font-bold text-slate-900 dark:text-white text-sm">Monitoring Asrama</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Pemantauan shalat berjamaah, jam malam, dan kebersihan kamar yang dibina oleh bagian kesantrian.
               </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-[#111726] border border-white/[0.08] space-y-2 shadow-soft">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold">
+            <div className="p-5 rounded-2xl bg-white/90 dark:bg-[#111726]/90 border border-slate-200/90 dark:border-white/[0.08] space-y-2 shadow-soft">
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold">
                 <Award className="w-5 h-5" />
               </div>
-              <h4 className="font-bold text-white text-sm">Pemulihan Poin Kebaikan</h4>
-              <p className="text-xs text-slate-400 leading-relaxed">
+              <h4 className="font-bold text-slate-900 dark:text-white text-sm">Pemulihan Poin Kebaikan</h4>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
                 Santri termotivasi beramal shalih dan berprestasi untuk memulihkan poin pelanggaran mereka.
               </p>
             </div>
           </div>
         )}
-      </main>
+      </div>
 
-      {/* 5. FOOTER RESMI PESANTREN */}
-      <footer className="mt-auto border-t border-white/[0.08] bg-[#0d1222] py-6 px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 space-y-1">
-        <p className="font-semibold text-slate-400">
-          {school?.school_name || "Pesantren Tahfizh Al-Qur'an Imam Asy-Syathibi"} • Divisi Pendidikan & Kepengasuhan
-        </p>
-        <p className="text-[11px]">
-          {school?.address || 'Kompleks Pesantren Tahfizh'} | Kontak: {school?.phone || '-'} | Email: {school?.email || '-'}
-        </p>
-        <p className="text-[10px] text-slate-600 pt-1">
-          Sistem Informasi Kedisiplinan Terpadu © {new Date().getFullYear()}
-        </p>
-      </footer>
+      {/* 5. FOOTER RESMI PESANTREN (Only shown when viewed directly as standalone public portal) */}
+      {!isInsideApp && (
+        <footer className="mt-auto border-t border-slate-200 dark:border-white/[0.08] bg-white dark:bg-[#0d1222] py-6 px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 space-y-1">
+          <p className="font-semibold text-slate-700 dark:text-slate-400">
+            {school?.school_name || "Pesantren Tahfizh Al-Qur'an Imam Asy-Syathibi"} • Divisi Pendidikan & Kepengasuhan
+          </p>
+          <p className="text-[11px] text-slate-500">
+            {school?.address || 'Kompleks Pesantren Tahfizh'} | Kontak: {school?.phone || '-'} | Email: {school?.email || '-'}
+          </p>
+          <p className="text-[10px] text-slate-400 pt-1">
+            Sistem Informasi Kedisiplinan Terpadu © {new Date().getFullYear()}
+          </p>
+        </footer>
+      )}
 
       {/* PDF Export Preview Modal */}
       {portalData && (

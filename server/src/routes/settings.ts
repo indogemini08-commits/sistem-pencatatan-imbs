@@ -80,7 +80,7 @@ router.get('/', async (req: Request, res: Response) => {
   }
 });
 
-// PUT update school settings (APP NAME, LOGO, SCHOOL NAME, ADDRESS, KOP SURAT, SIGNERS)
+// PUT update school settings (APP NAME, LOGO, SCHOOL NAME, ADDRESS, KOP SURAT, PER-DIVISION SIGNERS)
 router.put('/school', async (req: Request, res: Response) => {
   try {
     const {
@@ -92,11 +92,23 @@ router.put('/school', async (req: Request, res: Response) => {
       logoUrl,
       kopSuratText,
       currentAcademicYear,
+      signatureCity,
+      signerTahfizh1Title,
+      signerTahfizh1Name,
+      signerTahfizh2Title,
+      signerTahfizh2Name,
+      signerKesantrian1Title,
+      signerKesantrian1Name,
+      signerKesantrian2Title,
+      signerKesantrian2Name,
+      signerAkademik1Title,
+      signerAkademik1Name,
+      signerAkademik2Title,
+      signerAkademik2Name,
       signer1Title,
       signer1Name,
       signer2Title,
       signer2Name,
-      signatureCity,
       actorName = 'Admin',
     } = req.body;
 
@@ -110,15 +122,40 @@ router.put('/school', async (req: Request, res: Response) => {
     const updatedLogo = logoUrl !== undefined ? logoUrl.trim() : (old?.logo_url || '/logo.svg');
     const updatedKop = kopSuratText !== undefined ? kopSuratText.trim() : (old?.kop_surat_text || 'BIDANG PENDIDIKAN DAN KEPENGASUHAN - DIVISI HALAQAH TAHFIZH');
     const updatedYear = currentAcademicYear ? currentAcademicYear.trim() : (old?.current_academic_year || '2025/2026');
-    const updatedSigner1Title = signer1Title !== undefined ? signer1Title.trim() : (old?.signer_1_title || 'Koordinator Tahfizh / Mudir');
-    const updatedSigner1Name = signer1Name !== undefined ? signer1Name.trim() : (old?.signer_1_name || '');
-    const updatedSigner2Title = signer2Title !== undefined ? signer2Title.trim() : (old?.signer_2_title || 'Petugas / Muhafizh Pengampu');
-    const updatedSigner2Name = signer2Name !== undefined ? signer2Name.trim() : (old?.signer_2_name || '');
     const updatedCity = signatureCity !== undefined ? signatureCity.trim() : (old?.signature_city || 'Bogor');
 
+    // Tahfizh
+    const updatedTahfizh1Title = signerTahfizh1Title !== undefined ? signerTahfizh1Title.trim() : (old?.signer_tahfizh_1_title || signer1Title || old?.signer_1_title || 'Koordinator Tahfizh / Mudir');
+    const updatedTahfizh1Name = signerTahfizh1Name !== undefined ? signerTahfizh1Name.trim() : (old?.signer_tahfizh_1_name || signer1Name || old?.signer_1_name || '');
+    const updatedTahfizh2Title = signerTahfizh2Title !== undefined ? signerTahfizh2Title.trim() : (old?.signer_tahfizh_2_title || signer2Title || old?.signer_2_title || 'Petugas / Muhafizh Pengampu');
+    const updatedTahfizh2Name = signerTahfizh2Name !== undefined ? signerTahfizh2Name.trim() : (old?.signer_tahfizh_2_name || signer2Name || old?.signer_2_name || '');
+
+    // Kesantrian
+    const updatedKesantrian1Title = signerKesantrian1Title !== undefined ? signerKesantrian1Title.trim() : (old?.signer_kesantrian_1_title || 'Kepala Kesantrian / Mudir');
+    const updatedKesantrian1Name = signerKesantrian1Name !== undefined ? signerKesantrian1Name.trim() : (old?.signer_kesantrian_1_name || '');
+    const updatedKesantrian2Title = signerKesantrian2Title !== undefined ? signerKesantrian2Title.trim() : (old?.signer_kesantrian_2_title || 'Wali Asrama / Musyrif Kesantrian');
+    const updatedKesantrian2Name = signerKesantrian2Name !== undefined ? signerKesantrian2Name.trim() : (old?.signer_kesantrian_2_name || '');
+
+    // Akademik
+    const updatedAkademik1Title = signerAkademik1Title !== undefined ? signerAkademik1Title.trim() : (old?.signer_akademik_1_title || 'Kepala Sekolah / Kurikulum');
+    const updatedAkademik1Name = signerAkademik1Name !== undefined ? signerAkademik1Name.trim() : (old?.signer_akademik_1_name || '');
+    const updatedAkademik2Title = signerAkademik2Title !== undefined ? signerAkademik2Title.trim() : (old?.signer_akademik_2_title || 'Wali Kelas / Guru Pengajar');
+    const updatedAkademik2Name = signerAkademik2Name !== undefined ? signerAkademik2Name.trim() : (old?.signer_akademik_2_name || '');
+
     run(
-      `INSERT OR REPLACE INTO school_settings (id, app_name, school_name, address, phone, email, logo_url, kop_surat_text, current_academic_year, signer_1_title, signer_1_name, signer_2_title, signer_2_name, signature_city)
-       VALUES ('settings_default', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT OR REPLACE INTO school_settings (
+        id, app_name, school_name, address, phone, email, logo_url, kop_surat_text, current_academic_year, signature_city,
+        signer_tahfizh_1_title, signer_tahfizh_1_name, signer_tahfizh_2_title, signer_tahfizh_2_name,
+        signer_kesantrian_1_title, signer_kesantrian_1_name, signer_kesantrian_2_title, signer_kesantrian_2_name,
+        signer_akademik_1_title, signer_akademik_1_name, signer_akademik_2_title, signer_akademik_2_name,
+        signer_1_title, signer_1_name, signer_2_title, signer_2_name
+      ) VALUES (
+        'settings_default', ?, ?, ?, ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?, ?
+      )`,
       [
         updatedAppName,
         updatedSchoolName,
@@ -128,11 +165,23 @@ router.put('/school', async (req: Request, res: Response) => {
         updatedLogo,
         updatedKop,
         updatedYear,
-        updatedSigner1Title,
-        updatedSigner1Name,
-        updatedSigner2Title,
-        updatedSigner2Name,
         updatedCity,
+        updatedTahfizh1Title,
+        updatedTahfizh1Name,
+        updatedTahfizh2Title,
+        updatedTahfizh2Name,
+        updatedKesantrian1Title,
+        updatedKesantrian1Name,
+        updatedKesantrian2Title,
+        updatedKesantrian2Name,
+        updatedAkademik1Title,
+        updatedAkademik1Name,
+        updatedAkademik2Title,
+        updatedAkademik2Name,
+        updatedTahfizh1Title,
+        updatedTahfizh1Name,
+        updatedTahfizh2Title,
+        updatedTahfizh2Name,
       ]
     );
 
@@ -147,11 +196,13 @@ router.put('/school', async (req: Request, res: Response) => {
         schoolName: updatedSchoolName,
         address: updatedAddress,
         logoUrl: updatedLogo,
-        signer1Title: updatedSigner1Title,
-        signer1Name: updatedSigner1Name,
-        signer2Title: updatedSigner2Title,
-        signer2Name: updatedSigner2Name,
         signatureCity: updatedCity,
+        signerTahfizh1Title: updatedTahfizh1Title,
+        signerTahfizh1Name: updatedTahfizh1Name,
+        signerKesantrian1Title: updatedKesantrian1Title,
+        signerKesantrian1Name: updatedKesantrian1Name,
+        signerAkademik1Title: updatedAkademik1Title,
+        signerAkademik1Name: updatedAkademik1Name,
       },
     });
 

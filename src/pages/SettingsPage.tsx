@@ -23,6 +23,9 @@ import {
   Share2,
   Copy,
   Check,
+  BookOpen,
+  Building2,
+  GraduationCap,
 } from 'lucide-react';
 import { SchoolSettings, PointThreshold, User } from '../types';
 import { api } from '../services/api';
@@ -55,11 +58,28 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
   const [logoUrl, setLogoUrl] = useState<string>('/logo.svg');
   const [kopSuratText, setKopSuratText] = useState<string>('');
   const [academicYear, setAcademicYear] = useState<string>('2025/2026');
-  const [signer1Title, setSigner1Title] = useState<string>('Koordinator Tahfizh / Mudir');
-  const [signer1Name, setSigner1Name] = useState<string>('');
-  const [signer2Title, setSigner2Title] = useState<string>('Petugas / Muhafizh Pengampu');
-  const [signer2Name, setSigner2Name] = useState<string>('');
   const [signatureCity, setSignatureCity] = useState<string>('Bogor');
+
+  // Multi-Division Signatures State
+  const [signerDivisionTab, setSignerDivisionTab] = useState<'tahfizh' | 'kesantrian' | 'akademik'>('tahfizh');
+
+  // Tahfizh Signers
+  const [signerTahfizh1Title, setSignerTahfizh1Title] = useState<string>('Koordinator Tahfizh / Mudir');
+  const [signerTahfizh1Name, setSignerTahfizh1Name] = useState<string>('');
+  const [signerTahfizh2Title, setSignerTahfizh2Title] = useState<string>('Petugas / Muhafizh Pengampu');
+  const [signerTahfizh2Name, setSignerTahfizh2Name] = useState<string>('');
+
+  // Kesantrian Signers
+  const [signerKesantrian1Title, setSignerKesantrian1Title] = useState<string>('Kepala Kesantrian / Mudir');
+  const [signerKesantrian1Name, setSignerKesantrian1Name] = useState<string>('');
+  const [signerKesantrian2Title, setSignerKesantrian2Title] = useState<string>('Wali Asrama / Musyrif Kesantrian');
+  const [signerKesantrian2Name, setSignerKesantrian2Name] = useState<string>('');
+
+  // Akademik Signers
+  const [signerAkademik1Title, setSignerAkademik1Title] = useState<string>('Kepala Sekolah / Kurikulum');
+  const [signerAkademik1Name, setSignerAkademik1Name] = useState<string>('');
+  const [signerAkademik2Title, setSignerAkademik2Title] = useState<string>('Wali Kelas / Guru Pengajar');
+  const [signerAkademik2Name, setSignerAkademik2Name] = useState<string>('');
 
   // Device Logo Upload state
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -170,11 +190,25 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         setLogoUrl(data.settings.logo_url || '/logo.svg');
         setKopSuratText(data.settings.kop_surat_text || '');
         setAcademicYear(data.settings.current_academic_year || '2025/2026');
-        setSigner1Title(data.settings.signer_1_title || 'Koordinator Tahfizh / Mudir');
-        setSigner1Name(data.settings.signer_1_name || '');
-        setSigner2Title(data.settings.signer_2_title || 'Petugas / Muhafizh Pengampu');
-        setSigner2Name(data.settings.signer_2_name || '');
         setSignatureCity(data.settings.signature_city || 'Bogor');
+
+        // Tahfizh
+        setSignerTahfizh1Title(data.settings.signer_tahfizh_1_title || data.settings.signer_1_title || 'Koordinator Tahfizh / Mudir');
+        setSignerTahfizh1Name(data.settings.signer_tahfizh_1_name || data.settings.signer_1_name || '');
+        setSignerTahfizh2Title(data.settings.signer_tahfizh_2_title || data.settings.signer_2_title || 'Petugas / Muhafizh Pengampu');
+        setSignerTahfizh2Name(data.settings.signer_tahfizh_2_name || data.settings.signer_2_name || '');
+
+        // Kesantrian
+        setSignerKesantrian1Title(data.settings.signer_kesantrian_1_title || 'Kepala Kesantrian / Mudir');
+        setSignerKesantrian1Name(data.settings.signer_kesantrian_1_name || '');
+        setSignerKesantrian2Title(data.settings.signer_kesantrian_2_title || 'Wali Asrama / Musyrif Kesantrian');
+        setSignerKesantrian2Name(data.settings.signer_kesantrian_2_name || '');
+
+        // Akademik
+        setSignerAkademik1Title(data.settings.signer_akademik_1_title || 'Kepala Sekolah / Kurikulum');
+        setSignerAkademik1Name(data.settings.signer_akademik_1_name || '');
+        setSignerAkademik2Title(data.settings.signer_akademik_2_title || 'Wali Kelas / Guru Pengajar');
+        setSignerAkademik2Name(data.settings.signer_akademik_2_name || '');
       }
       if (data.thresholds) {
         setThresholds(data.thresholds);
@@ -249,11 +283,19 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
         logoUrl,
         kopSuratText,
         currentAcademicYear: academicYear,
-        signer1Title,
-        signer1Name,
-        signer2Title,
-        signer2Name,
         signatureCity,
+        signerTahfizh1Title,
+        signerTahfizh1Name,
+        signerTahfizh2Title,
+        signerTahfizh2Name,
+        signerKesantrian1Title,
+        signerKesantrian1Name,
+        signerKesantrian2Title,
+        signerKesantrian2Name,
+        signerAkademik1Title,
+        signerAkademik1Name,
+        signerAkademik2Title,
+        signerAkademik2Name,
         actorName: currentUser?.name || 'Admin',
       });
       setSuccessMsg(res.message);
@@ -644,7 +686,7 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
             </div>
           </div>
 
-          {/* KONFIGURASI TANDA TANGAN & PENGESAHAN LAPORAN PDF */}
+          {/* KONFIGURASI TANDA TANGAN & PENGESAHAN LAPORAN PDF (3 DIVISI) */}
           <div className="saas-card p-6 sm:p-7 space-y-6">
             <div className="flex items-center gap-3 pb-4 border-b border-slate-100 dark:border-white/[0.08]">
               <div className="p-2.5 bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-xl border border-indigo-500/20">
@@ -655,36 +697,82 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   Konfigurasi Pengesahan & Tanda Tangan Laporan PDF
                 </h2>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Nama pejabat, jabatan, dan kota pengesahan yang otomatis dicetak pada footer seluruh laporan PDF (Riwayat Pelanggaran & Data Santri).
+                  Atur penandatangan laporan resmi untuk setiap divisi (Tahfizh, Kesantrian, dan Akademik) serta kota pengesahan.
                 </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-              {/* Kota Tanda Tangan */}
-              <div className="md:col-span-12">
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                  Kota Lokasi Pengesahan
-                </label>
-                <input
-                  type="text"
-                  value={signatureCity}
-                  onChange={(e) => setSignatureCity(e.target.value)}
-                  placeholder="Bogor"
-                  className="w-full text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-medium outline-none"
-                />
-                <p className="text-[11px] text-slate-400 mt-1">
-                  Akan tercantum pada format tanggal pengesahan (contoh: &quot;{signatureCity || 'Bogor'}, {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}&quot;).
-                </p>
-              </div>
+            {/* Kota Tanda Tangan */}
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                Kota Lokasi Pengesahan Seluruh Dokumen
+              </label>
+              <input
+                type="text"
+                value={signatureCity}
+                onChange={(e) => setSignatureCity(e.target.value)}
+                placeholder="Bogor"
+                className="w-full max-w-md text-xs sm:text-sm px-4 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-medium outline-none"
+              />
+              <p className="text-[11px] text-slate-400 mt-1">
+                Akan otomatis tercantum pada format tanggal pengesahan di sudut kanan laporan (contoh: &quot;{signatureCity || 'Bogor'}, {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}&quot;).
+              </p>
+            </div>
 
+            {/* Division Switcher */}
+            <div className="space-y-3">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Pilih Divisi yang Ingin Dikonfigurasi:
+              </label>
+              <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-slate-200/70 dark:bg-[#111726] border border-slate-300/60 dark:border-white/[0.08] w-fit shadow-inner">
+                <button
+                  type="button"
+                  onClick={() => setSignerDivisionTab('tahfizh')}
+                  className={`py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                    signerDivisionTab === 'tahfizh'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400'
+                  }`}
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>Divisi Tahfizh (Halaqah)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSignerDivisionTab('kesantrian')}
+                  className={`py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                    signerDivisionTab === 'kesantrian'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400'
+                  }`}
+                >
+                  <Building2 className="w-4 h-4" />
+                  <span>Divisi Kesantrian (Asrama)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSignerDivisionTab('akademik')}
+                  className={`py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                    signerDivisionTab === 'akademik'
+                      ? 'bg-purple-600 text-white shadow-md'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400'
+                  }`}
+                >
+                  <GraduationCap className="w-4 h-4" />
+                  <span>Divisi Akademik (Sekolah)</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Form Fields for Active Division */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 pt-2">
               {/* Pihak 1 (Kiri - Mengetahui) */}
-              <div className="md:col-span-6 p-4 rounded-2xl bg-slate-50/70 dark:bg-[#141b2d] border border-slate-200 dark:border-white/[0.08] space-y-3.5">
+              <div className="md:col-span-6 p-4 sm:p-5 rounded-2xl bg-slate-50/70 dark:bg-[#141b2d] border border-slate-200 dark:border-white/[0.08] space-y-3.5">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />
                   <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200">
-                    Pihak Mengetahui (Kiri)
+                    Pihak Mengetahui (Kiri) • Divisi {signerDivisionTab === 'tahfizh' ? 'Tahfizh' : signerDivisionTab === 'kesantrian' ? 'Kesantrian' : 'Akademik'}
                   </h3>
                 </div>
                 <div>
@@ -693,9 +781,25 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   </label>
                   <input
                     type="text"
-                    value={signer1Title}
-                    onChange={(e) => setSigner1Title(e.target.value)}
-                    placeholder="Koordinator Tahfizh / Mudir"
+                    value={
+                      signerDivisionTab === 'tahfizh'
+                        ? signerTahfizh1Title
+                        : signerDivisionTab === 'kesantrian'
+                        ? signerKesantrian1Title
+                        : signerAkademik1Title
+                    }
+                    onChange={(e) => {
+                      if (signerDivisionTab === 'tahfizh') setSignerTahfizh1Title(e.target.value);
+                      else if (signerDivisionTab === 'kesantrian') setSignerKesantrian1Title(e.target.value);
+                      else setSignerAkademik1Title(e.target.value);
+                    }}
+                    placeholder={
+                      signerDivisionTab === 'tahfizh'
+                        ? 'Koordinator Tahfizh / Mudir'
+                        : signerDivisionTab === 'kesantrian'
+                        ? 'Kepala Kesantrian / Mudir'
+                        : 'Kepala Sekolah / Kurikulum'
+                    }
                     className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-semibold outline-none"
                   />
                 </div>
@@ -705,23 +809,33 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   </label>
                   <input
                     type="text"
-                    value={signer1Name}
-                    onChange={(e) => setSigner1Name(e.target.value)}
-                    placeholder="Ustadz H. Ahmad Abdullah, Lc. (kosongkan jika titik-titik)"
+                    value={
+                      signerDivisionTab === 'tahfizh'
+                        ? signerTahfizh1Name
+                        : signerDivisionTab === 'kesantrian'
+                        ? signerKesantrian1Name
+                        : signerAkademik1Name
+                    }
+                    onChange={(e) => {
+                      if (signerDivisionTab === 'tahfizh') setSignerTahfizh1Name(e.target.value);
+                      else if (signerDivisionTab === 'kesantrian') setSignerKesantrian1Name(e.target.value);
+                      else setSignerAkademik1Name(e.target.value);
+                    }}
+                    placeholder="Contoh: Ustadz H. Ahmad Abdullah, Lc. (kosongkan jika titik-titik)"
                     className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-medium outline-none"
                   />
                   <p className="text-[10.5px] text-slate-400 mt-1">
-                    Jika diisi, nama akan otomatis dicetak di dalam tanda kurung pada berkas PDF resmi.
+                    Jika diisi, nama akan otomatis dicetak di dalam tanda kurung pada berkas PDF resmi divisi ini.
                   </p>
                 </div>
               </div>
 
               {/* Pihak 2 (Kanan - Pelapor / Petugas) */}
-              <div className="md:col-span-6 p-4 rounded-2xl bg-slate-50/70 dark:bg-[#141b2d] border border-slate-200 dark:border-white/[0.08] space-y-3.5">
+              <div className="md:col-span-6 p-4 sm:p-5 rounded-2xl bg-slate-50/70 dark:bg-[#141b2d] border border-slate-200 dark:border-white/[0.08] space-y-3.5">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                   <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 dark:text-slate-200">
-                    Pihak Pelapor / Petugas (Kanan)
+                    Pihak Pelapor / Petugas (Kanan) • Divisi {signerDivisionTab === 'tahfizh' ? 'Tahfizh' : signerDivisionTab === 'kesantrian' ? 'Kesantrian' : 'Akademik'}
                   </h3>
                 </div>
                 <div>
@@ -730,9 +844,25 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   </label>
                   <input
                     type="text"
-                    value={signer2Title}
-                    onChange={(e) => setSigner2Title(e.target.value)}
-                    placeholder="Petugas / Muhafizh Pengampu"
+                    value={
+                      signerDivisionTab === 'tahfizh'
+                        ? signerTahfizh2Title
+                        : signerDivisionTab === 'kesantrian'
+                        ? signerKesantrian2Title
+                        : signerAkademik2Title
+                    }
+                    onChange={(e) => {
+                      if (signerDivisionTab === 'tahfizh') setSignerTahfizh2Title(e.target.value);
+                      else if (signerDivisionTab === 'kesantrian') setSignerKesantrian2Title(e.target.value);
+                      else setSignerAkademik2Title(e.target.value);
+                    }}
+                    placeholder={
+                      signerDivisionTab === 'tahfizh'
+                        ? 'Petugas / Muhafizh Pengampu'
+                        : signerDivisionTab === 'kesantrian'
+                        ? 'Wali Asrama / Musyrif Kesantrian'
+                        : 'Wali Kelas / Guru Pengajar'
+                    }
                     className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-semibold outline-none"
                   />
                 </div>
@@ -742,39 +872,80 @@ export const SettingsPage: React.FC<SettingsPageProps> = ({
                   </label>
                   <input
                     type="text"
-                    value={signer2Name}
-                    onChange={(e) => setSigner2Name(e.target.value)}
-                    placeholder="Ustadz Muhammad Yusuf, S.Pd. (kosongkan jika otomatis/titik-titik)"
+                    value={
+                      signerDivisionTab === 'tahfizh'
+                        ? signerTahfizh2Name
+                        : signerDivisionTab === 'kesantrian'
+                        ? signerKesantrian2Name
+                        : signerAkademik2Name
+                    }
+                    onChange={(e) => {
+                      if (signerDivisionTab === 'tahfizh') setSignerTahfizh2Name(e.target.value);
+                      else if (signerDivisionTab === 'kesantrian') setSignerKesantrian2Name(e.target.value);
+                      else setSignerAkademik2Name(e.target.value);
+                    }}
+                    placeholder="Contoh: Ustadz Muhammad Yusuf, S.Pd. (kosongkan jika otomatis/titik-titik)"
                     className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 font-medium outline-none"
                   />
                   <p className="text-[10.5px] text-slate-400 mt-1">
-                    Jika dikosongkan, laporan akan memakai nama Muhafizh halaqah santri atau titik-titik.
+                    Jika dikosongkan, laporan akan memakai nama pengampu halaqah santri atau titik-titik.
                   </p>
                 </div>
               </div>
 
-              {/* Live Preview Tanda Tangan */}
+              {/* Live Preview Tanda Tangan Sesuai Divisi yang Dipilih */}
               <div className="md:col-span-12 p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0f1525] border border-slate-200 dark:border-white/[0.1] shadow-inner space-y-3">
-                <span className="text-[10px] font-black uppercase tracking-wider text-indigo-500 dark:text-indigo-400 block">
-                  Pratinjau Format Tanda Tangan Resmi di Kertas PDF:
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-indigo-500 dark:text-indigo-400 block">
+                    Pratinjau Format Tanda Tangan Resmi PDF: Divisi {signerDivisionTab === 'tahfizh' ? 'Tahfizh' : signerDivisionTab === 'kesantrian' ? 'Kesantrian' : 'Akademik'}
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-semibold">
+                    Ukuran A4 Standar
+                  </span>
+                </div>
                 <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 pt-3 text-xs text-slate-700 dark:text-slate-300">
                   <div className="space-y-1">
                     <p className="font-normal text-slate-500 dark:text-slate-400">Mengetahui,</p>
-                    <p className="font-bold text-slate-900 dark:text-white">{signer1Title || 'Koordinator Tahfizh / Mudir'}</p>
+                    <p className="font-bold text-slate-900 dark:text-white">
+                      {signerDivisionTab === 'tahfizh'
+                        ? (signerTahfizh1Title || 'Koordinator Tahfizh / Mudir')
+                        : signerDivisionTab === 'kesantrian'
+                        ? (signerKesantrian1Title || 'Kepala Kesantrian / Mudir')
+                        : (signerAkademik1Title || 'Kepala Sekolah / Kurikulum')}
+                    </p>
                     <div className="h-14" />
                     <p className="font-bold text-slate-900 dark:text-white">
-                      ( {signer1Name.trim() || '............................................'} )
+                      ( {
+                        (signerDivisionTab === 'tahfizh'
+                          ? signerTahfizh1Name
+                          : signerDivisionTab === 'kesantrian'
+                          ? signerKesantrian1Name
+                          : signerAkademik1Name
+                        ).trim() || '............................................'
+                      } )
                     </p>
                   </div>
                   <div className="space-y-1 sm:text-right">
                     <p className="font-normal text-slate-500 dark:text-slate-400">
                       {signatureCity || 'Bogor'}, {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </p>
-                    <p className="font-bold text-slate-900 dark:text-white">{signer2Title || 'Petugas / Muhafizh Pengampu'}</p>
+                    <p className="font-bold text-slate-900 dark:text-white">
+                      {signerDivisionTab === 'tahfizh'
+                        ? (signerTahfizh2Title || 'Petugas / Muhafizh Pengampu')
+                        : signerDivisionTab === 'kesantrian'
+                        ? (signerKesantrian2Title || 'Wali Asrama / Musyrif Kesantrian')
+                        : (signerAkademik2Title || 'Wali Kelas / Guru Pengajar')}
+                    </p>
                     <div className="h-14" />
                     <p className="font-bold text-slate-900 dark:text-white sm:text-right">
-                      ( {signer2Name.trim() || '............................................'} )
+                      ( {
+                        (signerDivisionTab === 'tahfizh'
+                          ? signerTahfizh2Name
+                          : signerDivisionTab === 'kesantrian'
+                          ? signerKesantrian2Name
+                          : signerAkademik2Name
+                        ).trim() || '............................................'
+                      } )
                     </p>
                   </div>
                 </div>

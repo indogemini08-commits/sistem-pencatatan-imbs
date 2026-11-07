@@ -300,20 +300,33 @@ function runMigrations(database: Database) {
     `);
 
     // School settings signer columns migration
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signature_city TEXT DEFAULT 'Bogor';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_tahfizh_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_tahfizh_1_name TEXT DEFAULT '';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_tahfizh_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_tahfizh_2_name TEXT DEFAULT '';"); } catch (e) {}
+
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_kesantrian_1_title TEXT DEFAULT 'Kepala Kesantrian / Mudir';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_kesantrian_1_name TEXT DEFAULT '';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_kesantrian_2_title TEXT DEFAULT 'Wali Asrama / Musyrif Kesantrian';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_kesantrian_2_name TEXT DEFAULT '';"); } catch (e) {}
+
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_akademik_1_title TEXT DEFAULT 'Kepala Sekolah / Kurikulum';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_akademik_1_name TEXT DEFAULT '';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_akademik_2_title TEXT DEFAULT 'Wali Kelas / Guru Pengajar';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_akademik_2_name TEXT DEFAULT '';"); } catch (e) {}
+
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_1_name TEXT DEFAULT '';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu';"); } catch (e) {}
+    try { database.run("ALTER TABLE school_settings ADD COLUMN signer_2_name TEXT DEFAULT '';"); } catch (e) {}
+
+    // Synchronize legacy signer columns with tahfizh if empty
     try {
-      database.run("ALTER TABLE school_settings ADD COLUMN signer_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir';");
-    } catch (e) {}
-    try {
-      database.run("ALTER TABLE school_settings ADD COLUMN signer_1_name TEXT DEFAULT '';");
-    } catch (e) {}
-    try {
-      database.run("ALTER TABLE school_settings ADD COLUMN signer_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu';");
-    } catch (e) {}
-    try {
-      database.run("ALTER TABLE school_settings ADD COLUMN signer_2_name TEXT DEFAULT '';");
-    } catch (e) {}
-    try {
-      database.run("ALTER TABLE school_settings ADD COLUMN signature_city TEXT DEFAULT 'Bogor';");
+      database.run("UPDATE school_settings SET signer_tahfizh_1_title = signer_1_title WHERE (signer_tahfizh_1_title IS NULL OR signer_tahfizh_1_title = '') AND signer_1_title IS NOT NULL;");
+      database.run("UPDATE school_settings SET signer_tahfizh_1_name = signer_1_name WHERE (signer_tahfizh_1_name IS NULL OR signer_tahfizh_1_name = '') AND signer_1_name IS NOT NULL;");
+      database.run("UPDATE school_settings SET signer_tahfizh_2_title = signer_2_title WHERE (signer_tahfizh_2_title IS NULL OR signer_tahfizh_2_title = '') AND signer_2_title IS NOT NULL;");
+      database.run("UPDATE school_settings SET signer_tahfizh_2_name = signer_2_name WHERE (signer_tahfizh_2_name IS NULL OR signer_tahfizh_2_name = '') AND signer_2_name IS NOT NULL;");
     } catch (e) {}
 
     // Enforce tombstones on migration/reopen: purge any deleted items that might resurrect

@@ -738,7 +738,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
           <table className="w-full text-left text-xs sm:text-sm">
             <thead className="bg-slate-100/90 dark:bg-white/[0.06] text-slate-800 dark:text-slate-200 uppercase text-[11px] font-black tracking-wider border-b-2 border-slate-200/90 dark:border-white/[0.1]">
               <tr>
-                <th className="px-4 py-3.5 text-center w-10">
+                <th className="px-4 py-3.5 text-center w-10 whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={allFilteredSelected}
@@ -747,20 +747,20 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                     title="Pilih semua"
                   />
                 </th>
-                <th className="px-4 py-3.5 text-center w-12">#</th>
-                <th className="px-4 py-3.5">NIS</th>
-                <th className="px-4 py-3.5">Nama Santri</th>
-                <th className="px-4 py-3.5 text-center">Kelas</th>
-                <th className="px-4 py-3.5">Halaqah & Muhafizh</th>
-                <th className="px-4 py-3.5 text-center">Akumulasi Poin</th>
-                <th className="px-4 py-3.5 text-center">Status</th>
-                <th className="px-4 py-3.5 text-center w-28">Aksi</th>
+                <th className="px-4 py-3.5 text-center w-12 whitespace-nowrap">#</th>
+                <th className="px-4 py-3.5 whitespace-nowrap">NIS</th>
+                <th className="px-4 py-3.5 min-w-[200px] whitespace-nowrap">Nama Santri</th>
+                <th className="px-4 py-3.5 text-center whitespace-nowrap">Kelas</th>
+                <th className="px-4 py-3.5 min-w-[180px] whitespace-nowrap">Halaqah & Muhafizh</th>
+                <th className="px-4 py-3.5 text-center whitespace-nowrap">Akumulasi Poin</th>
+                <th className="px-4 py-3.5 text-center whitespace-nowrap">Status</th>
+                <th className="px-4 py-3.5 text-center w-28 whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200/70 dark:divide-white/[0.06]">
               {filteredStudents.map((s, idx) => (
                 <tr key={s.id} className={`hover:bg-indigo-50/70 dark:hover:bg-indigo-500/10 transition-colors ${selectedIds.has(s.id) ? 'bg-rose-50/70 dark:bg-rose-950/30' : ''}`}>
-                  <td className="px-4 py-3.5 text-center">
+                  <td className="px-4 py-3.5 text-center whitespace-nowrap">
                     <input
                       type="checkbox"
                       checked={selectedIds.has(s.id)}
@@ -768,40 +768,40 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                       className="w-4 h-4 rounded border-slate-300 dark:border-white/[0.14] text-rose-600 focus:ring-rose-500 cursor-pointer"
                     />
                   </td>
-                  <td className="px-4 py-3.5 text-center font-black text-slate-700 dark:text-slate-300">
+                  <td className="px-4 py-3.5 text-center font-black text-slate-700 dark:text-slate-300 whitespace-nowrap">
                     {idx + 1}
                   </td>
-                  <td className="px-4 py-3.5 font-mono text-slate-700 dark:text-slate-300 font-bold">
+                  <td className="px-4 py-3.5 font-mono text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap">
                     {s.student_number}
                   </td>
                   <td className="px-4 py-3.5">
                     <button
                       onClick={() => onSelectStudent(s.id)}
-                      className="font-black text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left cursor-pointer"
+                      className="font-black text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-left cursor-pointer whitespace-nowrap"
                     >
                       {s.name}
                     </button>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium whitespace-nowrap">
                       {s.gender === 'L' ? 'Laki-laki' : 'Perempuan'} • TA: {s.academic_year}
                     </p>
                   </td>
-                  <td className="px-4 py-3.5 text-center">
-                    <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-black text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 shadow-xs">
+                  <td className="px-4 py-3.5 text-center whitespace-nowrap">
+                    <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-black text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 shadow-xs whitespace-nowrap">
                       {s.class}
                     </span>
                   </td>
                   <td className="px-4 py-3.5">
-                    <p className="font-bold text-slate-900 dark:text-white">{s.halaqah_name || 'Tanpa Halaqah'}</p>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">{s.teacher_name || '-'}</p>
+                    <p className="font-bold text-slate-900 dark:text-white whitespace-nowrap">{s.halaqah_name || 'Tanpa Halaqah'}</p>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium whitespace-nowrap">{s.teacher_name || '-'}</p>
                   </td>
-                  <td className="px-4 py-3.5 text-center">
-                    <div className="inline-flex items-center gap-1.5 flex-wrap justify-center">
-                      <span className="inline-block px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-900/50 shadow-xs">
+                  <td className="px-4 py-3.5 text-center whitespace-nowrap">
+                    <div className="inline-flex items-center gap-1.5 flex-nowrap justify-center">
+                      <span className="inline-block px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-900/50 shadow-xs whitespace-nowrap">
                         {s.total_points} Poin
                       </span>
                       {(s.total_deductions || 0) > 0 && (
                         <span
-                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 whitespace-nowrap"
                           title={`Pengurangan Melalui Kegiatan Baik: -${s.total_deductions} Poin`}
                         >
                           <span>★</span>
@@ -810,21 +810,21 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                       )}
                     </div>
                     {(s.tahfizh_points !== undefined || s.kesantrian_points !== undefined || s.akademik_points !== undefined) && (
-                      <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1">
+                      <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1 whitespace-nowrap">
                         <span
-                          className="text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40"
+                          className="text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40 whitespace-nowrap"
                           title={`Poin Bersih Tahfizh: ${s.tahfizh_points || 0}`}
                         >
                           T: {s.tahfizh_points || 0}
                         </span>
                         <span
-                          className="text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900/40"
+                          className="text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900/40 whitespace-nowrap"
                           title={`Poin Bersih Kesantrian: ${s.kesantrian_points || 0}`}
                         >
                           K: {s.kesantrian_points || 0}
                         </span>
                         <span
-                          className="text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 px-1.5 py-0.5 rounded border border-purple-200 dark:border-purple-900/40"
+                          className="text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 px-1.5 py-0.5 rounded border border-purple-200 dark:border-purple-900/40 whitespace-nowrap"
                           title={`Poin Bersih Akademik: ${s.akademik_points || 0}`}
                         >
                           A: {s.akademik_points || 0}
@@ -832,13 +832,13 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                       </div>
                     )}
                   </td>
-                  <td className="px-4 py-3.5 text-center">
+                  <td className="px-4 py-3.5 text-center whitespace-nowrap">
                     <StatusBadge
                       statusName={s.status_info?.statusName || 'AMAN'}
                       badgeColor={s.status_info?.badgeColor || 'emerald'}
                     />
                   </td>
-                  <td className="px-4 py-3.5 text-center">
+                  <td className="px-4 py-3.5 text-center whitespace-nowrap">
                     <div className="flex items-center justify-center gap-1.5">
                       <button
                         onClick={() => onSelectStudent(s.id)}

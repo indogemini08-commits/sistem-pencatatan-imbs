@@ -650,11 +650,23 @@ export const api = {
       logoUrl?: string;
       kopSuratText?: string;
       currentAcademicYear?: string;
+      signatureCity?: string;
+      signerTahfizh1Title?: string;
+      signerTahfizh1Name?: string;
+      signerTahfizh2Title?: string;
+      signerTahfizh2Name?: string;
+      signerKesantrian1Title?: string;
+      signerKesantrian1Name?: string;
+      signerKesantrian2Title?: string;
+      signerKesantrian2Name?: string;
+      signerAkademik1Title?: string;
+      signerAkademik1Name?: string;
+      signerAkademik2Title?: string;
+      signerAkademik2Name?: string;
       signer1Title?: string;
       signer1Name?: string;
       signer2Title?: string;
       signer2Name?: string;
-      signatureCity?: string;
       actorName?: string;
     }) => {
       const res = await fetchJson<{ message: string }>(`${API_BASE}/settings/school`, {

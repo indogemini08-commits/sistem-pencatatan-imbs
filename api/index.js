@@ -129,11 +129,23 @@ CREATE TABLE IF NOT EXISTS school_settings (
   logo_url TEXT,
   kop_surat_text TEXT,
   current_academic_year TEXT NOT NULL,
+  signature_city TEXT DEFAULT 'Bogor',
+  signer_tahfizh_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir',
+  signer_tahfizh_1_name TEXT DEFAULT '',
+  signer_tahfizh_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu',
+  signer_tahfizh_2_name TEXT DEFAULT '',
+  signer_kesantrian_1_title TEXT DEFAULT 'Kepala Kesantrian / Mudir',
+  signer_kesantrian_1_name TEXT DEFAULT '',
+  signer_kesantrian_2_title TEXT DEFAULT 'Wali Asrama / Musyrif Kesantrian',
+  signer_kesantrian_2_name TEXT DEFAULT '',
+  signer_akademik_1_title TEXT DEFAULT 'Kepala Sekolah / Kurikulum',
+  signer_akademik_1_name TEXT DEFAULT '',
+  signer_akademik_2_title TEXT DEFAULT 'Wali Kelas / Guru Pengajar',
+  signer_akademik_2_name TEXT DEFAULT '',
   signer_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir',
   signer_1_name TEXT DEFAULT '',
   signer_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu',
-  signer_2_name TEXT DEFAULT '',
-  signature_city TEXT DEFAULT 'Bogor'
+  signer_2_name TEXT DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS audit_logs (
@@ -652,6 +664,58 @@ function runMigrations(database) {
       );
     `);
     try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signature_city TEXT DEFAULT 'Bogor';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_tahfizh_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_tahfizh_1_name TEXT DEFAULT '';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_tahfizh_2_title TEXT DEFAULT 'Petugas / Muhafizh Pengampu';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_tahfizh_2_name TEXT DEFAULT '';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_kesantrian_1_title TEXT DEFAULT 'Kepala Kesantrian / Mudir';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_kesantrian_1_name TEXT DEFAULT '';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_kesantrian_2_title TEXT DEFAULT 'Wali Asrama / Musyrif Kesantrian';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_kesantrian_2_name TEXT DEFAULT '';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_akademik_1_title TEXT DEFAULT 'Kepala Sekolah / Kurikulum';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_akademik_1_name TEXT DEFAULT '';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_akademik_2_title TEXT DEFAULT 'Wali Kelas / Guru Pengajar';");
+    } catch (e) {
+    }
+    try {
+      database.run("ALTER TABLE school_settings ADD COLUMN signer_akademik_2_name TEXT DEFAULT '';");
+    } catch (e) {
+    }
+    try {
       database.run("ALTER TABLE school_settings ADD COLUMN signer_1_title TEXT DEFAULT 'Koordinator Tahfizh / Mudir';");
     } catch (e) {
     }
@@ -668,7 +732,10 @@ function runMigrations(database) {
     } catch (e) {
     }
     try {
-      database.run("ALTER TABLE school_settings ADD COLUMN signature_city TEXT DEFAULT 'Bogor';");
+      database.run("UPDATE school_settings SET signer_tahfizh_1_title = signer_1_title WHERE (signer_tahfizh_1_title IS NULL OR signer_tahfizh_1_title = '') AND signer_1_title IS NOT NULL;");
+      database.run("UPDATE school_settings SET signer_tahfizh_1_name = signer_1_name WHERE (signer_tahfizh_1_name IS NULL OR signer_tahfizh_1_name = '') AND signer_1_name IS NOT NULL;");
+      database.run("UPDATE school_settings SET signer_tahfizh_2_title = signer_2_title WHERE (signer_tahfizh_2_title IS NULL OR signer_tahfizh_2_title = '') AND signer_2_title IS NOT NULL;");
+      database.run("UPDATE school_settings SET signer_tahfizh_2_name = signer_2_name WHERE (signer_tahfizh_2_name IS NULL OR signer_tahfizh_2_name = '') AND signer_2_name IS NOT NULL;");
     } catch (e) {
     }
     database.run("DELETE FROM students WHERE id IN (SELECT id FROM tombstones);");
@@ -2969,11 +3036,23 @@ router8.put("/school", async (req, res) => {
       logoUrl,
       kopSuratText,
       currentAcademicYear,
+      signatureCity,
+      signerTahfizh1Title,
+      signerTahfizh1Name,
+      signerTahfizh2Title,
+      signerTahfizh2Name,
+      signerKesantrian1Title,
+      signerKesantrian1Name,
+      signerKesantrian2Title,
+      signerKesantrian2Name,
+      signerAkademik1Title,
+      signerAkademik1Name,
+      signerAkademik2Title,
+      signerAkademik2Name,
       signer1Title,
       signer1Name,
       signer2Title,
       signer2Name,
-      signatureCity,
       actorName = "Admin"
     } = req.body;
     const old = get('SELECT * FROM school_settings WHERE id = "settings_default"');
@@ -2985,14 +3064,33 @@ router8.put("/school", async (req, res) => {
     const updatedLogo = logoUrl !== void 0 ? logoUrl.trim() : old?.logo_url || "/logo.svg";
     const updatedKop = kopSuratText !== void 0 ? kopSuratText.trim() : old?.kop_surat_text || "BIDANG PENDIDIKAN DAN KEPENGASUHAN - DIVISI HALAQAH TAHFIZH";
     const updatedYear = currentAcademicYear ? currentAcademicYear.trim() : old?.current_academic_year || "2025/2026";
-    const updatedSigner1Title = signer1Title !== void 0 ? signer1Title.trim() : old?.signer_1_title || "Koordinator Tahfizh / Mudir";
-    const updatedSigner1Name = signer1Name !== void 0 ? signer1Name.trim() : old?.signer_1_name || "";
-    const updatedSigner2Title = signer2Title !== void 0 ? signer2Title.trim() : old?.signer_2_title || "Petugas / Muhafizh Pengampu";
-    const updatedSigner2Name = signer2Name !== void 0 ? signer2Name.trim() : old?.signer_2_name || "";
     const updatedCity = signatureCity !== void 0 ? signatureCity.trim() : old?.signature_city || "Bogor";
+    const updatedTahfizh1Title = signerTahfizh1Title !== void 0 ? signerTahfizh1Title.trim() : old?.signer_tahfizh_1_title || signer1Title || old?.signer_1_title || "Koordinator Tahfizh / Mudir";
+    const updatedTahfizh1Name = signerTahfizh1Name !== void 0 ? signerTahfizh1Name.trim() : old?.signer_tahfizh_1_name || signer1Name || old?.signer_1_name || "";
+    const updatedTahfizh2Title = signerTahfizh2Title !== void 0 ? signerTahfizh2Title.trim() : old?.signer_tahfizh_2_title || signer2Title || old?.signer_2_title || "Petugas / Muhafizh Pengampu";
+    const updatedTahfizh2Name = signerTahfizh2Name !== void 0 ? signerTahfizh2Name.trim() : old?.signer_tahfizh_2_name || signer2Name || old?.signer_2_name || "";
+    const updatedKesantrian1Title = signerKesantrian1Title !== void 0 ? signerKesantrian1Title.trim() : old?.signer_kesantrian_1_title || "Kepala Kesantrian / Mudir";
+    const updatedKesantrian1Name = signerKesantrian1Name !== void 0 ? signerKesantrian1Name.trim() : old?.signer_kesantrian_1_name || "";
+    const updatedKesantrian2Title = signerKesantrian2Title !== void 0 ? signerKesantrian2Title.trim() : old?.signer_kesantrian_2_title || "Wali Asrama / Musyrif Kesantrian";
+    const updatedKesantrian2Name = signerKesantrian2Name !== void 0 ? signerKesantrian2Name.trim() : old?.signer_kesantrian_2_name || "";
+    const updatedAkademik1Title = signerAkademik1Title !== void 0 ? signerAkademik1Title.trim() : old?.signer_akademik_1_title || "Kepala Sekolah / Kurikulum";
+    const updatedAkademik1Name = signerAkademik1Name !== void 0 ? signerAkademik1Name.trim() : old?.signer_akademik_1_name || "";
+    const updatedAkademik2Title = signerAkademik2Title !== void 0 ? signerAkademik2Title.trim() : old?.signer_akademik_2_title || "Wali Kelas / Guru Pengajar";
+    const updatedAkademik2Name = signerAkademik2Name !== void 0 ? signerAkademik2Name.trim() : old?.signer_akademik_2_name || "";
     run(
-      `INSERT OR REPLACE INTO school_settings (id, app_name, school_name, address, phone, email, logo_url, kop_surat_text, current_academic_year, signer_1_title, signer_1_name, signer_2_title, signer_2_name, signature_city)
-       VALUES ('settings_default', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT OR REPLACE INTO school_settings (
+        id, app_name, school_name, address, phone, email, logo_url, kop_surat_text, current_academic_year, signature_city,
+        signer_tahfizh_1_title, signer_tahfizh_1_name, signer_tahfizh_2_title, signer_tahfizh_2_name,
+        signer_kesantrian_1_title, signer_kesantrian_1_name, signer_kesantrian_2_title, signer_kesantrian_2_name,
+        signer_akademik_1_title, signer_akademik_1_name, signer_akademik_2_title, signer_akademik_2_name,
+        signer_1_title, signer_1_name, signer_2_title, signer_2_name
+      ) VALUES (
+        'settings_default', ?, ?, ?, ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?, ?,
+        ?, ?, ?, ?
+      )`,
       [
         updatedAppName,
         updatedSchoolName,
@@ -3002,11 +3100,23 @@ router8.put("/school", async (req, res) => {
         updatedLogo,
         updatedKop,
         updatedYear,
-        updatedSigner1Title,
-        updatedSigner1Name,
-        updatedSigner2Title,
-        updatedSigner2Name,
-        updatedCity
+        updatedCity,
+        updatedTahfizh1Title,
+        updatedTahfizh1Name,
+        updatedTahfizh2Title,
+        updatedTahfizh2Name,
+        updatedKesantrian1Title,
+        updatedKesantrian1Name,
+        updatedKesantrian2Title,
+        updatedKesantrian2Name,
+        updatedAkademik1Title,
+        updatedAkademik1Name,
+        updatedAkademik2Title,
+        updatedAkademik2Name,
+        updatedTahfizh1Title,
+        updatedTahfizh1Name,
+        updatedTahfizh2Title,
+        updatedTahfizh2Name
       ]
     );
     logAudit({
@@ -3020,11 +3130,13 @@ router8.put("/school", async (req, res) => {
         schoolName: updatedSchoolName,
         address: updatedAddress,
         logoUrl: updatedLogo,
-        signer1Title: updatedSigner1Title,
-        signer1Name: updatedSigner1Name,
-        signer2Title: updatedSigner2Title,
-        signer2Name: updatedSigner2Name,
-        signatureCity: updatedCity
+        signatureCity: updatedCity,
+        signerTahfizh1Title: updatedTahfizh1Title,
+        signerTahfizh1Name: updatedTahfizh1Name,
+        signerKesantrian1Title: updatedKesantrian1Title,
+        signerKesantrian1Name: updatedKesantrian1Name,
+        signerAkademik1Title: updatedAkademik1Title,
+        signerAkademik1Name: updatedAkademik1Name
       }
     });
     await persistDb();
