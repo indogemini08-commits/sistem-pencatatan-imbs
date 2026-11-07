@@ -51,11 +51,11 @@ function drawOfficialEmblem(doc: jsPDF, cx: number, cy: number, r: number = 10) 
  */
 function drawOfficialHeader(doc: jsPDF, settings: SchoolSettings): number {
   const pageWidth = doc.internal.pageSize.getWidth();
-  let currentHeaderY = 14;
+  let currentHeaderY = 16;
 
   let logoDrawn = false;
 
-  // Render Official Logo if Base64 from device upload (20x20 mm on the top-left margin)
+  // Render Official Logo if Base64 from device upload (21x21 mm on the top-left margin)
   if (settings.logo_url && settings.logo_url.startsWith('data:image/')) {
     try {
       let format = 'PNG';
@@ -64,7 +64,7 @@ function drawOfficialHeader(doc: jsPDF, settings: SchoolSettings): number {
       } else if (settings.logo_url.includes('image/webp')) {
         format = 'WEBP';
       }
-      doc.addImage(settings.logo_url, format, 14, 12, 20, 20);
+      doc.addImage(settings.logo_url, format, 15, 14, 21, 21);
       logoDrawn = true;
     } catch (err) {
       console.warn('PDF Header Logo render warning:', err);
@@ -73,12 +73,12 @@ function drawOfficialHeader(doc: jsPDF, settings: SchoolSettings): number {
 
   // If no base64 logo drawn, render official vector emblem directly
   if (!logoDrawn) {
-    drawOfficialEmblem(doc, 24, 22, 10);
+    drawOfficialEmblem(doc, 25, 24, 10.5);
   }
 
   // 1. Nama Sekolah Utama (Deep Navy) - Auto-scaled to never collide with logo
   doc.setFont('helvetica', 'bold');
-  let schoolNameSize = 13;
+  let schoolNameSize = 12.5;
   doc.setFontSize(schoolNameSize);
   const schoolNameUpper = (settings.school_name || 'PESANTREN TAHFIZH AL-QUR\'AN IMAM ASY-SYATHIBI').toUpperCase();
   while (doc.getTextWidth(schoolNameUpper) > 124 && schoolNameSize > 8.5) {
@@ -90,7 +90,7 @@ function drawOfficialHeader(doc: jsPDF, settings: SchoolSettings): number {
 
   // 2. Sub-header Divisi / Kop Surat Text (Split cleanly if contains separator or exceeds safe width)
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(9.5);
+  doc.setFontSize(9);
   doc.setTextColor(30, 86, 160); // #1e56a0 Royal Navy
 
   const kopText = settings.kop_surat_text || 'DIVISI HALAQAH TAHFIZH AL-QUR\'AN';
@@ -112,7 +112,7 @@ function drawOfficialHeader(doc: jsPDF, settings: SchoolSettings): number {
     kopLine2 = words.slice(mid).join(' ');
   }
 
-  currentHeaderY += 5;
+  currentHeaderY += 5.5;
   doc.text(kopLine1, pageWidth / 2, currentHeaderY, { align: 'center' });
 
   if (kopLine2) {

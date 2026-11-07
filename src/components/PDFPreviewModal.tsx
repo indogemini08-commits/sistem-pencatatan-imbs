@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   X,
   Download,
@@ -95,9 +96,10 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
   // 'FitH' scales to full width
   const iframeSrc = `${blobUrl}#toolbar=0&navpanes=0&scrollbar=${viewMode === 'fit' ? '0' : '1'}&view=${viewMode === 'fit' ? 'Fit' : 'FitH'}${zoom !== 100 ? `&zoom=${zoom}` : ''}`;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-5xl h-[92vh] max-h-[880px] flex flex-col rounded-3xl bg-white dark:bg-[#0e1424] backdrop-blur-2xl border border-slate-200/90 dark:border-white/[0.12] shadow-2xl overflow-hidden animate-scale-in">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 md:p-8 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+      {/* Floating Card - Fully Separated with Ample Margins */}
+      <div className="relative w-full max-w-5xl h-[92vh] max-h-[880px] flex flex-col rounded-3xl bg-white dark:bg-[#0e1424] backdrop-blur-2xl border border-slate-200/90 dark:border-white/[0.12] shadow-2xl shadow-black/40 overflow-hidden animate-scale-in">
         {/* Header Bar */}
         <div className="p-3 sm:px-6 sm:py-3.5 border-b border-slate-200/80 dark:border-white/[0.08] flex items-center justify-between gap-3 bg-slate-50/90 dark:bg-[#12192c] shrink-0">
           <div className="flex items-center gap-3 min-w-0">
@@ -183,25 +185,26 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
               </button>
             </div>
 
+            {/* Open in Separate Tab Button (Highlight Requested Feature) */}
+            <button
+              type="button"
+              onClick={handleOpenNewTab}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-white/[0.08] hover:bg-indigo-100 dark:hover:bg-white/[0.14] text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-500/30 text-xs font-bold transition-all cursor-pointer shadow-xs"
+              title="Buka Dokumen PDF di Tab Browser Terpisah"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span className="hidden sm:inline">Buka di Tab Terpisah</span>
+            </button>
+
             {/* Print Button */}
             <button
               type="button"
               onClick={handlePrint}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white dark:bg-white/[0.06] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.1] border border-slate-200 dark:border-white/[0.1] text-xs font-bold transition-colors cursor-pointer shadow-xs"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-white/[0.06] text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.1] border border-slate-200 dark:border-white/[0.1] text-xs font-bold transition-colors cursor-pointer shadow-xs"
               title="Cetak Dokumen"
             >
-              <Printer className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+              <Printer className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
               <span>Cetak</span>
-            </button>
-
-            {/* Open in new tab */}
-            <button
-              type="button"
-              onClick={handleOpenNewTab}
-              className="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white dark:hover:bg-white/[0.06] border border-slate-200 dark:border-white/[0.08] transition-colors cursor-pointer"
-              title="Buka Pratinjau di Tab Baru"
-            >
-              <ExternalLink className="w-4 h-4" />
             </button>
 
             {/* Close button */}
@@ -254,9 +257,15 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
 
         {/* Modal Footer */}
         <div className="p-3 sm:px-6 sm:py-3 border-t border-slate-200/80 dark:border-white/[0.08] flex items-center justify-between gap-3 bg-slate-50/90 dark:bg-[#12192c] shrink-0">
-          <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium hidden sm:inline">
-            💡 Pastikan data dan tanda tangan sudah sesuai sebelum mengunduh berkas.
-          </span>
+          {/* Quick Action to open in new tab */}
+          <button
+            type="button"
+            onClick={handleOpenNewTab}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/[0.06] hover:bg-slate-200 dark:hover:bg-white/[0.1] text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors cursor-pointer"
+          >
+            <ExternalLink className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+            <span>Buka di Tab Terpisah</span>
+          </button>
 
           <div className="flex items-center gap-2 ml-auto">
             <button
@@ -277,7 +286,8 @@ export const PDFPreviewModal: React.FC<PDFPreviewModalProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

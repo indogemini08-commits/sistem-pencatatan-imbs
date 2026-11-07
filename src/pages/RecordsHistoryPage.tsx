@@ -20,6 +20,7 @@ import {
   GraduationCap,
   UserCheck,
   Globe,
+  ExternalLink,
 } from 'lucide-react';
 import { ViolationRecord, Halaqah, Teacher, SchoolSettings, User, ViolationDivision } from '../types';
 import { api } from '../services/api';
@@ -352,6 +353,29 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
     setPreviewPdfOpen(true);
   };
 
+  const handleOpenPDFInNewTab = () => {
+    if (!settings) {
+      alert('Pengaturan sekolah belum dimuat.');
+      return;
+    }
+
+    const divisionLabel =
+      filterDivision === 'akademik'
+        ? 'Bagian Akademik (Sekolah)'
+        : filterDivision === 'kesantrian'
+        ? 'Bagian Kesantrian (Asrama)'
+        : filterDivision === 'tahfizh'
+        ? 'Bagian Tahfizh (Halaqah)'
+        : 'Terpadu (Semua Divisi)';
+
+    const result = buildViolationReportPDF(filteredRecords, settings, {
+      period: startDate && endDate ? `${startDate} s/d ${endDate}` : (startDate ? `Sejak ${startDate}` : undefined),
+      halaqah: divisionLabel,
+    });
+
+    window.open(result.blobUrl, '_blank');
+  };
+
   // Title rendering
   const pageTitle =
     filterDivision === 'kesantrian'
@@ -395,13 +419,24 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
             </button>
           )}
 
-          <button
-            onClick={handleExportPDF}
-            className="px-6 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2.5 min-h-[44px] sm:min-h-0 w-full sm:w-auto whitespace-nowrap shrink-0"
-          >
-            <FileText className="w-4 h-4 shrink-0" />
-            <span className="pr-0.5">Export PDF (Kop Surat)</span>
-          </button>
+          <div className="flex items-center gap-1.5 w-full sm:w-auto">
+            <button
+              onClick={handleExportPDF}
+              className="flex-1 sm:flex-none px-5 sm:px-6 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg shadow-indigo-500/25 transition-all flex items-center justify-center gap-2 min-h-[44px] sm:min-h-0 whitespace-nowrap shrink-0 cursor-pointer active:scale-95"
+              title="Buka Pratinjau Dokumen PDF Resmi"
+            >
+              <FileText className="w-4 h-4 shrink-0" />
+              <span className="pr-0.5">Export PDF (Kop Surat)</span>
+            </button>
+            <button
+              onClick={handleOpenPDFInNewTab}
+              className="p-2.5 bg-white dark:bg-[#161d31] hover:bg-slate-100 dark:hover:bg-[#1e2742] text-indigo-600 dark:text-indigo-400 rounded-xl border border-slate-200 dark:border-white/[0.1] shadow-soft transition-all flex items-center justify-center min-h-[44px] sm:min-h-0 cursor-pointer active:scale-95 shrink-0"
+              title="Buka PDF Langsung di Tab Terpisah"
+              aria-label="Buka PDF di Tab Terpisah"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </button>
+          </div>
 
           <button
             onClick={handleExportExcel}
