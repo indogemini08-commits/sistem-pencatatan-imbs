@@ -538,11 +538,11 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
           {/* Halaqah Filter */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap sm:w-16">Halaqah:</span>
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap sm:w-16">Halaqah:</span>
             <select
               value={filterHalaqah}
               onChange={(e) => setFilterHalaqah(e.target.value)}
-              className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 min-h-[42px] outline-none"
+              className="w-full text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.18] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white font-semibold focus:border-indigo-500 dark:focus:border-indigo-400 min-h-[42px] outline-none"
             >
               <option value="all">Semua Halaqah</option>
               {halaqahs.map((h) => (
@@ -556,22 +556,22 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
           {/* Tanggal Dari & Sampai */}
           <div className="grid grid-cols-2 sm:contents gap-2">
             <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap sm:w-10">Dari:</span>
+              <span className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap sm:w-10">Dari:</span>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 min-h-[42px] outline-none"
+                className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.18] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white font-semibold focus:border-indigo-500 dark:focus:border-indigo-400 min-h-[42px] outline-none"
               />
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2">
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap sm:w-12">Sampai:</span>
+              <span className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap sm:w-12">Sampai:</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 dark:focus:border-indigo-400 min-h-[42px] outline-none"
+                className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.18] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white font-semibold focus:border-indigo-500 dark:focus:border-indigo-400 min-h-[42px] outline-none"
               />
             </div>
           </div>
@@ -582,11 +582,11 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
           <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-3">
             {/* Status Filter */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Status:</span>
+              <span className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200">Status:</span>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full sm:w-auto text-xs px-2.5 py-2 rounded-lg border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white min-h-[38px] outline-none"
+                className="w-full sm:w-auto text-xs px-2.5 py-2 rounded-lg border border-slate-300 dark:border-white/[0.18] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white font-semibold min-h-[38px] outline-none"
               >
                 <option value="all">Semua Status</option>
                 <option value="active">Aktif</option>
@@ -596,11 +596,11 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
             {/* Kategori Filter */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Kategori:</span>
+              <span className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200">Kategori:</span>
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="w-full sm:w-auto text-xs px-2.5 py-2 rounded-lg border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white min-h-[38px] outline-none"
+                className="w-full sm:w-auto text-xs px-2.5 py-2 rounded-lg border border-slate-300 dark:border-white/[0.18] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white font-semibold min-h-[38px] outline-none"
               >
                 <option value="all">Semua Kategori</option>
                 <option value="Tahfizh">Tahfizh</option>
@@ -614,7 +614,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
 
             {/* Urutan Poin / Tanggal (Default: Poin Terbesar ke Terkecil) */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400">Urutan:</span>
+              <span className="text-[11px] sm:text-xs font-bold text-slate-800 dark:text-slate-200">Urutan:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
@@ -856,13 +856,13 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                             className="w-4 h-4 rounded border-slate-300 dark:border-slate-700 text-rose-600 focus:ring-rose-500 cursor-pointer"
                           />
                         </td>
-                        <td className="px-4 py-3.5 text-center text-xs text-slate-400 dark:text-slate-500 font-medium">
+                        <td className="px-4 py-3.5 text-center text-xs text-slate-700 dark:text-slate-200 font-bold">
                           {index + 1}
                         </td>
 
                         <td className="px-4 py-3.5 whitespace-nowrap">
-                          <div className="font-semibold text-slate-800 dark:text-slate-200">{r.date}</div>
-                          <div className="text-[11px] text-slate-400 dark:text-slate-500">{r.time} WIB</div>
+                          <div className="font-bold text-slate-900 dark:text-white">{r.date}</div>
+                          <div className="text-[11px] text-slate-600 dark:text-slate-300 font-semibold">{r.time} WIB</div>
                         </td>
 
                         <td className="px-4 py-3.5 whitespace-nowrap">

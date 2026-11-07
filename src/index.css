@@ -399,30 +399,116 @@
   border-color: #1e3152 !important;
 }
 
-/* High Contrast Text Harmonization in Dark Mode */
+/* High Contrast Text Harmonization across Modes */
+:not(.dark) .text-slate-400 {
+  color: #475569 !important; /* Lift faint Slate-400 to crisp Slate-600 in light mode */
+}
+
+:not(.dark) .text-slate-500 {
+  color: #334155 !important; /* Lift Slate-500 to deep Slate-700 in light mode */
+}
+
 .dark .text-slate-900 {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .text-slate-800 {
-  color: #f1f5f9 !important;
+  color: #f8fafc !important;
 }
 
 .dark .text-slate-700 {
-  color: #e2e8f0 !important;
+  color: #f1f5f9 !important;
 }
 
 .dark .text-slate-600 {
-  color: #cbd5e1 !important;
+  color: #e2e8f0 !important;
 }
 
 .dark .text-slate-500 {
-  color: #94a3b8 !important;
+  color: #cbd5e1 !important;
 }
 
 .dark .text-slate-400 {
-  color: #94a3b8 !important;
+  color: #cbd5e1 !important;
 }
+
+/* Universal Input Placeholder Contrast */
+input::placeholder,
+textarea::placeholder {
+  color: #64748b !important;
+  opacity: 0.9 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #94a3b8 !important;
+  opacity: 0.95 !important;
+}
+
+/* Universal Form Controls in Dark Mode */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.dark select,
+.dark textarea {
+  background-color: #141f36 !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+}
+
+.dark select option {
+  background-color: #141f36 !important;
+  color: #ffffff !important;
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+.dark select:focus,
+.dark textarea:focus {
+  background-color: #182642 !important;
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+}
+
+/* Custom Checkbox Contrast & Appearance */
+input[type="checkbox"], input[type="radio"] {
+  accent-color: #e11d48;
+  cursor: pointer;
+}
+
+/* High Contrast Table System */
+table thead {
+  background-color: #f1f5f9 !important;
+  border-bottom: 2px solid #cbd5e1 !important;
+}
+
+table thead th {
+  color: #0f172a !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.025em;
+}
+
+.dark table thead {
+  background-color: #16223b !important;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark table thead th {
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.025em;
+}
+
+table tbody tr {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dark table tbody tr {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark table tbody tr:hover td {
+  background-color: rgba(99, 102, 241, 0.12) !important;
+}
+
+/* Vivid Colored Text in Dark Mode (no dim dark text on dark backgrounds) */
 
 /* Vivid Colored Text in Dark Mode (no dim dark text on dark backgrounds) */
 .dark .text-emerald-800,
@@ -508,38 +594,6 @@
 
 .dark .hover\:bg-slate-100:hover {
   background-color: #1a2c4e;
-}
-
-.dark input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
-.dark select,
-.dark textarea {
-  background-color: #132039;
-  border-color: #24395c;
-  color: #f8fafc;
-}
-
-.dark input::placeholder,
-.dark textarea::placeholder {
-  color: #64748b;
-}
-
-.dark input:focus,
-.dark select:focus,
-.dark textarea:focus {
-  background-color: #172744;
-  border-color: #3b82f6;
-}
-
-.dark table thead {
-  background-color: #0e182d !important;
-}
-
-.dark table thead th {
-  color: #cbd5e1 !important;
-}
-
-.dark tr:hover td {
-  background-color: #14223d;
 }
 
 .dark .shadow-soft,

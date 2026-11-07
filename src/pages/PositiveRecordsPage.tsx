@@ -499,7 +499,7 @@ export const PositiveRecordsPage: React.FC<PositiveRecordsPageProps> = ({
                           >
                             {r.student_name || 'Santri'}
                           </button>
-                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                          <p className="text-xs text-slate-600 dark:text-slate-300 font-medium mt-0.5">
                             NIS: {r.student_nis || '-'} • Kls {r.student_class_snapshot}
                           </p>
                         </div>
@@ -648,7 +648,7 @@ export const PositiveRecordsPage: React.FC<PositiveRecordsPageProps> = ({
                             <div className="font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                               {r.student_name || 'Santri'}
                             </div>
-                            <div className="text-[11px] text-slate-400 dark:text-slate-500">
+                            <div className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                               NIS: {r.student_nis || '-'} • Kls {r.student_class_snapshot}
                             </div>
                           </button>

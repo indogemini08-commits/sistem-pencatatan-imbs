@@ -15,26 +15,26 @@ export const StatusBadge: React.FC<BadgeProps> = ({
 }) => {
   const color = badgeColor.toLowerCase();
 
-  let colorClasses = 'bg-slate-100 text-slate-700 border-slate-200 dark:bg-white/[0.06] dark:text-slate-300 dark:border-white/[0.08]';
+  let colorClasses = 'bg-slate-100 text-slate-800 border-slate-300 dark:bg-white/[0.08] dark:text-slate-200 dark:border-white/20';
 
   if (color.includes('emerald') || color.includes('green') || statusName === 'AMAN') {
-    colorClasses = 'bg-emerald-50 text-emerald-700 border-emerald-200 ring-1 ring-emerald-500/20 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-800';
+    colorClasses = 'bg-emerald-100 text-emerald-900 border-emerald-300 ring-1 ring-emerald-500/20 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-600/70';
   } else if (color.includes('amber') || color.includes('yellow') || statusName.includes('PEMBINAAN')) {
-    colorClasses = 'bg-amber-50 text-amber-800 border-amber-200 ring-1 ring-amber-500/20 dark:bg-amber-950/70 dark:text-amber-300 dark:border-amber-800';
+    colorClasses = 'bg-amber-100 text-amber-900 border-amber-300 ring-1 ring-amber-500/20 dark:bg-amber-950/80 dark:text-amber-200 dark:border-amber-600/70';
   } else if (color.includes('orange') || statusName.includes('KHUSUS')) {
-    colorClasses = 'bg-orange-50 text-orange-800 border-orange-200 ring-1 ring-orange-500/20 dark:bg-orange-950/70 dark:text-orange-300 dark:border-orange-800';
+    colorClasses = 'bg-orange-100 text-orange-900 border-orange-300 ring-1 ring-orange-500/20 dark:bg-orange-950/80 dark:text-orange-200 dark:border-orange-600/70';
   } else if (color.includes('rose') || statusName.includes('PERINGATAN')) {
-    colorClasses = 'bg-rose-50 text-rose-800 border-rose-200 ring-1 ring-rose-500/20 dark:bg-rose-950/70 dark:text-rose-300 dark:border-rose-800';
+    colorClasses = 'bg-rose-100 text-rose-900 border-rose-300 ring-1 ring-rose-500/20 dark:bg-rose-950/80 dark:text-rose-200 dark:border-rose-600/70';
   } else if (color.includes('red') || statusName.includes('TINDAKAN')) {
-    colorClasses = 'bg-red-100 text-red-900 border-red-300 ring-1 ring-red-500/30 dark:bg-red-950/80 dark:text-red-300 dark:border-red-800 animate-pulse';
+    colorClasses = 'bg-red-100 text-red-950 border-red-300 ring-1 ring-red-500/30 dark:bg-red-950/90 dark:text-red-200 dark:border-red-600/80 animate-pulse';
   } else if (color.includes('blue')) {
-    colorClasses = 'bg-blue-50 text-blue-800 border-blue-200 ring-1 ring-blue-500/20 dark:bg-blue-950/70 dark:text-blue-300 dark:border-blue-800';
+    colorClasses = 'bg-blue-100 text-blue-900 border-blue-300 ring-1 ring-blue-500/20 dark:bg-blue-950/80 dark:text-blue-200 dark:border-blue-600/70';
   }
 
   const sizeClasses = {
-    sm: 'text-xs px-2 py-0.5',
-    md: 'text-xs px-2.5 py-1 font-medium',
-    lg: 'text-sm px-3.5 py-1.5 font-semibold',
+    sm: 'text-xs px-2.5 py-0.5 font-bold',
+    md: 'text-xs px-3 py-1 font-black tracking-wide',
+    lg: 'text-sm px-4 py-1.5 font-black tracking-wide',
   }[size];
 
   return (

@@ -448,7 +448,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
             </div>
             <span>Data Santri Halaqah</span>
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-medium mt-1">
             Kelola santri, import dari Excel dengan template resmi, dan pantau status poin.
           </p>
         </div>
@@ -481,7 +481,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
               setImportSuccessMsg('');
               setIsImportModalOpen(true);
             }}
-            className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 bg-white dark:bg-[#111726] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl border border-slate-300 dark:border-white/[0.1] shadow-sm transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0"
+            className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 bg-white dark:bg-[#15213b] hover:bg-slate-50 dark:hover:bg-[#1e2d4e] text-slate-800 dark:text-white text-xs sm:text-sm font-bold rounded-xl border border-slate-300 dark:border-white/20 shadow-sm transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0"
           >
             <FileSpreadsheet className="w-4 h-4 text-emerald-500 shrink-0" />
             <span>Import Excel</span>
@@ -489,7 +489,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
           <button
             onClick={handleExportStudents}
-            className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 bg-white dark:bg-[#111726] hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl border border-slate-300 dark:border-white/[0.1] shadow-sm transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0"
+            className="w-full sm:w-auto justify-center min-h-[44px] px-4 py-2.5 bg-white dark:bg-[#15213b] hover:bg-slate-50 dark:hover:bg-[#1e2d4e] text-slate-800 dark:text-white text-xs sm:text-sm font-bold rounded-xl border border-slate-300 dark:border-white/20 shadow-sm transition-all flex items-center gap-2 active:scale-[0.98] cursor-pointer whitespace-nowrap shrink-0"
           >
             <Download className="w-4 h-4 text-emerald-500 shrink-0" />
             <span>Export Excel</span>
@@ -506,7 +506,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
             </button>
             <button
               onClick={handleOpenPDFInNewTab}
-              className="p-2.5 bg-white dark:bg-[#111726] hover:bg-slate-50 dark:hover:bg-slate-800 text-indigo-600 dark:text-indigo-400 rounded-xl border border-slate-300 dark:border-white/[0.1] shadow-sm transition-all flex items-center justify-center min-h-[44px] cursor-pointer active:scale-95 shrink-0"
+              className="p-2.5 bg-white dark:bg-[#15213b] hover:bg-slate-50 dark:hover:bg-[#1e2d4e] text-indigo-600 dark:text-indigo-300 rounded-xl border border-slate-300 dark:border-white/20 shadow-sm transition-all flex items-center justify-center min-h-[44px] cursor-pointer active:scale-95 shrink-0"
               title="Buka PDF Langsung di Tab Terpisah"
               aria-label="Buka PDF di Tab Terpisah"
             >
@@ -521,23 +521,23 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
         <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
           {/* Global Search */}
           <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-300" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari nama, NIS, atau halaqah..."
-              className="w-full min-h-[44px] text-xs sm:text-sm pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.14] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white/90 dark:bg-[#161d31]/90 text-slate-900 dark:text-slate-100 placeholder:text-slate-500 font-semibold shadow-inner"
+              className="w-full min-h-[44px] text-xs sm:text-sm pl-10 pr-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.18] focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white/95 dark:bg-[#141b2d] text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-400 font-semibold shadow-inner"
             />
           </div>
 
           {/* Filter Kelas */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 sm:whitespace-nowrap">Kelas:</span>
+            <span className="text-[11px] sm:text-xs font-black text-slate-800 dark:text-slate-200 sm:whitespace-nowrap">Kelas:</span>
             <select
               value={selectedClass}
               onChange={(e) => setSelectedClass(e.target.value)}
-              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.14] focus:border-indigo-500 bg-white/90 dark:bg-[#161d31]/90 text-slate-900 dark:text-slate-100 font-semibold shadow-inner"
+              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.18] focus:border-indigo-500 bg-white/95 dark:bg-[#141b2d] text-slate-900 dark:text-white font-bold shadow-inner"
             >
               <option value="all">Semua Kelas</option>
               {uniqueClasses.map((c) => (
@@ -550,11 +550,11 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
           {/* Filter Halaqah */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 sm:whitespace-nowrap">Halaqah:</span>
+            <span className="text-[11px] sm:text-xs font-black text-slate-800 dark:text-slate-200 sm:whitespace-nowrap">Halaqah:</span>
             <select
               value={selectedHalaqah}
               onChange={(e) => setSelectedHalaqah(e.target.value)}
-              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.14] focus:border-indigo-500 bg-white/90 dark:bg-[#161d31]/90 text-slate-900 dark:text-slate-100 font-semibold shadow-inner"
+              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.18] focus:border-indigo-500 bg-white/95 dark:bg-[#141b2d] text-slate-900 dark:text-white font-bold shadow-inner"
             >
               <option value="all">Semua Halaqah</option>
               {halaqahs.map((h) => (
@@ -567,7 +567,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
 
           {/* Sort Control */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-            <span className="text-[11px] sm:text-xs font-black text-slate-700 dark:text-slate-300 sm:whitespace-nowrap">Urutkan:</span>
+            <span className="text-[11px] sm:text-xs font-black text-slate-800 dark:text-slate-200 sm:whitespace-nowrap">Urutkan:</span>
             <select
               value={`${sortBy}-${sortDir}`}
               onChange={(e) => {
@@ -575,7 +575,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 setSortBy(by);
                 setSortDir(dir as 'asc' | 'desc');
               }}
-              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.14] focus:border-indigo-500 bg-white/90 dark:bg-[#161d31]/90 text-slate-900 dark:text-slate-100 font-semibold shadow-inner"
+              className="w-full min-h-[44px] text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.18] focus:border-indigo-500 bg-white/95 dark:bg-[#141b2d] text-slate-900 dark:text-white font-bold shadow-inner"
             >
               <option value="name-asc">Nama (A - Z)</option>
               <option value="name-desc">Nama (Z - A)</option>
@@ -588,7 +588,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
         </div>
 
         {/* Total stats count indicator */}
-        <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 font-semibold pt-2 border-t border-slate-200/80 dark:border-white/[0.08]">
+        <div className="flex items-center justify-between text-xs text-slate-700 dark:text-slate-200 font-bold pt-2 border-t border-slate-200/90 dark:border-white/[0.12]">
           <span>
             Menampilkan <strong className="text-slate-900 dark:text-white font-black">{filteredStudents.length}</strong> dari <strong className="text-slate-900 dark:text-white font-black">{students.length}</strong> santri
           </span>
@@ -599,7 +599,7 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 setSelectedClass('all');
                 setSelectedHalaqah('all');
               }}
-              className="text-indigo-600 dark:text-indigo-400 hover:underline font-bold"
+              className="text-indigo-600 dark:text-indigo-400 hover:underline font-bold cursor-pointer"
             >
               Reset Filter
             </button>
@@ -744,14 +744,14 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
       <div className="hidden md:block glass-panel overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs sm:text-sm">
-            <thead className="bg-slate-100/90 dark:bg-white/[0.06] text-slate-800 dark:text-slate-200 uppercase text-[11px] font-black tracking-wider border-b-2 border-slate-200/90 dark:border-white/[0.1]">
+            <thead className="bg-slate-100/95 dark:bg-[#161e33] text-slate-800 dark:text-slate-100 uppercase text-[11px] font-black tracking-wider border-b-2 border-slate-300 dark:border-white/[0.18]">
               <tr>
                 <th className="px-4 py-3.5 text-center w-10 whitespace-nowrap">
                   <input
                     type="checkbox"
                     checked={allFilteredSelected}
                     onChange={toggleSelectAll}
-                    className="w-4 h-4 rounded border-slate-300 dark:border-white/[0.14] text-rose-600 focus:ring-rose-500 cursor-pointer"
+                    className="w-4 h-4 rounded border-slate-300 dark:border-slate-500 bg-white dark:bg-slate-800 text-rose-600 focus:ring-rose-500 cursor-pointer"
                     title="Pilih semua"
                   />
                 </th>
@@ -765,21 +765,21 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                 <th className="px-4 py-3.5 text-center w-28 whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200/70 dark:divide-white/[0.06]">
+            <tbody className="divide-y divide-slate-200/90 dark:divide-white/[0.1]">
               {filteredStudents.map((s, idx) => (
-                <tr key={s.id} className={`hover:bg-indigo-50/70 dark:hover:bg-indigo-500/10 transition-colors ${selectedIds.has(s.id) ? 'bg-rose-50/70 dark:bg-rose-950/30' : ''}`}>
+                <tr key={s.id} className={`hover:bg-indigo-50/70 dark:hover:bg-indigo-900/20 even:bg-slate-50/40 dark:even:bg-white/[0.02] transition-colors ${selectedIds.has(s.id) ? 'bg-rose-50/70 dark:bg-rose-950/40' : ''}`}>
                   <td className="px-4 py-3.5 text-center whitespace-nowrap">
                     <input
                       type="checkbox"
                       checked={selectedIds.has(s.id)}
                       onChange={() => toggleSelectStudent(s.id)}
-                      className="w-4 h-4 rounded border-slate-300 dark:border-white/[0.14] text-rose-600 focus:ring-rose-500 cursor-pointer"
+                      className="w-4 h-4 rounded border-slate-300 dark:border-slate-500 bg-white dark:bg-slate-800 text-rose-600 focus:ring-rose-500 cursor-pointer"
                     />
                   </td>
-                  <td className="px-4 py-3.5 text-center font-black text-slate-700 dark:text-slate-300 whitespace-nowrap">
+                  <td className="px-4 py-3.5 text-center font-black text-slate-700 dark:text-slate-200 whitespace-nowrap">
                     {idx + 1}
                   </td>
-                  <td className="px-4 py-3.5 font-mono text-slate-700 dark:text-slate-300 font-bold whitespace-nowrap">
+                  <td className="px-4 py-3.5 font-mono text-slate-800 dark:text-slate-100 font-bold whitespace-nowrap">
                     {s.student_number}
                   </td>
                   <td className="px-4 py-3.5">
@@ -789,24 +789,34 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                     >
                       {s.name}
                     </button>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium whitespace-nowrap">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
                       {s.gender === 'L' ? 'Laki-laki' : 'Perempuan'} • TA: {s.academic_year}
                     </p>
                   </td>
                   <td className="px-4 py-3.5 text-center whitespace-nowrap">
-                    <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 font-black text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 shadow-xs whitespace-nowrap">
+                    <span className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800/90 font-black text-slate-900 dark:text-white border border-slate-300 dark:border-white/20 shadow-xs whitespace-nowrap">
                       {s.class}
                     </span>
                   </td>
                   <td className="px-4 py-3.5">
                     <p className="font-bold text-slate-900 dark:text-white whitespace-nowrap">{s.halaqah_name || 'Tanpa Halaqah'}</p>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 font-medium whitespace-nowrap">{s.teacher_name || '-'}</p>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">{s.teacher_name || '-'}</p>
                   </td>
                   <td className="px-4 py-3.5 text-center whitespace-nowrap">
                     <div className="inline-flex items-center gap-1.5 flex-nowrap justify-center">
-                      <span className="inline-block px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-900/50 shadow-xs whitespace-nowrap">
-                        {s.total_points} Poin
-                      </span>
+                      {Number(s.total_points || 0) === 0 ? (
+                        <span className="inline-block px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700/70 shadow-xs whitespace-nowrap">
+                          0 Poin
+                        </span>
+                      ) : Number(s.total_points || 0) < 50 ? (
+                        <span className="inline-block px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700/70 shadow-xs whitespace-nowrap">
+                          {s.total_points} Poin
+                        </span>
+                      ) : (
+                        <span className="inline-block px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 dark:bg-rose-950/70 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-700/70 shadow-xs whitespace-nowrap">
+                          {s.total_points} Poin
+                        </span>
+                      )}
                       {(s.total_deductions || 0) > 0 && (
                         <span
                           className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 whitespace-nowrap"
@@ -818,21 +828,21 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                       )}
                     </div>
                     {(s.tahfizh_points !== undefined || s.kesantrian_points !== undefined || s.akademik_points !== undefined) && (
-                      <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1 whitespace-nowrap">
+                      <div className="flex items-center justify-center gap-1 text-[10px] font-bold text-slate-600 dark:text-slate-300 mt-1 whitespace-nowrap">
                         <span
-                          className="text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-900/40 whitespace-nowrap"
+                          className="text-emerald-800 dark:text-emerald-300 bg-emerald-100/90 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded font-extrabold border border-emerald-300 dark:border-emerald-700/70 whitespace-nowrap"
                           title={`Poin Bersih Tahfizh: ${s.tahfizh_points || 0}`}
                         >
                           T: {s.tahfizh_points || 0}
                         </span>
                         <span
-                          className="text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900/40 whitespace-nowrap"
+                          className="text-blue-800 dark:text-blue-300 bg-blue-100/90 dark:bg-blue-950/60 px-1.5 py-0.5 rounded font-extrabold border border-blue-300 dark:border-blue-700/70 whitespace-nowrap"
                           title={`Poin Bersih Kesantrian: ${s.kesantrian_points || 0}`}
                         >
                           K: {s.kesantrian_points || 0}
                         </span>
                         <span
-                          className="text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 px-1.5 py-0.5 rounded border border-purple-200 dark:border-purple-900/40 whitespace-nowrap"
+                          className="text-purple-800 dark:text-purple-300 bg-purple-100/90 dark:bg-purple-950/60 px-1.5 py-0.5 rounded font-extrabold border border-purple-300 dark:border-purple-700/70 whitespace-nowrap"
                           title={`Poin Bersih Akademik: ${s.akademik_points || 0}`}
                         >
                           A: {s.akademik_points || 0}
@@ -851,21 +861,21 @@ export const StudentsPage: React.FC<StudentsPageProps> = ({
                       <button
                         onClick={() => onSelectStudent(s.id)}
                         title="Lihat Profil Santri"
-                        className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors cursor-pointer"
+                        className="p-1.5 rounded-lg text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/40 border border-slate-200/80 dark:border-white/10 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all cursor-pointer"
                       >
                         <Eye className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleOpenEditModal(s)}
                         title="Edit Data Santri"
-                        className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-colors cursor-pointer"
+                        className="p-1.5 rounded-lg text-slate-700 dark:text-slate-200 hover:text-amber-600 dark:hover:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-900/40 border border-slate-200/80 dark:border-white/10 hover:border-amber-300 dark:hover:border-amber-700 transition-all cursor-pointer"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => setStudentToDelete(s)}
                         title="Hapus Santri"
-                        className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                        className="p-1.5 rounded-lg text-slate-700 dark:text-slate-200 hover:text-rose-600 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-900/40 border border-slate-200/80 dark:border-white/10 hover:border-rose-300 dark:hover:border-rose-700 transition-all cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
