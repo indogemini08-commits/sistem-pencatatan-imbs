@@ -383,6 +383,8 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
   const pageTitle =
     filterDivision === 'kesantrian'
       ? 'Monitoring & Pelanggaran Kesantrian'
+      : filterDivision === 'akademik'
+      ? 'Monitoring & Pelanggaran Akademik'
       : filterDivision === 'tahfizh'
       ? 'Monitoring & Pelanggaran Tahfizh'
       : 'Rekap Terpadu Seluruh Pelanggaran';
@@ -390,9 +392,11 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
   const pageDesc =
     filterDivision === 'kesantrian'
       ? 'Pencatatan kedisiplinan asrama, ibadah shalat berjamaah, dan tata tertib santri.'
+      : filterDivision === 'akademik'
+      ? 'Pencatatan kedisiplinan ruang kelas, KBM sekolah, kehadiran belajar, dan tugas akademik.'
       : filterDivision === 'tahfizh'
       ? 'Pencatatan kedisiplinan halaqah Al-Quran, mutabaah, hafalan, dan adab halaqah.'
-      : 'Monitoring terpadu mencakup divisi Tahfizh dan Kesantrian dengan akumulasi poin terintegrasi.';
+      : 'Monitoring terpadu mencakup divisi Tahfizh, Kesantrian, dan Akademik dengan akumulasi poin terintegrasi.';
 
   return (
     <div className="space-y-5 sm:space-y-6 animate-scale-in">
@@ -1027,7 +1031,7 @@ export const RecordsHistoryPage: React.FC<RecordsHistoryPageProps> = ({
                   <div>
                     <span className="text-slate-500 dark:text-slate-400">Divisi:</span>{' '}
                     <span className="font-bold text-slate-700 dark:text-slate-300">
-                      {recordToCancel.division === 'kesantrian' ? '🏢 Kesantrian' : '🕌 Tahfizh'}
+                      {recordToCancel.division === 'kesantrian' ? '🏢 Kesantrian' : recordToCancel.division === 'akademik' ? '📚 Akademik' : '🕌 Tahfizh'}
                     </span>
                   </div>
                 </div>

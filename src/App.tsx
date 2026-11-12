@@ -341,7 +341,7 @@ export function App() {
             {settings?.school_name || "Pesantren Tahfizh Al-Qur'an"} • {settings?.app_name || "Sistem Poin Santri"}
           </p>
           <p className="text-slate-400 dark:text-slate-500 font-medium">
-            Tahun Ajaran {settings?.current_academic_year || "2025/2026"} • Sistem Kedisiplinan Terpadu (Tahfizh & Kesantrian)
+            Tahun Ajaran {settings?.current_academic_year || "2025/2026"} • Sistem Kedisiplinan Terpadu (Tahfizh, Kesantrian &amp; Akademik)
           </p>
         </footer>
       </div>
@@ -361,14 +361,17 @@ export function App() {
         isOpen={isQuickRecordOpen}
         onClose={() => setIsQuickRecordOpen(false)}
         currentUser={currentUser}
-        initialDivision={currentTab.includes('kesantrian') ? 'kesantrian' : 'tahfizh'}
+        initialDivision={
+          currentTab.includes('kesantrian')
+            ? 'kesantrian'
+            : currentTab.includes('akademik')
+            ? 'akademik'
+            : 'tahfizh'
+        }
         onSuccess={() => {}}
-        onViewHistory={() => {
-          if (currentTab.includes('kesantrian')) {
-            setCurrentTab('records_kesantrian');
-          } else {
-            setCurrentTab('records_tahfizh');
-          }
+        onViewHistory={(recordedDivision) => {
+          const target = recordedDivision || (currentTab.includes('kesantrian') ? 'kesantrian' : currentTab.includes('akademik') ? 'akademik' : 'tahfizh');
+          setCurrentTab(`records_${target}`);
         }}
       />
 
@@ -377,14 +380,17 @@ export function App() {
         isOpen={isQuickRewardOpen}
         onClose={() => setIsQuickRewardOpen(false)}
         currentUser={currentUser}
-        initialDivision={currentTab.includes('kesantrian') ? 'kesantrian' : 'tahfizh'}
+        initialDivision={
+          currentTab.includes('kesantrian')
+            ? 'kesantrian'
+            : currentTab.includes('akademik')
+            ? 'akademik'
+            : 'tahfizh'
+        }
         onSuccess={() => {}}
-        onViewHistory={() => {
-          if (currentTab.includes('kesantrian')) {
-            setCurrentTab('rewards_kesantrian');
-          } else {
-            setCurrentTab('rewards_tahfizh');
-          }
+        onViewHistory={(recordedDivision) => {
+          const target = recordedDivision || (currentTab.includes('kesantrian') ? 'kesantrian' : currentTab.includes('akademik') ? 'akademik' : 'tahfizh');
+          setCurrentTab(`rewards_${target}`);
         }}
       />
     </div>

@@ -264,6 +264,12 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
   const tahfizhCount = violations.filter((v) => (v.division || 'tahfizh') === 'tahfizh').length;
   const kesantrianCount = violations.filter((v) => v.division === 'kesantrian').length;
   const akademikCount = violations.filter((v) => v.division === 'akademik').length;
+  const formDivisionLabel =
+    formDivision === 'kesantrian'
+      ? 'Kesantrian'
+      : formDivision === 'akademik'
+      ? 'Akademik'
+      : 'Tahfizh';
 
   return (
     <div className="space-y-5 sm:space-y-6 animate-scale-in">
@@ -381,7 +387,7 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
         <div>
           <p className="font-bold">Keamanan Data Historis (Snapshot Terpadu):</p>
           <p className="text-indigo-800/80 dark:text-indigo-300/80 text-xs mt-0.5 leading-relaxed">
-            Perubahan nama atau nilai poin pada master ini tidak akan mengubah catatan riwayat pelanggaran santri yang sudah tersimpan sebelumnya. Kedua divisi menggunakan batas evaluasi (threshold) poin yang sama.
+            Perubahan nama atau nilai poin pada master ini tidak akan mengubah catatan riwayat pelanggaran santri yang sudah tersimpan sebelumnya. Ketiga divisi (Tahfizh, Kesantrian, dan Akademik) menggunakan batas evaluasi (threshold) poin yang sama.
           </p>
         </div>
       </div>
@@ -819,7 +825,13 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
                     type="text"
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
-                    placeholder="Misal: Terlambat Shalat Berjamaah Subuh"
+                    placeholder={
+                      formDivision === 'tahfizh'
+                        ? 'Misal: Lupa membawa buku mutabaah / mushaf'
+                        : formDivision === 'akademik'
+                        ? 'Misal: Tidak mengerjakan tugas KBM atau terlambat masuk kelas'
+                        : 'Misal: Terlambat Shalat Berjamaah Subuh'
+                    }
                     className="w-full text-xs sm:text-sm px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-white focus:border-indigo-500 outline-none"
                     required
                   />
@@ -865,7 +877,7 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
                     disabled={formSubmitting}
                     className="w-full sm:w-auto justify-center min-h-[42px] px-4 py-2 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50 flex items-center active:scale-[0.98]"
                   >
-                    {formSubmitting ? 'Menyimpan...' : 'Simpan Master Aturan'}
+                    {formSubmitting ? 'Menyimpan...' : `Simpan Aturan ${formDivisionLabel}`}
                   </button>
                 </div>
               </form>
@@ -1050,7 +1062,7 @@ export const ViolationsMasterPage: React.FC<ViolationsMasterPageProps> = ({
                     disabled={formSubmitting}
                     className="w-full sm:w-auto justify-center min-h-[42px] px-4 py-2 text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-indigo-700 hover:from-purple-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-50 flex items-center active:scale-[0.98]"
                   >
-                    {formSubmitting ? 'Memperbarui...' : 'Simpan Perubahan'}
+                    {formSubmitting ? 'Memperbarui...' : `Simpan Perubahan (${formDivisionLabel})`}
                   </button>
                 </div>
               </form>

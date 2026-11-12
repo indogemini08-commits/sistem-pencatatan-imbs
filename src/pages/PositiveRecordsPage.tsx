@@ -232,7 +232,12 @@ export const PositiveRecordsPage: React.FC<PositiveRecordsPageProps> = ({
       NIS: r.student_nis || '-',
       'Nama Santri': r.student_name || '-',
       Kelas: r.student_class_snapshot || '-',
-      Divisi: r.division === 'tahfizh' ? 'Tahfizh (Halaqah)' : 'Kesantrian (Asrama)',
+      Divisi:
+        r.division === 'tahfizh'
+          ? 'Tahfizh (Halaqah)'
+          : r.division === 'akademik'
+          ? 'Akademik (Sekolah/KBM)'
+          : 'Kesantrian (Asrama)',
       'Kegiatan / Prestasi': r.action_name_snapshot,
       'Poin Pengurang': r.points_deducted,
       Pembimbing: r.teacher_name_snapshot || '-',
@@ -265,6 +270,8 @@ export const PositiveRecordsPage: React.FC<PositiveRecordsPageProps> = ({
                 ? 'Kebaikan & Prestasi Tahfizh'
                 : filterDivision === 'kesantrian'
                 ? 'Kebaikan & Prestasi Kesantrian'
+                : filterDivision === 'akademik'
+                ? 'Kebaikan & Prestasi Akademik'
                 : 'Rekap Kebaikan & Prestasi Santri'}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">

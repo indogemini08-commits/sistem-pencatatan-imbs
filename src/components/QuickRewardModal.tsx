@@ -32,8 +32,30 @@ interface QuickRewardModalProps {
   initialDivision?: ViolationDivision;
   onSuccess?: () => void;
   onViewStudent?: (studentId: string) => void;
-  onViewHistory?: () => void;
+  onViewHistory?: (recordedDivision?: ViolationDivision) => void;
 }
+
+const REWARD_DIVISION_CONFIG: Record<ViolationDivision, {
+  label: string;
+  defaultLocation: string;
+  notesPlaceholder: string;
+}> = {
+  tahfizh: {
+    label: 'Tahfizh',
+    defaultLocation: '',
+    notesPlaceholder: "Misal: Setoran ziyadah melampaui target, tasmi' 1 juz mutqin...",
+  },
+  kesantrian: {
+    label: 'Kesantrian',
+    defaultLocation: 'Asrama',
+    notesPlaceholder: 'Misal: Teladan kebersihan kamar asrama, imam shalat rawatib tepat waktu...',
+  },
+  akademik: {
+    label: 'Akademik',
+    defaultLocation: 'Ruang Kelas / KBM',
+    notesPlaceholder: 'Misal: Juara olimpiade sains, aktif membantu teman saat KBM...',
+  },
+};
 
 export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
   isOpen,
@@ -225,7 +247,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
         customActionName: chosenName,
         customPoints,
         supervisorName: supervisorName.trim() || currentUser?.name || 'Pembina',
-        locationName: locationName.trim() || (division === 'kesantrian' ? 'Asrama' : undefined),
+        locationName: locationName.trim() || REWARD_DIVISION_CONFIG[division].defaultLocation || undefined,
         date: recordDate,
         time: recordTime,
         notes: notes.trim(),
@@ -387,8 +409,9 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                   <button
                     type="button"
                     onClick={() => {
+                      const recordedDivision = division;
                       onClose();
-                      onViewHistory();
+                      onViewHistory(recordedDivision);
                     }}
                     className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer"
                   >
@@ -634,7 +657,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                   rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Deskripsikan prestasi atau kegiatan positif yang dilakukan santri..."
+                  placeholder={REWARD_DIVISION_CONFIG[division].notesPlaceholder}
                   className="w-full text-xs sm:text-sm px-3 py-2 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 />
               </div>
@@ -644,7 +667,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                 <HelpCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                 <p>
                   Poin ini akan secara otomatis memotong poin pelanggaran aktif santri pada{' '}
-                  <span className="font-bold capitalize">Divisi {division}</span>. Jika santri memiliki 0 pelanggaran, nilai poin santri tetap 0 (tidak minus).
+                  <span className="font-bold capitalize">Divisi {REWARD_DIVISION_CONFIG[division].label}</span>. Jika santri memiliki 0 pelanggaran, nilai poin santri tetap 0 (tidak minus).
                 </p>
               </div>
 
@@ -667,7 +690,7 @@ export const QuickRewardModal: React.FC<QuickRewardModalProps> = ({
                   ) : (
                     <>
                       <Sparkles className="w-4 h-4" />
-                      <span>Simpan & Kurangi Poin (-{customPoints})</span>
+                      <span>Simpan Kebaikan {REWARD_DIVISION_CONFIG[division].label} (-{customPoints} Poin)</span>
                     </>
                   )}
                 </button>
