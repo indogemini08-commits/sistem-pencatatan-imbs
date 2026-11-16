@@ -711,7 +711,6 @@ export function buildStudentsListReportPDF(
     const status = ptsTotal < 20 ? 'AMAN' : ptsTotal < 50 ? 'PEMBINAAN' : 'ATENSI SP';
     return [
       (idx + 1).toString(),
-      s.student_number || '-',
       s.name,
       s.class || '-',
       `${ptsTahfizh} Poin`,
@@ -728,7 +727,7 @@ export function buildStudentsListReportPDF(
         [
           {
             content: '— Tidak ada data santri yang cocok dengan kriteria filter —',
-            colSpan: 9,
+            colSpan: 8,
             styles: {
               halign: 'center',
               fontStyle: 'italic',
@@ -741,7 +740,7 @@ export function buildStudentsListReportPDF(
 
   autoTable(doc, {
     startY: currentY,
-    head: [['No', 'NIS', 'Nama Santri', 'Kls', 'Poin Tahfizh', 'Poin Kesantrian', 'Poin Akademik', 'Total Poin', 'Status']],
+    head: [['No', 'Nama Santri', 'Kls', 'Poin Tahfizh', 'Poin Kesantrian', 'Poin Akademik', 'Total Poin', 'Status']],
     body: bodyData,
     theme: 'plain',
     headStyles: {
@@ -765,35 +764,34 @@ export function buildStudentsListReportPDF(
       fillColor: [248, 250, 252],
     },
     columnStyles: {
-      0: { halign: 'center', cellWidth: 7, fontStyle: 'bold', textColor: [100, 116, 139] },
-      1: { halign: 'center', cellWidth: 15 },
-      2: { cellWidth: 43, fontStyle: 'bold' },
-      3: { halign: 'center', cellWidth: 7.5, textColor: [79, 70, 229] },
-      4: { halign: 'center', cellWidth: 20.5 },
-      5: { halign: 'center', cellWidth: 22.5 },
-      6: { halign: 'center', cellWidth: 21.5 },
-      7: { halign: 'center', fontStyle: 'bold', cellWidth: 20 },
-      8: { halign: 'center', fontStyle: 'bold', cellWidth: 25 },
+      0: { halign: 'center', cellWidth: 8, fontStyle: 'bold', textColor: [100, 116, 139] },
+      1: { cellWidth: 56, fontStyle: 'bold' },
+      2: { halign: 'center', cellWidth: 8, textColor: [79, 70, 229] },
+      3: { halign: 'center', cellWidth: 22 },
+      4: { halign: 'center', cellWidth: 23 },
+      5: { halign: 'center', cellWidth: 22 },
+      6: { halign: 'center', fontStyle: 'bold', cellWidth: 20 },
+      7: { halign: 'center', fontStyle: 'bold', cellWidth: 23 },
     },
     didDrawCell: (data) => {
       if (data.section === 'body') {
-        // Poin Tahfizh (kolom index 4)
-        if (data.column.index === 4 && data.cell.raw !== undefined) {
+        // Poin Tahfizh (kolom index 3)
+        if (data.column.index === 3 && data.cell.raw !== undefined) {
           const raw = parseInt(String(data.cell.raw), 10) || 0;
           if (raw > 0) doc.setTextColor(16, 120, 80); // Emerald
         }
-        // Poin Kesantrian (kolom index 5)
-        if (data.column.index === 5 && data.cell.raw !== undefined) {
+        // Poin Kesantrian (kolom index 4)
+        if (data.column.index === 4 && data.cell.raw !== undefined) {
           const raw = parseInt(String(data.cell.raw), 10) || 0;
           if (raw > 0) doc.setTextColor(37, 99, 235); // Blue
         }
-        // Poin Akademik (kolom index 6)
-        if (data.column.index === 6 && data.cell.raw !== undefined) {
+        // Poin Akademik (kolom index 5)
+        if (data.column.index === 5 && data.cell.raw !== undefined) {
           const raw = parseInt(String(data.cell.raw), 10) || 0;
           if (raw > 0) doc.setTextColor(124, 58, 237); // Purple
         }
-        // Total Poin (kolom index 7)
-        if (data.column.index === 7 && data.cell.raw !== undefined) {
+        // Total Poin (kolom index 6)
+        if (data.column.index === 6 && data.cell.raw !== undefined) {
           const raw = parseInt(String(data.cell.raw), 10) || 0;
           if (raw === 0) {
             doc.setTextColor(16, 185, 129); // Emerald
@@ -803,8 +801,8 @@ export function buildStudentsListReportPDF(
             doc.setTextColor(225, 29, 72); // Rose
           }
         }
-        // Status styling (kolom index 8)
-        if (data.column.index === 8 && data.cell.raw !== undefined) {
+        // Status styling (kolom index 7)
+        if (data.column.index === 7 && data.cell.raw !== undefined) {
           const status = String(data.cell.raw);
           if (status === 'AMAN') {
             doc.setTextColor(4, 120, 87);
