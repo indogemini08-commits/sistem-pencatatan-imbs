@@ -473,19 +473,19 @@ export function buildViolationReportPDF(
   const bodyData: any[] = tableRows.length > 0
     ? tableRows
     : [
-        [
-          {
-            content: '— Tidak ada catatan pelanggaran yang tercatat pada kriteria filter ini —',
-            colSpan: 9,
-            styles: {
-              halign: 'center',
-              fontStyle: 'italic',
-              textColor: [100, 116, 139],
-              minCellHeight: 14,
-            },
+      [
+        {
+          content: '— Tidak ada catatan pelanggaran yang tercatat pada kriteria filter ini —',
+          colSpan: 9,
+          styles: {
+            halign: 'center',
+            fontStyle: 'italic',
+            textColor: [100, 116, 139],
+            minCellHeight: 14,
           },
-        ],
-      ];
+        },
+      ],
+    ];
 
   autoTable(doc, {
     startY: currentY,
@@ -724,19 +724,19 @@ export function buildStudentsListReportPDF(
   const bodyData: any[] = tableRows.length > 0
     ? tableRows
     : [
-        [
-          {
-            content: '— Tidak ada data santri yang cocok dengan kriteria filter —',
-            colSpan: 8,
-            styles: {
-              halign: 'center',
-              fontStyle: 'italic',
-              textColor: [100, 116, 139],
-              minCellHeight: 14,
-            },
+      [
+        {
+          content: '— Tidak ada data santri yang cocok dengan kriteria filter —',
+          colSpan: 8,
+          styles: {
+            halign: 'center',
+            fontStyle: 'italic',
+            textColor: [100, 116, 139],
+            minCellHeight: 14,
           },
-        ],
-      ];
+        },
+      ],
+    ];
 
   autoTable(doc, {
     startY: currentY,
@@ -930,19 +930,19 @@ export function buildStudentDetailPDF(
   const bodyData: any[] = tableRows.length > 0
     ? tableRows
     : [
-        [
-          {
-            content: 'Alhamdulillah, tidak ada catatan pelanggaran disiplin yang tercatat untuk santri ini.',
-            colSpan: 9,
-            styles: {
-              halign: 'center',
-              fontStyle: 'italic',
-              textColor: [16, 120, 80],
-              minCellHeight: 18,
-            },
+      [
+        {
+          content: 'Alhamdulillah, tidak ada catatan pelanggaran disiplin yang tercatat untuk santri ini.',
+          colSpan: 9,
+          styles: {
+            halign: 'center',
+            fontStyle: 'italic',
+            textColor: [16, 120, 80],
+            minCellHeight: 18,
           },
-        ],
-      ];
+        },
+      ],
+    ];
 
   autoTable(doc, {
     startY: currentY,

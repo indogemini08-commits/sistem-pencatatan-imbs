@@ -142,6 +142,8 @@ router.post('/', async (req: Request, res: Response) => {
       halaqahId,
       violationId,
       violationName,
+      customViolationName,
+      customPoints,
       points,
       division,
       locationName,
@@ -153,8 +155,12 @@ router.post('/', async (req: Request, res: Response) => {
       createdBy = 'Muhafizh',
     } = req.body;
 
-    if (!studentId || !violationId) {
-      return res.status(400).json({ error: 'Santri dan jenis pelanggaran wajib dipilih' });
+    if (!studentId) {
+      return res.status(400).json({ error: 'Santri wajib dipilih' });
+    }
+
+    if (!violationId && !customViolationName && !violationName) {
+      return res.status(400).json({ error: 'Jenis pelanggaran wajib dipilih atau diisi' });
     }
 
     // 1. Fetch Student (self-healing for serverless ephemeral instances)
@@ -171,22 +177,43 @@ router.post('/', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Santri tidak ditemukan' });
     }
 
-    // 2. Fetch Violation Master (and its default points)
-    let violation = get<any>('SELECT * FROM violations WHERE id = ?', [violationId]);
-    if (!violation && violationName) {
-      run(
-        `INSERT OR IGNORE INTO violations (id, code, name, division, category, description, default_points, status)
-         VALUES (?, ?, ?, ?, 'Kedisiplinan', '', ?, 'active')`,
-        [violationId, 'CUST_' + String(violationId).substring(0, 5), violationName, division || 'tahfizh', Number(points || 5)]
-      );
-      violation = get<any>('SELECT * FROM violations WHERE id = ?', [violationId]);
+    // 2. Fetch Violation Master or Custom Violation
+    let violationActualName = (customViolationName || violationName || '').trim();
+    let violationPoints = Number(customPoints !== undefined ? customPoints : points) || 0;
+    let actualViolationId: string | null = (violationId && violationId !== '__custom__') ? violationId : null;
+
+    if (actualViolationId) {
+      let violation = get<any>('SELECT * FROM violations WHERE id = ?', [actualViolationId]);
+      if (!violation && violationName) {
+        run(
+          `INSERT OR IGNORE INTO violations (id, code, name, division, category, description, default_points, status)
+           VALUES (?, ?, ?, ?, 'Kedisiplinan', '', ?, 'active')`,
+          [actualViolationId, 'CUST_' + String(actualViolationId).substring(0, 5), violationName, division || 'tahfizh', Number(points || 5)]
+        );
+        violation = get<any>('SELECT * FROM violations WHERE id = ?', [actualViolationId]);
+      }
+      if (violation) {
+        if (!violationActualName) {
+          violationActualName = violation.name;
+        }
+        if (violationPoints <= 0) {
+          violationPoints = violation.default_points;
+        }
+      } else {
+        actualViolationId = null;
+      }
     }
-    if (!violation) {
-      return res.status(404).json({ error: 'Jenis pelanggaran tidak ditemukan' });
+
+    if (!violationActualName) {
+      return res.status(400).json({ error: 'Nama pelanggaran wajib diisi' });
+    }
+
+    if (violationPoints <= 0) {
+      return res.status(400).json({ error: 'Bobot poin pelanggaran harus lebih dari 0' });
     }
 
     // Determine division
-    const finalDivision = division === 'kesantrian' ? 'kesantrian' : division === 'akademik' ? 'akademik' : (violation.division || 'tahfizh');
+    const finalDivision = division === 'kesantrian' ? 'kesantrian' : division === 'akademik' ? 'akademik' : 'tahfizh';
 
     // 3. Halaqah & Teacher resolution
     const actualHalaqahId = halaqahId || student.halaqah_id;
@@ -257,9 +284,9 @@ router.post('/', async (req: Request, res: Response) => {
         finalDivision,
         finalDivision === 'tahfizh' ? (actualHalaqahId || null) : null,
         finalDivision === 'tahfizh' ? (teacherId || null) : null,
-        violation.id,
-        violation.name,           // Snapshot name
-        violation.default_points, // Snapshot points (Read-only from master)
+        actualViolationId,
+        violationActualName,      // Snapshot name (Custom or Master)
+        violationPoints,          // Snapshot points (Custom or Master)
         halaqahName,              // Snapshot halaqah / lokasi
         teacherName,              // Snapshot teacher / pembina
         student.class,            // Snapshot student class at this moment
@@ -294,9 +321,9 @@ router.post('/', async (req: Request, res: Response) => {
       recordId: recordId,
       newData: {
         student: student.name,
-        violation: violation.name,
+        violation: violationActualName,
         division: finalDivision,
-        points: violation.default_points,
+        points: violationPoints,
         newTotalPoints,
         tahfizhPoints,
         kesantrianPoints,
@@ -310,9 +337,9 @@ router.post('/', async (req: Request, res: Response) => {
       message: 'Pelanggaran berhasil dicatat.',
       recordId,
       studentName: student.name,
-      violationName: violation.name,
+      violationName: violationActualName,
       division: finalDivision,
-      points: violation.default_points,
+      points: violationPoints,
       newTotalPoints,
       tahfizhPoints,
       kesantrianPoints,

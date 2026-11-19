@@ -86,9 +86,11 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
   // Selected student
   const [selectedStudentId, setSelectedStudentId] = useState<string>('');
 
-  // Violations Master
+  // Violations Master & Custom Violation
   const [violations, setViolations] = useState<MasterViolation[]>([]);
   const [selectedViolationId, setSelectedViolationId] = useState<string>('');
+  const [customViolationName, setCustomViolationName] = useState<string>('');
+  const [customPoints, setCustomPoints] = useState<number>(5);
   const [points, setPoints] = useState<number>(0);
 
   // Kesantrian specific fields
@@ -216,19 +218,26 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
     );
   }, [allStudents, studentSearch]);
 
-  // When selected violation changes, automatically set points (READ-ONLY)
+  // When selected violation changes, automatically set points
   useEffect(() => {
-    const found = violations.find((v) => v.id === selectedViolationId);
-    if (found) {
-      setPoints(found.default_points);
+    if (selectedViolationId === '__custom__') {
+      if (customPoints <= 0) setCustomPoints(5);
     } else {
-      setPoints(0);
+      const found = violations.find((v) => v.id === selectedViolationId);
+      if (found) {
+        setPoints(found.default_points);
+        setCustomViolationName('');
+      } else {
+        setPoints(0);
+      }
     }
   }, [selectedViolationId, violations]);
 
   const handleResetForNext = () => {
     setSuccessData(null);
     setSelectedViolationId('');
+    setCustomViolationName('');
+    setCustomPoints(5);
     setPoints(0);
     setNotes('');
     setErrorMsg('');
@@ -248,12 +257,25 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
       return;
     }
     if (!selectedViolationId) {
-      setErrorMsg('Silakan pilih Jenis Pelanggaran dari master list.');
+      setErrorMsg(`Silakan pilih Jenis Pelanggaran (${DIVISION_CONFIG[division].label}).`);
       return;
     }
-    if (points <= 0) {
-      setErrorMsg('Poin pelanggaran tidak valid.');
-      return;
+
+    const isCustom = selectedViolationId === '__custom__';
+    if (isCustom) {
+      if (!customViolationName.trim()) {
+        setErrorMsg('Silakan masukkan nama pelanggaran kustom.');
+        return;
+      }
+      if (customPoints <= 0) {
+        setErrorMsg('Bobot poin pelanggaran kustom harus lebih dari 0.');
+        return;
+      }
+    } else {
+      if (points <= 0) {
+        setErrorMsg('Poin pelanggaran tidak valid.');
+        return;
+      }
     }
 
     setLoading(true);
@@ -261,7 +283,10 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
       const studentObj =
         (division === 'tahfizh' ? halaqahStudents : allStudents).find((s) => s.id === selectedStudentId) ||
         allStudents.find((s) => s.id === selectedStudentId);
-      const violationObj = violations.find((v) => v.id === selectedViolationId);
+
+      const violationObj = !isCustom ? violations.find((v) => v.id === selectedViolationId) : null;
+      const chosenViolationName = isCustom ? customViolationName.trim() : (violationObj?.name || 'Pelanggaran');
+      const finalPoints = isCustom ? customPoints : (violationObj?.default_points || points);
 
       const res = await api.records.create({
         studentId: selectedStudentId,
@@ -269,9 +294,11 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
         studentNis: studentObj?.student_number,
         studentClass: studentObj?.class,
         halaqahId: division === 'tahfizh' ? selectedHalaqahId : null,
-        violationId: selectedViolationId,
-        violationName: violationObj?.name,
-        points: violationObj?.default_points || points,
+        violationId: isCustom ? undefined : selectedViolationId,
+        customViolationName: isCustom ? chosenViolationName : undefined,
+        customPoints: isCustom ? finalPoints : undefined,
+        violationName: chosenViolationName,
+        points: finalPoints,
         division: division,
         locationName: division === 'kesantrian' || division === 'akademik' ? locationName : undefined,
         supervisorName: division === 'kesantrian' || division === 'akademik' ? (supervisorName || currentUser?.name) : undefined,
@@ -283,9 +310,9 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
 
       setSuccessData({
         studentName: res.studentName || studentObj?.name || 'Santri',
-        violationName: res.violationName || violationObj?.name || 'Pelanggaran',
+        violationName: res.violationName || chosenViolationName,
         division: res.division || division,
-        points: res.points,
+        points: res.points || finalPoints,
         newTotalPoints: res.newTotalPoints,
         tahfizhPoints: res.tahfizhPoints,
         kesantrianPoints: res.kesantrianPoints,
@@ -335,6 +362,8 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                 onClick={() => {
                   setDivision('tahfizh');
                   setSelectedViolationId('');
+                  setCustomViolationName('');
+                  setCustomPoints(5);
                   setErrorMsg('');
                 }}
                 className={`min-h-[42px] py-2 px-1.5 sm:px-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
@@ -351,6 +380,8 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                 onClick={() => {
                   setDivision('kesantrian');
                   setSelectedViolationId('');
+                  setCustomViolationName('');
+                  setCustomPoints(5);
                   setErrorMsg('');
                   if (!locationName || locationName === 'Ruang Kelas / KBM') {
                     setLocationName('Asrama Putra');
@@ -370,6 +401,8 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                 onClick={() => {
                   setDivision('akademik');
                   setSelectedViolationId('');
+                  setCustomViolationName('');
+                  setCustomPoints(5);
                   setErrorMsg('');
                   if (!locationName || locationName === 'Asrama Putra') {
                     setLocationName('Ruang Kelas / KBM');
@@ -682,7 +715,12 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                 </label>
                 <select
                   value={selectedViolationId}
-                  onChange={(e) => setSelectedViolationId(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedViolationId(e.target.value);
+                    if (e.target.value !== '__custom__') {
+                      setCustomViolationName('');
+                    }
+                  }}
                   className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 font-medium"
                   required
                 >
@@ -692,24 +730,74 @@ export const QuickViolationModal: React.FC<QuickViolationModalProps> = ({
                       [{v.code}] {v.name} ({v.default_points} Poin - {v.category})
                     </option>
                   ))}
+                  <option value="__custom__">+ Pelanggaran Kustom Lainnya</option>
                 </select>
               </div>
 
-              {/* POIN OTOMATIS (READ ONLY BADGE) */}
-              <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-slate-200 dark:border-white/[0.08] flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
-                    Bobot Poin Pelanggaran
-                  </span>
-                  <span className="text-[11px] text-slate-400">
-                    Ditentukan otomatis berdasarkan standar terpadu
-                  </span>
+              {/* Custom Violation Name Input (if __custom__ is selected) */}
+              {selectedViolationId === '__custom__' && (
+                <div className="space-y-1 animate-fade-in">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                    Nama Pelanggaran Kustom
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={
+                      division === 'tahfizh'
+                        ? 'Contoh: Terlambat halaqah pagi tanpa izin, meninggalkan mushaf...'
+                        : division === 'kesantrian'
+                        ? 'Contoh: Membawa barang terlarang ke asrama, tidak piket kamar...'
+                        : 'Contoh: Tidak mengumpulkan tugas KBM, membuat kegaduhan di kelas...'
+                    }
+                    value={customViolationName}
+                    onChange={(e) => setCustomViolationName(e.target.value)}
+                    className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 font-medium"
+                    required
+                  />
                 </div>
-                <div className="flex items-center gap-1.5 bg-white dark:bg-[#161d31] px-4 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/40 shadow-sm">
-                  <span className="text-2xl font-black text-rose-600 dark:text-rose-400">{points}</span>
-                  <span className="text-xs font-bold text-slate-600 dark:text-slate-400">POIN</span>
+              )}
+
+              {/* POIN OTOMATIS vs BOBOT POIN KUSTOM */}
+              {selectedViolationId === '__custom__' ? (
+                <div className="space-y-1 animate-fade-in">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <AlertCircle className="w-3.5 h-3.5 text-rose-500" />
+                      Bobot Poin Pelanggaran (Kustom)
+                    </span>
+                    <span className="text-[10px] text-rose-700 dark:text-rose-300 font-bold bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded border border-rose-200 dark:border-rose-900/40">
+                      +{customPoints} Pts
+                    </span>
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="100"
+                    value={customPoints}
+                    onChange={(e) => setCustomPoints(Math.max(1, parseInt(e.target.value) || 1))}
+                    className="w-full text-sm px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-white/[0.1] bg-white dark:bg-[#161d31] font-mono font-bold text-rose-600 dark:text-rose-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                    required
+                  />
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                    Tentukan bobot poin pelanggaran kustom ini secara manual (minimal 1 poin).
+                  </p>
                 </div>
-              </div>
+              ) : (
+                <div className="bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-xl border border-slate-200 dark:border-white/[0.08] flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
+                      Bobot Poin Pelanggaran
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      Ditentukan otomatis berdasarkan standar terpadu
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 bg-white dark:bg-[#161d31] px-4 py-1.5 rounded-xl border border-rose-200 dark:border-rose-900/40 shadow-sm">
+                    <span className="text-2xl font-black text-rose-600 dark:text-rose-400">{points}</span>
+                    <span className="text-xs font-bold text-slate-600 dark:text-slate-400">POIN</span>
+                  </div>
+                </div>
+              )}
 
               {/* Keterangan Tambahan */}
               <div>

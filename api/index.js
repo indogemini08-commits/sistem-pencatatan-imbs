@@ -2557,6 +2557,8 @@ router7.post("/", async (req, res) => {
       halaqahId,
       violationId,
       violationName,
+      customViolationName,
+      customPoints,
       points,
       division,
       locationName,
@@ -2567,8 +2569,11 @@ router7.post("/", async (req, res) => {
       evidenceUrl,
       createdBy = "Muhafizh"
     } = req.body;
-    if (!studentId || !violationId) {
-      return res.status(400).json({ error: "Santri dan jenis pelanggaran wajib dipilih" });
+    if (!studentId) {
+      return res.status(400).json({ error: "Santri wajib dipilih" });
+    }
+    if (!violationId && !customViolationName && !violationName) {
+      return res.status(400).json({ error: "Jenis pelanggaran wajib dipilih atau diisi" });
     }
     let student = get("SELECT * FROM students WHERE id = ?", [studentId]);
     if (!student && studentName) {
@@ -2582,19 +2587,37 @@ router7.post("/", async (req, res) => {
     if (!student) {
       return res.status(404).json({ error: "Santri tidak ditemukan" });
     }
-    let violation = get("SELECT * FROM violations WHERE id = ?", [violationId]);
-    if (!violation && violationName) {
-      run(
-        `INSERT OR IGNORE INTO violations (id, code, name, division, category, description, default_points, status)
-         VALUES (?, ?, ?, ?, 'Kedisiplinan', '', ?, 'active')`,
-        [violationId, "CUST_" + String(violationId).substring(0, 5), violationName, division || "tahfizh", Number(points || 5)]
-      );
-      violation = get("SELECT * FROM violations WHERE id = ?", [violationId]);
+    let violationActualName = (customViolationName || violationName || "").trim();
+    let violationPoints = Number(customPoints !== void 0 ? customPoints : points) || 0;
+    let actualViolationId = violationId && violationId !== "__custom__" ? violationId : null;
+    if (actualViolationId) {
+      let violation = get("SELECT * FROM violations WHERE id = ?", [actualViolationId]);
+      if (!violation && violationName) {
+        run(
+          `INSERT OR IGNORE INTO violations (id, code, name, division, category, description, default_points, status)
+           VALUES (?, ?, ?, ?, 'Kedisiplinan', '', ?, 'active')`,
+          [actualViolationId, "CUST_" + String(actualViolationId).substring(0, 5), violationName, division || "tahfizh", Number(points || 5)]
+        );
+        violation = get("SELECT * FROM violations WHERE id = ?", [actualViolationId]);
+      }
+      if (violation) {
+        if (!violationActualName) {
+          violationActualName = violation.name;
+        }
+        if (violationPoints <= 0) {
+          violationPoints = violation.default_points;
+        }
+      } else {
+        actualViolationId = null;
+      }
     }
-    if (!violation) {
-      return res.status(404).json({ error: "Jenis pelanggaran tidak ditemukan" });
+    if (!violationActualName) {
+      return res.status(400).json({ error: "Nama pelanggaran wajib diisi" });
     }
-    const finalDivision = division === "kesantrian" ? "kesantrian" : division === "akademik" ? "akademik" : violation.division || "tahfizh";
+    if (violationPoints <= 0) {
+      return res.status(400).json({ error: "Bobot poin pelanggaran harus lebih dari 0" });
+    }
+    const finalDivision = division === "kesantrian" ? "kesantrian" : division === "akademik" ? "akademik" : "tahfizh";
     const actualHalaqahId = halaqahId || student.halaqah_id;
     let halaqahName = "Tanpa Halaqah";
     let teacherId = null;
@@ -2652,11 +2675,11 @@ router7.post("/", async (req, res) => {
         finalDivision,
         finalDivision === "tahfizh" ? actualHalaqahId || null : null,
         finalDivision === "tahfizh" ? teacherId || null : null,
-        violation.id,
-        violation.name,
-        // Snapshot name
-        violation.default_points,
-        // Snapshot points (Read-only from master)
+        actualViolationId,
+        violationActualName,
+        // Snapshot name (Custom or Master)
+        violationPoints,
+        // Snapshot points (Custom or Master)
         halaqahName,
         // Snapshot halaqah / lokasi
         teacherName,
@@ -2690,9 +2713,9 @@ router7.post("/", async (req, res) => {
       recordId,
       newData: {
         student: student.name,
-        violation: violation.name,
+        violation: violationActualName,
         division: finalDivision,
-        points: violation.default_points,
+        points: violationPoints,
         newTotalPoints,
         tahfizhPoints,
         kesantrianPoints,
@@ -2704,9 +2727,9 @@ router7.post("/", async (req, res) => {
       message: "Pelanggaran berhasil dicatat.",
       recordId,
       studentName: student.name,
-      violationName: violation.name,
+      violationName: violationActualName,
       division: finalDivision,
-      points: violation.default_points,
+      points: violationPoints,
       newTotalPoints,
       tahfizhPoints,
       kesantrianPoints,

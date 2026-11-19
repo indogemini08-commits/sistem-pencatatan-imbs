@@ -417,7 +417,9 @@ export const api = {
       studentNis?: string;
       studentClass?: string;
       halaqahId?: string | null;
-      violationId: string;
+      violationId?: string;
+      customViolationName?: string;
+      customPoints?: number;
       violationName?: string;
       points?: number;
       division?: ViolationDivision;
