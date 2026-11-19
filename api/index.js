@@ -2935,17 +2935,191 @@ router7.get("/stats", (req, res) => {
       GROUP BY vr.halaqah_name_snapshot
       ORDER BY total_points DESC
     `);
-    const monthlyTrend = query(`
+    const now = /* @__PURE__ */ new Date();
+    const todayStr = now.toISOString().split("T")[0];
+    const dayOfWeek = now.getDay();
+    const distToMon = (dayOfWeek + 6) % 7;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - distToMon);
+    const dayNames = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Ahad"];
+    const shortDays = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Ahd"];
+    const weekStartDate = new Date(monday).toISOString().split("T")[0];
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    const weekEndDate = sunday.toISOString().split("T")[0];
+    const weekViolations = query(`
+      SELECT vr.date, vr.division,
+             COUNT(vr.id) as count,
+             COALESCE(SUM(vr.points_snapshot), 0) as points
+      FROM violation_records vr
+      JOIN students s ON s.id = vr.student_id AND s.status = 'active'
+      WHERE vr.status = 'active' AND vr.date >= ? AND vr.date <= ? ${divisionFilterSql}
+      GROUP BY vr.date, vr.division
+    `, [weekStartDate, weekEndDate]);
+    const weekPositives = query(`
+      SELECT pr.date, pr.division,
+             COUNT(pr.id) as count,
+             COALESCE(SUM(pr.points_deducted), 0) as points
+      FROM positive_records pr
+      JOIN students s ON s.id = pr.student_id AND s.status = 'active'
+      WHERE pr.status = 'active' AND pr.date >= ? AND pr.date <= ? ${hasDivisionFilter ? `AND pr.division = '${division}'` : ""}
+      GROUP BY pr.date, pr.division
+    `, [weekStartDate, weekEndDate]);
+    const weeklyTrend = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const dStr = d.toISOString().split("T")[0];
+      const vDay = weekViolations.filter((v) => v.date === dStr);
+      const pDay = weekPositives.filter((p) => p.date === dStr);
+      const tahfizhV = vDay.find((v) => v.division === "tahfizh");
+      const kesantrianV = vDay.find((v) => v.division === "kesantrian");
+      const akademikV = vDay.find((v) => v.division === "akademik");
+      weeklyTrend.push({
+        date: dStr,
+        dayName: dayNames[i],
+        shortDay: shortDays[i],
+        isToday: dStr === todayStr,
+        count: vDay.reduce((sum, v) => sum + Number(v.count || 0), 0),
+        points: vDay.reduce((sum, v) => sum + Number(v.points || 0), 0),
+        tahfizhCount: Number(tahfizhV?.count || 0),
+        tahfizhPoints: Number(tahfizhV?.points || 0),
+        kesantrianCount: Number(kesantrianV?.count || 0),
+        kesantrianPoints: Number(kesantrianV?.points || 0),
+        akademikCount: Number(akademikV?.count || 0),
+        akademikPoints: Number(akademikV?.points || 0),
+        positiveCount: pDay.reduce((sum, p) => sum + Number(p.count || 0), 0),
+        positivePoints: pDay.reduce((sum, p) => sum + Number(p.points || 0), 0)
+      });
+    }
+    const monthYearStr = todayStr.substring(0, 7);
+    const monthViolations = query(`
+      SELECT vr.date, vr.division,
+             COUNT(vr.id) as count,
+             COALESCE(SUM(vr.points_snapshot), 0) as points
+      FROM violation_records vr
+      JOIN students s ON s.id = vr.student_id AND s.status = 'active'
+      WHERE vr.status = 'active' AND vr.date LIKE ? ${divisionFilterSql}
+      GROUP BY vr.date, vr.division
+    `, [`${monthYearStr}%`]);
+    const monthPositives = query(`
+      SELECT pr.date, pr.division,
+             COUNT(pr.id) as count,
+             COALESCE(SUM(pr.points_deducted), 0) as points
+      FROM positive_records pr
+      JOIN students s ON s.id = pr.student_id AND s.status = 'active'
+      WHERE pr.status = 'active' AND pr.date LIKE ? ${hasDivisionFilter ? `AND pr.division = '${division}'` : ""}
+      GROUP BY pr.date, pr.division
+    `, [`${monthYearStr}%`]);
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+    const weekRanges = [
+      { label: "Pekan 1", start: 1, end: 7, rangeText: "1 - 7" },
+      { label: "Pekan 2", start: 8, end: 14, rangeText: "8 - 14" },
+      { label: "Pekan 3", start: 15, end: 21, rangeText: "15 - 21" },
+      { label: "Pekan 4", start: 22, end: totalDaysInMonth, rangeText: `22 - ${totalDaysInMonth}` }
+    ];
+    const monthWeeksTrend = weekRanges.map((wr) => {
+      const vWeek = monthViolations.filter((v) => {
+        const day = parseInt(v.date.split("-")[2], 10);
+        return day >= wr.start && day <= wr.end;
+      });
+      const pWeek = monthPositives.filter((p) => {
+        const day = parseInt(p.date.split("-")[2], 10);
+        return day >= wr.start && day <= wr.end;
+      });
+      const tahfizhV = vWeek.filter((v) => v.division === "tahfizh");
+      const kesantrianV = vWeek.filter((v) => v.division === "kesantrian");
+      const akademikV = vWeek.filter((v) => v.division === "akademik");
+      return {
+        weekLabel: wr.label,
+        dateRange: `Tgl ${wr.rangeText}`,
+        count: vWeek.reduce((sum, v) => sum + Number(v.count || 0), 0),
+        points: vWeek.reduce((sum, v) => sum + Number(v.points || 0), 0),
+        tahfizhCount: tahfizhV.reduce((sum, v) => sum + Number(v.count || 0), 0),
+        tahfizhPoints: tahfizhV.reduce((sum, v) => sum + Number(v.points || 0), 0),
+        kesantrianCount: kesantrianV.reduce((sum, v) => sum + Number(v.count || 0), 0),
+        kesantrianPoints: kesantrianV.reduce((sum, v) => sum + Number(v.points || 0), 0),
+        akademikCount: akademikV.reduce((sum, v) => sum + Number(v.count || 0), 0),
+        akademikPoints: akademikV.reduce((sum, v) => sum + Number(v.points || 0), 0),
+        positiveCount: pWeek.reduce((sum, p) => sum + Number(p.count || 0), 0),
+        positivePoints: pWeek.reduce((sum, p) => sum + Number(p.points || 0), 0)
+      };
+    });
+    const monthDaysTrend = [];
+    for (let day = 1; day <= totalDaysInMonth; day++) {
+      const dStr = `${monthYearStr}-${String(day).padStart(2, "0")}`;
+      const vDay = monthViolations.filter((v) => v.date === dStr);
+      const pDay = monthPositives.filter((p) => p.date === dStr);
+      const tahfizhV = vDay.find((v) => v.division === "tahfizh");
+      const kesantrianV = vDay.find((v) => v.division === "kesantrian");
+      const akademikV = vDay.find((v) => v.division === "akademik");
+      const dateObj = new Date(year, month, day);
+      const dayIdx = (dateObj.getDay() + 6) % 7;
+      monthDaysTrend.push({
+        date: dStr,
+        dayNumber: day,
+        dayName: dayNames[dayIdx],
+        shortDay: `${day}`,
+        isToday: dStr === todayStr,
+        count: vDay.reduce((sum, v) => sum + Number(v.count || 0), 0),
+        points: vDay.reduce((sum, v) => sum + Number(v.points || 0), 0),
+        tahfizhCount: Number(tahfizhV?.count || 0),
+        tahfizhPoints: Number(tahfizhV?.points || 0),
+        kesantrianCount: Number(kesantrianV?.count || 0),
+        kesantrianPoints: Number(kesantrianV?.points || 0),
+        akademikCount: Number(akademikV?.count || 0),
+        akademikPoints: Number(akademikV?.points || 0),
+        positiveCount: pDay.reduce((sum, p) => sum + Number(p.count || 0), 0),
+        positivePoints: pDay.reduce((sum, p) => sum + Number(p.points || 0), 0)
+      });
+    }
+    const rawMonthly = query(`
       SELECT substr(vr.date, 1, 7) as month,
+             vr.division,
              COUNT(vr.id) as count,
              COALESCE(SUM(vr.points_snapshot), 0) as points
       FROM violation_records vr
       JOIN students s ON s.id = vr.student_id AND s.status = 'active'
       WHERE vr.status = 'active' ${divisionFilterSql}
-      GROUP BY month
+      GROUP BY month, vr.division
       ORDER BY month ASC
-      LIMIT 6
     `);
+    const rawMonthlyPos = query(`
+      SELECT substr(pr.date, 1, 7) as month,
+             COUNT(pr.id) as count,
+             COALESCE(SUM(pr.points_deducted), 0) as points
+      FROM positive_records pr
+      JOIN students s ON s.id = pr.student_id AND s.status = 'active'
+      WHERE pr.status = 'active' ${hasDivisionFilter ? `AND pr.division = '${division}'` : ""}
+      GROUP BY month
+    `);
+    const last6Months = [];
+    for (let m = 5; m >= 0; m--) {
+      const d = new Date(year, month - m, 1);
+      last6Months.push(d.toISOString().substring(0, 7));
+    }
+    const monthlyTrend = last6Months.map((mStr) => {
+      const vMonth = rawMonthly.filter((r) => r.month === mStr);
+      const pMonth = rawMonthlyPos.find((r) => r.month === mStr);
+      const tahfizhV = vMonth.find((r) => r.division === "tahfizh");
+      const kesantrianV = vMonth.find((r) => r.division === "kesantrian");
+      const akademikV = vMonth.find((r) => r.division === "akademik");
+      return {
+        month: mStr,
+        count: vMonth.reduce((sum, r) => sum + Number(r.count || 0), 0),
+        points: vMonth.reduce((sum, r) => sum + Number(r.points || 0), 0),
+        tahfizhCount: Number(tahfizhV?.count || 0),
+        tahfizhPoints: Number(tahfizhV?.points || 0),
+        kesantrianCount: Number(kesantrianV?.count || 0),
+        kesantrianPoints: Number(kesantrianV?.points || 0),
+        akademikCount: Number(akademikV?.count || 0),
+        akademikPoints: Number(akademikV?.points || 0),
+        positiveCount: Number(pMonth?.count || 0),
+        positivePoints: Number(pMonth?.points || 0)
+      };
+    });
     const attentionThreshold = thresholds.find((t) => t.minimum_points > 0)?.minimum_points || 20;
     const studentsNeedingAttention = enrichedStudents.filter((s) => s.total_points >= attentionThreshold).sort((a, b) => b.total_points - a.total_points);
     return res.json({
@@ -2974,6 +3148,9 @@ router7.get("/stats", (req, res) => {
       byCategory,
       pointsByHalaqah,
       monthlyTrend,
+      weeklyTrend,
+      monthWeeksTrend,
+      monthDaysTrend,
       studentsNeedingAttention
     });
   } catch (err) {

@@ -37,6 +37,954 @@ import { storageSync } from '../services/storageSync';
 import { StatusBadge } from '../components/Badge';
 import { sortClasses } from '../utils/classHelper';
 
+interface DisciplineTrendChartProps {
+  stats: DashboardStats | null;
+  chartTimeframe: 'week' | 'month' | 'semester';
+  setChartTimeframe: (tf: 'week' | 'month' | 'semester') => void;
+  onSelectTab: (tab: string) => void;
+}
+
+type ChartMode = 'cases' | 'points' | 'divisions' | 'comparison';
+
+interface TrendChartItem {
+  key: string;
+  label: string;
+  fullLabel: string;
+  count: number;
+  points: number;
+  tahfizhCount: number;
+  tahfizhPoints: number;
+  kesantrianCount: number;
+  kesantrianPoints: number;
+  akademikCount: number;
+  akademikPoints: number;
+  positiveCount: number;
+  positivePoints: number;
+  isToday?: boolean;
+}
+
+// Cubic Bezier Spline generator for ultra-smooth neon curves
+function getSplinePath(points: Array<{ x: number; y: number }>): string {
+  if (points.length === 0) return '';
+  if (points.length === 1) return `M ${points[0].x.toFixed(1)},${points[0].y.toFixed(1)}`;
+
+  let d = `M ${points[0].x.toFixed(1)},${points[0].y.toFixed(1)}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = i > 0 ? points[i - 1] : points[i];
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    const p3 = i < points.length - 2 ? points[i + 2] : p2;
+
+    const cp1x = p1.x + (p2.x - p0.x) / 6;
+    const cp1y = p1.y + (p2.y - p0.y) / 6;
+    const cp2x = p2.x - (p3.x - p1.x) / 6;
+    const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+    d += ` C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+  }
+  return d;
+}
+
+function getAreaPath(points: Array<{ x: number; y: number }>, baselineY: number = 155): string {
+  if (points.length === 0) return '';
+  const spline = getSplinePath(points);
+  const firstX = points[0].x.toFixed(1);
+  const lastX = points[points.length - 1].x.toFixed(1);
+  return `${spline} L ${lastX},${baselineY} L ${firstX},${baselineY} Z`;
+}
+
+export const DisciplineTrendChart: React.FC<DisciplineTrendChartProps> = ({
+  stats,
+  chartTimeframe,
+  setChartTimeframe,
+  onSelectTab,
+}) => {
+  const [chartMode, setChartMode] = useState<ChartMode>('cases');
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  // Normalize dataset based on chartTimeframe
+  const dataset: TrendChartItem[] = useMemo(() => {
+    if (chartTimeframe === 'week') {
+      const raw = stats?.weeklyTrend || [];
+      if (raw.length === 0) {
+        const days = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Ahd'];
+        const dayNames = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Ahad'];
+        return days.map((d, i) => ({
+          key: `w-${i}`,
+          label: d,
+          fullLabel: `${dayNames[i]}, Pekan Ini`,
+          count: 0,
+          points: 0,
+          tahfizhCount: 0,
+          tahfizhPoints: 0,
+          kesantrianCount: 0,
+          kesantrianPoints: 0,
+          akademikCount: 0,
+          akademikPoints: 0,
+          positiveCount: 0,
+          positivePoints: 0,
+          isToday: false,
+        }));
+      }
+      return raw.map((item, idx) => ({
+        key: `w-${idx}`,
+        label: item.shortDay,
+        fullLabel: `${item.dayName}${item.date ? `, ${new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}` : ''}`,
+        count: item.count || 0,
+        points: item.points || 0,
+        tahfizhCount: item.tahfizhCount || 0,
+        tahfizhPoints: item.tahfizhPoints || 0,
+        kesantrianCount: item.kesantrianCount || 0,
+        kesantrianPoints: item.kesantrianPoints || 0,
+        akademikCount: item.akademikCount || 0,
+        akademikPoints: item.akademikPoints || 0,
+        positiveCount: item.positiveCount || 0,
+        positivePoints: item.positivePoints || 0,
+        isToday: item.isToday,
+      }));
+    }
+
+    if (chartTimeframe === 'month') {
+      const raw = stats?.monthWeeksTrend || [];
+      if (raw.length === 0) {
+        return [1, 2, 3, 4].map((w, i) => ({
+          key: `m-${i}`,
+          label: `Pekan ${w}`,
+          fullLabel: `Pekan ${w} Bulan Ini`,
+          count: 0,
+          points: 0,
+          tahfizhCount: 0,
+          tahfizhPoints: 0,
+          kesantrianCount: 0,
+          kesantrianPoints: 0,
+          akademikCount: 0,
+          akademikPoints: 0,
+          positiveCount: 0,
+          positivePoints: 0,
+          isToday: false,
+        }));
+      }
+      return raw.map((item, idx) => ({
+        key: `m-${idx}`,
+        label: item.weekLabel,
+        fullLabel: `${item.weekLabel} (${item.dateRange})`,
+        count: item.count || 0,
+        points: item.points || 0,
+        tahfizhCount: item.tahfizhCount || 0,
+        tahfizhPoints: item.tahfizhPoints || 0,
+        kesantrianCount: item.kesantrianCount || 0,
+        kesantrianPoints: item.kesantrianPoints || 0,
+        akademikCount: item.akademikCount || 0,
+        akademikPoints: item.akademikPoints || 0,
+        positiveCount: item.positiveCount || 0,
+        positivePoints: item.positivePoints || 0,
+        isToday: false,
+      }));
+    }
+
+    // chartTimeframe === 'semester'
+    const raw = stats?.monthlyTrend || [];
+    if (raw.length === 0) {
+      return ['Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'].map((m, i) => ({
+        key: `s-${i}`,
+        label: m,
+        fullLabel: `Bulan ${m}`,
+        count: 0,
+        points: 0,
+        tahfizhCount: 0,
+        tahfizhPoints: 0,
+        kesantrianCount: 0,
+        kesantrianPoints: 0,
+        akademikCount: 0,
+        akademikPoints: 0,
+        positiveCount: 0,
+        positivePoints: 0,
+        isToday: false,
+      }));
+    }
+    return raw.map((item, idx) => {
+      let displayMonth = item.month;
+      if (item.month.includes('-')) {
+        const parts = item.month.split('-');
+        const mIdx = parseInt(parts[1], 10) - 1;
+        const mNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        displayMonth = mNames[mIdx] || item.month;
+      }
+      return {
+        key: `s-${idx}`,
+        label: displayMonth,
+        fullLabel: `Bulan ${displayMonth} (${item.month})`,
+        count: item.count || 0,
+        points: item.points || 0,
+        tahfizhCount: item.tahfizhCount || 0,
+        tahfizhPoints: item.tahfizhPoints || 0,
+        kesantrianCount: item.kesantrianCount || 0,
+        kesantrianPoints: item.kesantrianPoints || 0,
+        akademikCount: item.akademikCount || 0,
+        akademikPoints: item.akademikPoints || 0,
+        positiveCount: item.positiveCount || 0,
+        positivePoints: item.positivePoints || 0,
+        isToday: false,
+      };
+    });
+  }, [stats, chartTimeframe]);
+
+  // Analytical summary
+  const summary = useMemo(() => {
+    const totalCases = dataset.reduce((s, it) => s + it.count, 0);
+    const totalPoints = dataset.reduce((s, it) => s + it.points, 0);
+    const totalTahfizh = dataset.reduce((s, it) => s + it.tahfizhCount, 0);
+    const totalKesantrian = dataset.reduce((s, it) => s + it.kesantrianCount, 0);
+    const totalAkademik = dataset.reduce((s, it) => s + it.akademikCount, 0);
+    const totalPositive = dataset.reduce((s, it) => s + it.positiveCount, 0);
+    const totalPositivePoints = dataset.reduce((s, it) => s + it.positivePoints, 0);
+
+    let peak = dataset[0];
+    for (const it of dataset) {
+      if (chartMode === 'points') {
+        if (it.points > (peak?.points || 0)) peak = it;
+      } else {
+        if (it.count > (peak?.count || 0)) peak = it;
+      }
+    }
+
+    const maxDivCount = Math.max(totalTahfizh, totalKesantrian, totalAkademik);
+    let dominantDiv = 'Seimbang';
+    if (totalCases > 0 && maxDivCount > 0) {
+      if (maxDivCount === totalTahfizh) {
+        dominantDiv = `Tahfizh (${Math.round((totalTahfizh / totalCases) * 100)}%)`;
+      } else if (maxDivCount === totalKesantrian) {
+        dominantDiv = `Kesantrian (${Math.round((totalKesantrian / totalCases) * 100)}%)`;
+      } else {
+        dominantDiv = `Akademik (${Math.round((totalAkademik / totalCases) * 100)}%)`;
+      }
+    }
+
+    return {
+      totalCases,
+      totalPoints,
+      totalTahfizh,
+      totalKesantrian,
+      totalAkademik,
+      totalPositive,
+      totalPositivePoints,
+      peak,
+      dominantDiv,
+    };
+  }, [dataset, chartMode]);
+
+  // Max value for scaling
+  const maxValue = useMemo(() => {
+    if (chartMode === 'cases') {
+      const max = Math.max(...dataset.map((d) => d.count), 0);
+      return Math.max(max, 4);
+    }
+    if (chartMode === 'points') {
+      const max = Math.max(...dataset.map((d) => d.points), 0);
+      return Math.max(max, 20);
+    }
+    if (chartMode === 'divisions') {
+      const max = Math.max(
+        ...dataset.flatMap((d) => [d.tahfizhCount, d.kesantrianCount, d.akademikCount]),
+        0
+      );
+      return Math.max(max, 4);
+    }
+    // comparison mode
+    const max = Math.max(
+      ...dataset.flatMap((d) => [d.count, d.positiveCount]),
+      0
+    );
+    return Math.max(max, 4);
+  }, [dataset, chartMode]);
+
+  // SVG coordinate computation
+  const getX = (idx: number) => 45 + (idx / Math.max(1, dataset.length - 1)) * 590;
+  const getY = (val: number) => 155 - (Math.min(val, maxValue) / maxValue) * 125;
+
+  const pointsCases = useMemo(() => dataset.map((d, i) => ({ x: getX(i), y: getY(d.count), data: d })), [dataset, maxValue]);
+  const pointsPoints = useMemo(() => dataset.map((d, i) => ({ x: getX(i), y: getY(d.points), data: d })), [dataset, maxValue]);
+
+  const pointsTahfizh = useMemo(() => dataset.map((d, i) => ({ x: getX(i), y: getY(d.tahfizhCount), data: d })), [dataset, maxValue]);
+  const pointsKesantrian = useMemo(() => dataset.map((d, i) => ({ x: getX(i), y: getY(d.kesantrianCount), data: d })), [dataset, maxValue]);
+  const pointsAkademik = useMemo(() => dataset.map((d, i) => ({ x: getX(i), y: getY(d.akademikCount), data: d })), [dataset, maxValue]);
+
+  const pointsViolations = useMemo(() => dataset.map((d, i) => ({ x: getX(i), y: getY(d.count), data: d })), [dataset, maxValue]);
+  const pointsPositives = useMemo(() => dataset.map((d, i) => ({ x: getX(i), y: getY(d.positiveCount), data: d })), [dataset, maxValue]);
+
+  // Determine current active index for tooltip
+  const todayIndex = dataset.findIndex((d) => d.isToday);
+  const defaultIndex = todayIndex !== -1 ? todayIndex : (summary.peak ? dataset.indexOf(summary.peak) : 0);
+  const currentActiveIndex = activeIndex !== null ? activeIndex : defaultIndex;
+  const activeItem = dataset[currentActiveIndex] || dataset[0];
+  const activeX = getX(currentActiveIndex);
+  const leftPercent = Math.max(16, Math.min(84, (activeX / 680) * 100));
+
+  return (
+    <div className="saas-card p-5 sm:p-6 transition-all duration-300">
+      {/* 1. Header with Title & Controls */}
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-white/[0.08]">
+        <div>
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400">
+              <TrendingUp className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                <span>Tren Kedisiplinan & Pelanggaran</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 font-bold uppercase tracking-wide">
+                  Data Riil
+                </span>
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                {chartMode === 'cases' && 'Frekuensi jumlah kasus catatan kedisiplinan santri'}
+                {chartMode === 'points' && 'Akumulasi bobot poin sanksi kedisiplinan'}
+                {chartMode === 'divisions' && 'Komparasi catatan antar Divisi Tahfizh, Kesantrian & Akademik'}
+                {chartMode === 'comparison' && 'Perbandingan pelanggaran disiplin vs amalan kebaikan & prestasi'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Controls: Mode Switcher & Timeframe Selector */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Chart Mode Pills (Alih Fungsi) */}
+          <div className="inline-flex items-center p-1 rounded-xl bg-slate-100/90 dark:bg-white/[0.05] border border-slate-200/80 dark:border-white/[0.08] text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => setChartMode('cases')}
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                chartMode === 'cases'
+                  ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-xs font-bold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="Frekuensi Jumlah Kasus"
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Kasus</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setChartMode('points')}
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                chartMode === 'points'
+                  ? 'bg-white dark:bg-slate-800 text-amber-600 dark:text-amber-400 shadow-xs font-bold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="Bobot Poin Sanksi"
+            >
+              <ShieldAlert className="w-3.5 h-3.5" />
+              <span>Poin</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setChartMode('divisions')}
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                chartMode === 'divisions'
+                  ? 'bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-xs font-bold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="Komparasi 3 Divisi"
+            >
+              <Building2 className="w-3.5 h-3.5" />
+              <span>3 Divisi</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setChartMode('comparison')}
+              className={`px-2.5 py-1 rounded-lg transition-all flex items-center gap-1.5 cursor-pointer ${
+                chartMode === 'comparison'
+                  ? 'bg-white dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 shadow-xs font-bold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="Disiplin vs Prestasi"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Prestasi</span>
+            </button>
+          </div>
+
+          {/* Timeframe pill selector */}
+          <div className="inline-flex items-center p-1 rounded-xl bg-slate-100/90 dark:bg-white/[0.05] border border-slate-200/80 dark:border-white/[0.08] text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => setChartTimeframe('week')}
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                chartTimeframe === 'week'
+                  ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-white shadow-xs font-bold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              Minggu Ini
+            </button>
+            <button
+              type="button"
+              onClick={() => setChartTimeframe('month')}
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                chartTimeframe === 'month'
+                  ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-white shadow-xs font-bold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              Bulan Ini
+            </button>
+            <button
+              type="button"
+              onClick={() => setChartTimeframe('semester')}
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                chartTimeframe === 'semester'
+                  ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-white shadow-xs font-bold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              6 Bulan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Smart KPI Metric Summary Chips */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-4 pb-2">
+        <div className="p-2.5 rounded-xl bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/[0.06]">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            Total Periode Ini
+          </span>
+          <div className="flex items-baseline gap-1.5 mt-0.5">
+            <span className="text-lg font-black text-slate-900 dark:text-white">{summary.totalCases}</span>
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Kasus</span>
+            <span className="text-[11px] font-bold text-rose-500 dark:text-rose-400 ml-auto">
+              +{summary.totalPoints} Pts
+            </span>
+          </div>
+        </div>
+
+        <div className="p-2.5 rounded-xl bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/[0.06]">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            Puncak Kejadian
+          </span>
+          <div className="flex items-baseline gap-1.5 mt-0.5 truncate">
+            <span className="text-sm font-black text-indigo-600 dark:text-indigo-400 truncate">
+              {summary.peak?.label || '-'}
+            </span>
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              ({chartMode === 'points' ? `${summary.peak?.points || 0} Pts` : `${summary.peak?.count || 0} Kasus`})
+            </span>
+          </div>
+        </div>
+
+        <div className="p-2.5 rounded-xl bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/[0.06]">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            Divisi Terbanyak
+          </span>
+          <div className="text-xs sm:text-sm font-black text-slate-800 dark:text-slate-200 mt-0.5 truncate">
+            {summary.dominantDiv}
+          </div>
+        </div>
+
+        <div className="p-2.5 rounded-xl bg-slate-50/80 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/[0.06]">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+            Kebaikan & Prestasi
+          </span>
+          <div className="flex items-baseline gap-1.5 mt-0.5">
+            <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">
+              {summary.totalPositive}
+            </span>
+            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Catatan</span>
+            <span className="text-[11px] font-bold text-emerald-500 dark:text-emerald-400 ml-auto">
+              -{summary.totalPositivePoints} Pts
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Multi-line Legends when in divisions or comparison mode */}
+      {chartMode === 'divisions' && (
+        <div className="flex flex-wrap items-center gap-4 text-xs font-bold pt-1 pb-1 px-1">
+          <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+            <span className="w-3 h-1 rounded-full bg-emerald-500 inline-block"></span>
+            <span>Tahfizh: {summary.totalTahfizh} Kasus</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-sky-600 dark:text-sky-400">
+            <span className="w-3 h-1 rounded-full bg-sky-500 inline-block"></span>
+            <span>Kesantrian: {summary.totalKesantrian} Kasus</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-purple-600 dark:text-purple-400">
+            <span className="w-3 h-1 rounded-full bg-purple-500 inline-block"></span>
+            <span>Akademik: {summary.totalAkademik} Kasus</span>
+          </div>
+        </div>
+      )}
+
+      {chartMode === 'comparison' && (
+        <div className="flex flex-wrap items-center gap-4 text-xs font-bold pt-1 pb-1 px-1">
+          <div className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
+            <span className="w-3 h-1 rounded-full bg-rose-500 inline-block"></span>
+            <span>Pelanggaran Disiplin: {summary.totalCases} Kasus (+{summary.totalPoints} Poin)</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+            <span className="w-3 h-1 rounded-full bg-emerald-500 inline-block"></span>
+            <span>Kebaikan & Prestasi: {summary.totalPositive} Catatan (-{summary.totalPositivePoints} Poin)</span>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Glowing Neon Chart Graphic & Interactive Tooltip */}
+      <div className="pt-4 pb-1">
+        <div className="relative w-full h-48 sm:h-56">
+          <svg className="w-full h-full overflow-visible" viewBox="0 0 680 180" preserveAspectRatio="none">
+            <defs>
+              {/* Neon Purple Gradient */}
+              <linearGradient id="neonPurpleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#8b5cf6" />
+                <stop offset="50%" stopColor="#c084fc" />
+                <stop offset="100%" stopColor="#6366f1" />
+              </linearGradient>
+              <linearGradient id="neonPurpleArea" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.35" />
+                <stop offset="60%" stopColor="#6366f1" stopOpacity="0.10" />
+                <stop offset="100%" stopColor="#6366f1" stopOpacity="0.0" />
+              </linearGradient>
+
+              {/* Neon Amber Gradient (Points Mode) */}
+              <linearGradient id="neonAmberGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#f59e0b" />
+                <stop offset="50%" stopColor="#fbbf24" />
+                <stop offset="100%" stopColor="#ef4444" />
+              </linearGradient>
+              <linearGradient id="neonAmberArea" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.35" />
+                <stop offset="60%" stopColor="#ef4444" stopOpacity="0.10" />
+                <stop offset="100%" stopColor="#ef4444" stopOpacity="0.0" />
+              </linearGradient>
+
+              {/* Neon Emerald Gradient (Positives / Tahfizh) */}
+              <linearGradient id="neonEmeraldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#10b981" />
+                <stop offset="100%" stopColor="#059669" />
+              </linearGradient>
+              <linearGradient id="neonEmeraldArea" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.28" />
+                <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
+              </linearGradient>
+
+              {/* Neon Sky Gradient (Kesantrian) */}
+              <linearGradient id="neonSkyGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#0ea5e9" />
+                <stop offset="100%" stopColor="#0284c7" />
+              </linearGradient>
+
+              {/* Neon Violet Gradient (Akademik) */}
+              <linearGradient id="neonVioletGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#a855f7" />
+                <stop offset="100%" stopColor="#7c3aed" />
+              </linearGradient>
+
+              {/* Neon Rose Gradient (Violations in comparison) */}
+              <linearGradient id="neonRoseGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#f43f5e" />
+                <stop offset="100%" stopColor="#e11d48" />
+              </linearGradient>
+              <linearGradient id="neonRoseArea" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#f43f5e" stopOpacity="0.25" />
+                <stop offset="100%" stopColor="#f43f5e" stopOpacity="0.0" />
+              </linearGradient>
+
+              {/* Filter for Glow Effect */}
+              <filter id="neonGlowEffect" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+                <feMerge>
+                  <feMergeNode in="coloredBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            {/* Horizontal Grid lines & Y-Axis Scale Values */}
+            <g className="text-slate-200/50 dark:text-white/[0.04]">
+              <line x1="40" y1="30" x2="640" y2="30" stroke="currentColor" strokeDasharray="4 4" />
+              <text x="32" y="34" textAnchor="end" className="text-[10px] fill-slate-400 dark:fill-slate-500 font-bold">
+                {maxValue}
+              </text>
+
+              <line x1="40" y1="72" x2="640" y2="72" stroke="currentColor" strokeDasharray="4 4" />
+              <text x="32" y="76" textAnchor="end" className="text-[10px] fill-slate-400 dark:fill-slate-500 font-bold">
+                {Math.round(maxValue * 0.66)}
+              </text>
+
+              <line x1="40" y1="114" x2="640" y2="114" stroke="currentColor" strokeDasharray="4 4" />
+              <text x="32" y="118" textAnchor="end" className="text-[10px] fill-slate-400 dark:fill-slate-500 font-bold">
+                {Math.round(maxValue * 0.33)}
+              </text>
+
+              <line x1="40" y1="155" x2="640" y2="155" stroke="currentColor" />
+              <text x="32" y="159" textAnchor="end" className="text-[10px] fill-slate-400 dark:fill-slate-500 font-bold">
+                0
+              </text>
+            </g>
+
+            {/* Active Vertical Guideline */}
+            <line
+              x1={activeX}
+              y1="30"
+              x2={activeX}
+              y2="155"
+              stroke="#818cf8"
+              strokeOpacity="0.45"
+              strokeDasharray="3 3"
+              strokeWidth="1.5"
+            />
+
+            {/* MODE 1: CASUS DISIPLIN */}
+            {chartMode === 'cases' && (
+              <>
+                <path d={getAreaPath(pointsCases, 155)} fill="url(#neonPurpleArea)" />
+                <path
+                  d={getSplinePath(pointsCases)}
+                  fill="none"
+                  stroke="url(#neonPurpleGrad)"
+                  strokeWidth="3.5"
+                  filter="url(#neonGlowEffect)"
+                  strokeLinecap="round"
+                />
+                {pointsCases.map((pt, i) => {
+                  const isActive = i === currentActiveIndex;
+                  return (
+                    <circle
+                      key={`pt-cases-${i}`}
+                      cx={pt.x}
+                      cy={pt.y}
+                      r={isActive ? 6 : 4}
+                      fill={isActive ? '#ffffff' : '#c084fc'}
+                      stroke={isActive ? '#9333ea' : '#ffffff'}
+                      strokeWidth={isActive ? 3 : 1.5}
+                      filter={isActive ? 'url(#neonGlowEffect)' : undefined}
+                      className="transition-all duration-200"
+                    />
+                  );
+                })}
+              </>
+            )}
+
+            {/* MODE 2: BOBOT POIN */}
+            {chartMode === 'points' && (
+              <>
+                <path d={getAreaPath(pointsPoints, 155)} fill="url(#neonAmberArea)" />
+                <path
+                  d={getSplinePath(pointsPoints)}
+                  fill="none"
+                  stroke="url(#neonAmberGrad)"
+                  strokeWidth="3.5"
+                  filter="url(#neonGlowEffect)"
+                  strokeLinecap="round"
+                />
+                {pointsPoints.map((pt, i) => {
+                  const isActive = i === currentActiveIndex;
+                  return (
+                    <circle
+                      key={`pt-points-${i}`}
+                      cx={pt.x}
+                      cy={pt.y}
+                      r={isActive ? 6 : 4}
+                      fill={isActive ? '#ffffff' : '#f59e0b'}
+                      stroke={isActive ? '#d97706' : '#ffffff'}
+                      strokeWidth={isActive ? 3 : 1.5}
+                      filter={isActive ? 'url(#neonGlowEffect)' : undefined}
+                      className="transition-all duration-200"
+                    />
+                  );
+                })}
+              </>
+            )}
+
+            {/* MODE 3: KOMPARASI 3 DIVISI */}
+            {chartMode === 'divisions' && (
+              <>
+                {/* Tahfizh Line */}
+                <path
+                  d={getSplinePath(pointsTahfizh)}
+                  fill="none"
+                  stroke="url(#neonEmeraldGrad)"
+                  strokeWidth="3"
+                  filter="url(#neonGlowEffect)"
+                  strokeLinecap="round"
+                />
+                {/* Kesantrian Line */}
+                <path
+                  d={getSplinePath(pointsKesantrian)}
+                  fill="none"
+                  stroke="url(#neonSkyGrad)"
+                  strokeWidth="3"
+                  filter="url(#neonGlowEffect)"
+                  strokeLinecap="round"
+                />
+                {/* Akademik Line */}
+                <path
+                  d={getSplinePath(pointsAkademik)}
+                  fill="none"
+                  stroke="url(#neonVioletGrad)"
+                  strokeWidth="3"
+                  filter="url(#neonGlowEffect)"
+                  strokeLinecap="round"
+                />
+                {/* Nodes for each */}
+                {dataset.map((_, i) => {
+                  const isActive = i === currentActiveIndex;
+                  return (
+                    <g key={`div-nodes-${i}`}>
+                      <circle
+                        cx={pointsTahfizh[i].x}
+                        cy={pointsTahfizh[i].y}
+                        r={isActive ? 5 : 3.5}
+                        fill="#10b981"
+                        stroke="#ffffff"
+                        strokeWidth="1.5"
+                      />
+                      <circle
+                        cx={pointsKesantrian[i].x}
+                        cy={pointsKesantrian[i].y}
+                        r={isActive ? 5 : 3.5}
+                        fill="#0ea5e9"
+                        stroke="#ffffff"
+                        strokeWidth="1.5"
+                      />
+                      <circle
+                        cx={pointsAkademik[i].x}
+                        cy={pointsAkademik[i].y}
+                        r={isActive ? 5 : 3.5}
+                        fill="#a855f7"
+                        stroke="#ffffff"
+                        strokeWidth="1.5"
+                      />
+                    </g>
+                  );
+                })}
+              </>
+            )}
+
+            {/* MODE 4: DISIPLIN VS PRESTASI */}
+            {chartMode === 'comparison' && (
+              <>
+                <path d={getAreaPath(pointsViolations, 155)} fill="url(#neonRoseArea)" />
+                <path
+                  d={getSplinePath(pointsViolations)}
+                  fill="none"
+                  stroke="url(#neonRoseGrad)"
+                  strokeWidth="3"
+                  filter="url(#neonGlowEffect)"
+                  strokeLinecap="round"
+                />
+
+                <path d={getAreaPath(pointsPositives, 155)} fill="url(#neonEmeraldArea)" />
+                <path
+                  d={getSplinePath(pointsPositives)}
+                  fill="none"
+                  stroke="url(#neonEmeraldGrad)"
+                  strokeWidth="3"
+                  filter="url(#neonGlowEffect)"
+                  strokeLinecap="round"
+                />
+
+                {dataset.map((_, i) => {
+                  const isActive = i === currentActiveIndex;
+                  return (
+                    <g key={`comp-nodes-${i}`}>
+                      <circle
+                        cx={pointsViolations[i].x}
+                        cy={pointsViolations[i].y}
+                        r={isActive ? 5.5 : 3.5}
+                        fill="#ef4444"
+                        stroke="#ffffff"
+                        strokeWidth="1.5"
+                      />
+                      <circle
+                        cx={pointsPositives[i].x}
+                        cy={pointsPositives[i].y}
+                        r={isActive ? 5.5 : 3.5}
+                        fill="#10b981"
+                        stroke="#ffffff"
+                        strokeWidth="1.5"
+                      />
+                    </g>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Wide transparent click/hover hitboxes for all devices */}
+            {dataset.map((_, i) => {
+              const colWidth = 590 / Math.max(1, dataset.length);
+              const xStart = getX(i) - colWidth / 2;
+              return (
+                <rect
+                  key={`hitbox-${i}`}
+                  x={xStart}
+                  y="0"
+                  width={colWidth}
+                  height="180"
+                  fill="transparent"
+                  className="cursor-pointer"
+                  onMouseEnter={() => setActiveIndex(i)}
+                  onClick={() => setActiveIndex(i)}
+                />
+              );
+            })}
+          </svg>
+
+          {/* Floating Interactive Tooltip Pill (Real Live Data) */}
+          <div
+            style={{ left: `${leftPercent}%` }}
+            className="absolute -translate-x-1/2 top-0 sm:top-1 z-20 transition-all duration-200 pointer-events-auto"
+          >
+            <div className="px-3.5 py-2 rounded-2xl bg-slate-900/95 dark:bg-slate-900/95 text-white border border-slate-700/80 shadow-2xl backdrop-blur-md min-w-[210px] text-center">
+              <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-1 mb-1.5 text-[11px] font-bold text-slate-300">
+                <span>{activeItem.fullLabel}</span>
+                {activeItem.isToday && (
+                  <span className="px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[9px] font-extrabold uppercase tracking-wide">
+                    Hari Ini
+                  </span>
+                )}
+              </div>
+
+              {/* Mode 1: Cases */}
+              {chartMode === 'cases' && (
+                <div>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-sm sm:text-base font-black text-purple-300">
+                      {activeItem.count} Catatan Disiplin
+                    </span>
+                    <span className="text-[11px] font-semibold text-rose-300">
+                      ({activeItem.points} Poin)
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 mt-1 text-[10px] text-slate-300 font-semibold">
+                    <span className="text-emerald-400">Tahfizh: {activeItem.tahfizhCount}</span>
+                    <span>•</span>
+                    <span className="text-sky-400">Kesantrian: {activeItem.kesantrianCount}</span>
+                    <span>•</span>
+                    <span className="text-purple-400">Akademik: {activeItem.akademikCount}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Mode 2: Points */}
+              {chartMode === 'points' && (
+                <div>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-sm sm:text-base font-black text-amber-300">
+                      {activeItem.points} Poin Sanksi
+                    </span>
+                    <span className="text-[11px] font-semibold text-slate-300">
+                      ({activeItem.count} Kasus)
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 mt-1 text-[10px] text-slate-300 font-semibold">
+                    <span className="text-emerald-400">Tahfizh: {activeItem.tahfizhPoints} Pts</span>
+                    <span>•</span>
+                    <span className="text-sky-400">Kesantrian: {activeItem.kesantrianPoints} Pts</span>
+                    <span>•</span>
+                    <span className="text-purple-400">Akademik: {activeItem.akademikPoints} Pts</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Mode 3: Divisions */}
+              {chartMode === 'divisions' && (
+                <div className="space-y-1 text-[11px] font-semibold text-left">
+                  <div className="flex items-center justify-between text-emerald-400">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                      Tahfizh:
+                    </span>
+                    <span className="font-bold">{activeItem.tahfizhCount} kasus ({activeItem.tahfizhPoints} pts)</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sky-400">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-sky-500 inline-block"></span>
+                      Kesantrian:
+                    </span>
+                    <span className="font-bold">{activeItem.kesantrianCount} kasus ({activeItem.kesantrianPoints} pts)</span>
+                  </div>
+                  <div className="flex items-center justify-between text-purple-400">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
+                      Akademik:
+                    </span>
+                    <span className="font-bold">{activeItem.akademikCount} kasus ({activeItem.akademikPoints} pts)</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Mode 4: Comparison */}
+              {chartMode === 'comparison' && (
+                <div className="space-y-1 text-[11px] font-semibold text-left">
+                  <div className="flex items-center justify-between text-rose-400">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-rose-500 inline-block"></span>
+                      Pelanggaran:
+                    </span>
+                    <span className="font-bold">{activeItem.count} kasus (+{activeItem.points} pts)</span>
+                  </div>
+                  <div className="flex items-center justify-between text-emerald-400">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                      Kebaikan & Prestasi:
+                    </span>
+                    <span className="font-bold">{activeItem.positiveCount} amalan (-{activeItem.positivePoints} pts)</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Fast Jump Link to Records Tab */}
+              <button
+                type="button"
+                onClick={() => onSelectTab('records')}
+                className="mt-2 w-full py-1 px-2 rounded-lg bg-white/10 hover:bg-white/20 text-indigo-300 hover:text-white text-[10px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer"
+              >
+                <span>Buka Riwayat Kasus Lengkap</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+
+          {/* Empty state notice if period has 0 records */}
+          {summary.totalCases === 0 && summary.totalPositive === 0 && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="px-3.5 py-1.5 rounded-xl bg-slate-900/80 dark:bg-white/10 backdrop-blur-sm text-xs font-bold text-slate-300 flex items-center gap-2 shadow-lg">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Nihil catatan kedisiplinan pada periode ini. Santri tertib!</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 5. Dynamic X-Axis with interactive selection */}
+        <div className="flex items-center justify-between text-xs text-slate-400 font-bold px-4 pt-2">
+          {dataset.map((d, i) => {
+            const isSelected = i === currentActiveIndex;
+            return (
+              <button
+                key={d.key}
+                type="button"
+                onClick={() => setActiveIndex(i)}
+                className={`flex flex-col items-center transition-all cursor-pointer ${
+                  isSelected
+                    ? 'text-indigo-600 dark:text-indigo-300 font-black scale-110'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <span>{d.label}</span>
+                {d.isToday && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-0.5"></span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 interface DashboardProps {
   currentUser: User | null;
   onOpenQuickRecord: () => void;
@@ -886,124 +1834,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Left Column (2 Cols) */}
         <div className="lg:col-span-2 space-y-5">
-          {/* Card A: Glowing Neon Wave Line Chart (Matching Learning Progress in Reference) */}
-          <div className="saas-card p-5 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-white/[0.08]">
-              <div>
-                <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                  <span>Tren Kedisiplinan & Pelanggaran</span>
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  Distribusi fluktuasi akumulasi catatan kedisiplinan santri
-                </p>
-              </div>
-
-              {/* Timeframe pill selector */}
-              <div className="inline-flex items-center p-1 rounded-xl bg-slate-100/90 dark:bg-white/[0.05] border border-slate-200/80 dark:border-white/[0.08] text-xs font-semibold">
-                <button
-                  type="button"
-                  onClick={() => setChartTimeframe('week')}
-                  className={`px-3 py-1 rounded-lg transition-all ${
-                    chartTimeframe === 'week'
-                      ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-white shadow-xs font-bold'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  Minggu Ini
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setChartTimeframe('month')}
-                  className={`px-3 py-1 rounded-lg transition-all ${
-                    chartTimeframe === 'month'
-                      ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-white shadow-xs font-bold'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  Bulan Ini
-                </button>
-              </div>
-            </div>
-
-            {/* Glowing Neon Chart Graphic */}
-            <div className="pt-6 pb-2">
-              <div className="relative w-full h-44 sm:h-52">
-                <svg className="w-full h-full overflow-visible" viewBox="0 0 680 180" preserveAspectRatio="none">
-                  <defs>
-                    {/* Linear Gradient for Neon Wave Stroke */}
-                    <linearGradient id="neonPurple" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#8b5cf6" />
-                      <stop offset="50%" stopColor="#c084fc" />
-                      <stop offset="100%" stopColor="#6366f1" />
-                    </linearGradient>
-
-                    {/* Linear Gradient for Area Fill */}
-                    <linearGradient id="neonArea" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.35" />
-                      <stop offset="50%" stopColor="#6366f1" stopOpacity="0.12" />
-                      <stop offset="100%" stopColor="#6366f1" stopOpacity="0.0" />
-                    </linearGradient>
-
-                    {/* Filter for Glow Effect */}
-                    <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
-                      <feMerge>
-                        <feMergeNode in="coloredBlur" />
-                        <feMergeNode in="SourceGraphic" />
-                      </feMerge>
-                    </filter>
-                  </defs>
-
-                  {/* Horizontal Grid lines */}
-                  <line x1="0" y1="30" x2="680" y2="30" stroke="currentColor" className="text-slate-200/50 dark:text-white/[0.04]" strokeDasharray="4 4" />
-                  <line x1="0" y1="75" x2="680" y2="75" stroke="currentColor" className="text-slate-200/50 dark:text-white/[0.04]" strokeDasharray="4 4" />
-                  <line x1="0" y1="120" x2="680" y2="120" stroke="currentColor" className="text-slate-200/50 dark:text-white/[0.04]" strokeDasharray="4 4" />
-                  <line x1="0" y1="165" x2="680" y2="165" stroke="currentColor" className="text-slate-200/60 dark:text-white/[0.06]" />
-
-                  {/* Translucent Area Under Curve */}
-                  <path
-                    d="M 20,130 C 80,110 130,50 190,85 C 250,120 300,40 370,55 C 440,70 500,25 570,75 C 620,110 650,45 660,50 L 660,165 L 20,165 Z"
-                    fill="url(#neonArea)"
-                  />
-
-                  {/* Smooth Neon Curve Line */}
-                  <path
-                    d="M 20,130 C 80,110 130,50 190,85 C 250,120 300,40 370,55 C 440,70 500,25 570,75 C 620,110 650,45 660,50"
-                    fill="none"
-                    stroke="url(#neonPurple)"
-                    strokeWidth="3.5"
-                    filter="url(#neonGlow)"
-                    strokeLinecap="round"
-                  />
-
-                  {/* Glowing Node Points */}
-                  <circle cx="190" cy="85" r="4.5" fill="#c084fc" className="ring-2 ring-white" />
-                  <circle cx="370" cy="55" r="5.5" fill="#ffffff" stroke="#9333ea" strokeWidth="3" filter="url(#neonGlow)" />
-                  <circle cx="570" cy="75" r="4.5" fill="#818cf8" />
-                </svg>
-
-                {/* Floating Interactive Tooltip Pill (Matching Reference) */}
-                <div
-                  className="absolute left-[50%] -translate-x-1/2 top-4 px-3 py-1.5 rounded-xl bg-slate-900/90 dark:bg-white/10 backdrop-blur-md text-white border border-white/20 shadow-xl text-center pointer-events-none"
-                >
-                  <p className="text-[11px] font-black text-purple-300">3 Catatan Disiplin</p>
-                  <p className="text-[9px] text-slate-300">Kamis, Pekan Ini</p>
-                </div>
-              </div>
-
-              {/* Day Axis */}
-              <div className="flex items-center justify-between text-xs text-slate-400 font-bold px-3 pt-2">
-                <span>Sen</span>
-                <span>Sel</span>
-                <span>Rab</span>
-                <span className="text-purple-600 dark:text-purple-300">Kam</span>
-                <span>Jum</span>
-                <span>Sab</span>
-                <span>Ahd</span>
-              </div>
-            </div>
-          </div>
+          {/* Card A: Glowing Dynamic Multi-mode Neon Trend Chart */}
+          <DisciplineTrendChart
+            stats={stats}
+            chartTimeframe={chartTimeframe}
+            setChartTimeframe={setChartTimeframe}
+            onSelectTab={onSelectTab}
+          />
 
           {/* Card B: Top 10 Santri Poin Tertinggi Table */}
           <div className="saas-card overflow-hidden">

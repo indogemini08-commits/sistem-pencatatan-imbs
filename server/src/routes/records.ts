@@ -595,18 +595,219 @@ router.get('/stats', (req: Request, res: Response) => {
       ORDER BY total_points DESC
     `);
 
-    // Violations per month (last 6 months)
-    const monthlyTrend = query<any>(`
+    // 1. Weekly Trend (7 days: Monday to Sunday of current week)
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    const dayOfWeek = now.getDay();
+    const distToMon = (dayOfWeek + 6) % 7;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - distToMon);
+
+    const dayNames = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Ahad'];
+    const shortDays = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Ahd'];
+
+    const weekStartDate = new Date(monday).toISOString().split('T')[0];
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    const weekEndDate = sunday.toISOString().split('T')[0];
+
+    const weekViolations = query<any>(`
+      SELECT vr.date, vr.division,
+             COUNT(vr.id) as count,
+             COALESCE(SUM(vr.points_snapshot), 0) as points
+      FROM violation_records vr
+      JOIN students s ON s.id = vr.student_id AND s.status = 'active'
+      WHERE vr.status = 'active' AND vr.date >= ? AND vr.date <= ? ${divisionFilterSql}
+      GROUP BY vr.date, vr.division
+    `, [weekStartDate, weekEndDate]);
+
+    const weekPositives = query<any>(`
+      SELECT pr.date, pr.division,
+             COUNT(pr.id) as count,
+             COALESCE(SUM(pr.points_deducted), 0) as points
+      FROM positive_records pr
+      JOIN students s ON s.id = pr.student_id AND s.status = 'active'
+      WHERE pr.status = 'active' AND pr.date >= ? AND pr.date <= ? ${hasDivisionFilter ? `AND pr.division = '${division}'` : ''}
+      GROUP BY pr.date, pr.division
+    `, [weekStartDate, weekEndDate]);
+
+    const weeklyTrend: Array<any> = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const dStr = d.toISOString().split('T')[0];
+
+      const vDay = weekViolations.filter((v: any) => v.date === dStr);
+      const pDay = weekPositives.filter((p: any) => p.date === dStr);
+
+      const tahfizhV = vDay.find((v: any) => v.division === 'tahfizh');
+      const kesantrianV = vDay.find((v: any) => v.division === 'kesantrian');
+      const akademikV = vDay.find((v: any) => v.division === 'akademik');
+
+      weeklyTrend.push({
+        date: dStr,
+        dayName: dayNames[i],
+        shortDay: shortDays[i],
+        isToday: dStr === todayStr,
+        count: vDay.reduce((sum: number, v: any) => sum + Number(v.count || 0), 0),
+        points: vDay.reduce((sum: number, v: any) => sum + Number(v.points || 0), 0),
+        tahfizhCount: Number(tahfizhV?.count || 0),
+        tahfizhPoints: Number(tahfizhV?.points || 0),
+        kesantrianCount: Number(kesantrianV?.count || 0),
+        kesantrianPoints: Number(kesantrianV?.points || 0),
+        akademikCount: Number(akademikV?.count || 0),
+        akademikPoints: Number(akademikV?.points || 0),
+        positiveCount: pDay.reduce((sum: number, p: any) => sum + Number(p.count || 0), 0),
+        positivePoints: pDay.reduce((sum: number, p: any) => sum + Number(p.points || 0), 0),
+      });
+    }
+
+    // 2. Current Month Trends (4 Weeks and Days)
+    const monthYearStr = todayStr.substring(0, 7);
+    const monthViolations = query<any>(`
+      SELECT vr.date, vr.division,
+             COUNT(vr.id) as count,
+             COALESCE(SUM(vr.points_snapshot), 0) as points
+      FROM violation_records vr
+      JOIN students s ON s.id = vr.student_id AND s.status = 'active'
+      WHERE vr.status = 'active' AND vr.date LIKE ? ${divisionFilterSql}
+      GROUP BY vr.date, vr.division
+    `, [`${monthYearStr}%`]);
+
+    const monthPositives = query<any>(`
+      SELECT pr.date, pr.division,
+             COUNT(pr.id) as count,
+             COALESCE(SUM(pr.points_deducted), 0) as points
+      FROM positive_records pr
+      JOIN students s ON s.id = pr.student_id AND s.status = 'active'
+      WHERE pr.status = 'active' AND pr.date LIKE ? ${hasDivisionFilter ? `AND pr.division = '${division}'` : ''}
+      GROUP BY pr.date, pr.division
+    `, [`${monthYearStr}%`]);
+
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const weekRanges = [
+      { label: 'Pekan 1', start: 1, end: 7, rangeText: '1 - 7' },
+      { label: 'Pekan 2', start: 8, end: 14, rangeText: '8 - 14' },
+      { label: 'Pekan 3', start: 15, end: 21, rangeText: '15 - 21' },
+      { label: 'Pekan 4', start: 22, end: totalDaysInMonth, rangeText: `22 - ${totalDaysInMonth}` },
+    ];
+
+    const monthWeeksTrend = weekRanges.map((wr) => {
+      const vWeek = monthViolations.filter((v: any) => {
+        const day = parseInt(v.date.split('-')[2], 10);
+        return day >= wr.start && day <= wr.end;
+      });
+      const pWeek = monthPositives.filter((p: any) => {
+        const day = parseInt(p.date.split('-')[2], 10);
+        return day >= wr.start && day <= wr.end;
+      });
+
+      const tahfizhV = vWeek.filter((v: any) => v.division === 'tahfizh');
+      const kesantrianV = vWeek.filter((v: any) => v.division === 'kesantrian');
+      const akademikV = vWeek.filter((v: any) => v.division === 'akademik');
+
+      return {
+        weekLabel: wr.label,
+        dateRange: `Tgl ${wr.rangeText}`,
+        count: vWeek.reduce((sum: number, v: any) => sum + Number(v.count || 0), 0),
+        points: vWeek.reduce((sum: number, v: any) => sum + Number(v.points || 0), 0),
+        tahfizhCount: tahfizhV.reduce((sum: number, v: any) => sum + Number(v.count || 0), 0),
+        tahfizhPoints: tahfizhV.reduce((sum: number, v: any) => sum + Number(v.points || 0), 0),
+        kesantrianCount: kesantrianV.reduce((sum: number, v: any) => sum + Number(v.count || 0), 0),
+        kesantrianPoints: kesantrianV.reduce((sum: number, v: any) => sum + Number(v.points || 0), 0),
+        akademikCount: akademikV.reduce((sum: number, v: any) => sum + Number(v.count || 0), 0),
+        akademikPoints: akademikV.reduce((sum: number, v: any) => sum + Number(v.points || 0), 0),
+        positiveCount: pWeek.reduce((sum: number, p: any) => sum + Number(p.count || 0), 0),
+        positivePoints: pWeek.reduce((sum: number, p: any) => sum + Number(p.points || 0), 0),
+      };
+    });
+
+    const monthDaysTrend = [];
+    for (let day = 1; day <= totalDaysInMonth; day++) {
+      const dStr = `${monthYearStr}-${String(day).padStart(2, '0')}`;
+      const vDay = monthViolations.filter((v: any) => v.date === dStr);
+      const pDay = monthPositives.filter((p: any) => p.date === dStr);
+
+      const tahfizhV = vDay.find((v: any) => v.division === 'tahfizh');
+      const kesantrianV = vDay.find((v: any) => v.division === 'kesantrian');
+      const akademikV = vDay.find((v: any) => v.division === 'akademik');
+
+      const dateObj = new Date(year, month, day);
+      const dayIdx = (dateObj.getDay() + 6) % 7;
+
+      monthDaysTrend.push({
+        date: dStr,
+        dayNumber: day,
+        dayName: dayNames[dayIdx],
+        shortDay: `${day}`,
+        isToday: dStr === todayStr,
+        count: vDay.reduce((sum: number, v: any) => sum + Number(v.count || 0), 0),
+        points: vDay.reduce((sum: number, v: any) => sum + Number(v.points || 0), 0),
+        tahfizhCount: Number(tahfizhV?.count || 0),
+        tahfizhPoints: Number(tahfizhV?.points || 0),
+        kesantrianCount: Number(kesantrianV?.count || 0),
+        kesantrianPoints: Number(kesantrianV?.points || 0),
+        akademikCount: Number(akademikV?.count || 0),
+        akademikPoints: Number(akademikV?.points || 0),
+        positiveCount: pDay.reduce((sum: number, p: any) => sum + Number(p.count || 0), 0),
+        positivePoints: pDay.reduce((sum: number, p: any) => sum + Number(p.points || 0), 0),
+      });
+    }
+
+    // 3. Violations per month (last 6 months with division & positive breakdown)
+    const rawMonthly = query<any>(`
       SELECT substr(vr.date, 1, 7) as month,
+             vr.division,
              COUNT(vr.id) as count,
              COALESCE(SUM(vr.points_snapshot), 0) as points
       FROM violation_records vr
       JOIN students s ON s.id = vr.student_id AND s.status = 'active'
       WHERE vr.status = 'active' ${divisionFilterSql}
-      GROUP BY month
+      GROUP BY month, vr.division
       ORDER BY month ASC
-      LIMIT 6
     `);
+
+    const rawMonthlyPos = query<any>(`
+      SELECT substr(pr.date, 1, 7) as month,
+             COUNT(pr.id) as count,
+             COALESCE(SUM(pr.points_deducted), 0) as points
+      FROM positive_records pr
+      JOIN students s ON s.id = pr.student_id AND s.status = 'active'
+      WHERE pr.status = 'active' ${hasDivisionFilter ? `AND pr.division = '${division}'` : ''}
+      GROUP BY month
+    `);
+
+    const last6Months: string[] = [];
+    for (let m = 5; m >= 0; m--) {
+      const d = new Date(year, month - m, 1);
+      last6Months.push(d.toISOString().substring(0, 7));
+    }
+
+    const monthlyTrend = last6Months.map((mStr) => {
+      const vMonth = rawMonthly.filter((r: any) => r.month === mStr);
+      const pMonth = rawMonthlyPos.find((r: any) => r.month === mStr);
+
+      const tahfizhV = vMonth.find((r: any) => r.division === 'tahfizh');
+      const kesantrianV = vMonth.find((r: any) => r.division === 'kesantrian');
+      const akademikV = vMonth.find((r: any) => r.division === 'akademik');
+
+      return {
+        month: mStr,
+        count: vMonth.reduce((sum: number, r: any) => sum + Number(r.count || 0), 0),
+        points: vMonth.reduce((sum: number, r: any) => sum + Number(r.points || 0), 0),
+        tahfizhCount: Number(tahfizhV?.count || 0),
+        tahfizhPoints: Number(tahfizhV?.points || 0),
+        kesantrianCount: Number(kesantrianV?.count || 0),
+        kesantrianPoints: Number(kesantrianV?.points || 0),
+        akademikCount: Number(akademikV?.count || 0),
+        akademikPoints: Number(akademikV?.points || 0),
+        positiveCount: Number(pMonth?.count || 0),
+        positivePoints: Number(pMonth?.points || 0),
+      };
+    });
 
     // Santri needing attention (e.g. points >= 20)
     const attentionThreshold = thresholds.find((t: any) => t.minimum_points > 0)?.minimum_points || 20;
@@ -640,6 +841,9 @@ router.get('/stats', (req: Request, res: Response) => {
       byCategory,
       pointsByHalaqah,
       monthlyTrend,
+      weeklyTrend,
+      monthWeeksTrend,
+      monthDaysTrend,
       studentsNeedingAttention,
     });
   } catch (err: any) {
